@@ -1,2 +1,2 @@
 # juce-dev
-Where projects from learning juice live
+Where projects from learning juce live
