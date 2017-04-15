@@ -10,16 +10,16 @@
 
 */
 
-#ifndef __APPHEADERFILE_WWLVXW__
-#define __APPHEADERFILE_WWLVXW__
+#ifndef __APPHEADERFILE_LUYZJ9__
+#define __APPHEADERFILE_LUYZJ9__
 
 #include "AppConfig.h"
 
 #include <juce_audio_basics/juce_audio_basics.h>
 #include <juce_audio_devices/juce_audio_devices.h>
 #include <juce_audio_formats/juce_audio_formats.h>
-#include <juce_audio_plugin_client/juce_audio_plugin_client.h>
 #include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_audio_utils/juce_audio_utils.h>
 #include <juce_core/juce_core.h>
 #include <juce_cryptography/juce_cryptography.h>
 #include <juce_data_structures/juce_data_structures.h>
@@ -40,10 +40,10 @@
 #if ! JUCE_DONT_DECLARE_PROJECTINFO
 namespace ProjectInfo
 {
-    const char* const  projectName    = "HelloWorld";
+    const char* const  projectName    = "hello-world";
     const char* const  versionString  = "1.0.0";
     const int          versionNumber  = 0x10000;
 }
 #endif
 
-#endif   // __APPHEADERFILE_WWLVXW__
+#endif   // __APPHEADERFILE_LUYZJ9__
