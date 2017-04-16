@@ -65,7 +65,7 @@ public:
                     // found a connection, so stop looking for more
                     std::cout << "Connected to " << test.toString() << std::endl;
                     server->stop();
-                    break;
+                    return;
                 }
             }
         }
