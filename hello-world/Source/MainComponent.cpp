@@ -20,6 +20,7 @@
 class MainContentComponent   : public AudioAppComponent
 {
 public:
+
     //==============================================================================
     MainContentComponent()
     {
@@ -29,30 +30,34 @@ public:
         setAudioChannels (2, 2);
 
         // initialize network stuff
-        client = new NetworkClient();
-        server = new NetworkServer();
-        server->setClient (client);
-        server->helloMessage = "";
+        helloMessage = "";
+        client = new NetworkClient(this, &helloMessage);
+        server = new NetworkServer(client);
 
+        server->beginWaitingForSocket (PORT, ""); // empty string means listen on all host IPs
         // try to connect to all possible IPv4 addresses
-        Array<IPAddress> interfaceIPs();
+        Array<IPAddress> interfaceIPs;
         IPAddress::findAllAddresses (interfaceIPs);
         for (auto ip : interfaceIPs) {
             for (uint8 i = 1; i <= 255; ++i) {
                 IPAddress test (ip.address[0], ip.address[1], ip.address[2], i);
                 if (ip == test) continue; // avoid trying to connect to itself
-                client->connectToSocket (test.toString(), PORT, TIMEOUT);
-                if (client->isConnected()) break;
+                if (client->isConnected()
+                || client->connectToSocket (test.toString(), PORT, TIMEOUT)) {
+                    // found a connection, so stop looking for more
+                    server->stop();
+                    break;
+                }
             }
         }
-
-        // otherwise, be a host server for someone else to connect to
-        if (!client->isConnected())
-            server->beginWaitingForSocket (PORT, ""); // empty string means listen on all host IPs
     }
 
     ~MainContentComponent()
     {
+        client->disconnect();
+        server->stop();
+        delete client;
+        delete server;
         shutdownAudio();
     }
 
@@ -95,15 +100,15 @@ public:
 
 
         // You can add your drawing code here!
-    }
-
-    void resized() override
-    {
-        if (server && server->helloMessage != "") {
+        if (helloMessage != "") {
             g.setColour (Colours::white);
             g.setFont (24.0f);
             g.drawText (helloMessage, getLocalBounds(), Justification::centred);
         }
+    }
+
+    void resized() override
+    {
         // This is called when the MainContentComponent is resized.
         // If you add any child components, this is where you should
         // update their positions.
@@ -116,6 +121,7 @@ private:
     // Your private member variables go here...
     NetworkClient* client;
     NetworkServer* server;
+    String helloMessage;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };

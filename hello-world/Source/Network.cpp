@@ -10,17 +10,12 @@
 
 #include "Network.h"
 
-void NetworkServer::setClient (NetworkClient* newClient) {
-    this->client = newClient;
-}
-
-InterprocessConnection* NetworkServer::createConnectionObject() {
-    // just support one client at a time for now
-    if (client->isConnected()) {
-        this->stop();
-        return nullptr;
-    }
-    return client;
+NetworkClient::NetworkClient(Component* component, String* helloMessage,
+                             uint32 magicMessageHeaderNumber)
+    : InterprocessConnection(/*callbacksOnMessageThread*/ true, magicMessageHeaderNumber)
+{
+    this->component = component;
+    this->helloMessage = helloMessage;
 }
 
 void NetworkClient::connectionMade() {
@@ -30,8 +25,26 @@ void NetworkClient::connectionMade() {
     this->sendMessage (MemoryBlock (&hostname, sizeof (hostname)));
 }
 
+void NetworkClient::connectionLost() {
+    *(this->helloMessage) = "Connection lost";
+}
+
 void NetworkClient::messageReceived (const MemoryBlock &message) {
     char hostname[256]; // 255 is the max length of a computer's hostname in POSIX
     message.copyTo (hostname, 0, message.getSize());
-    this->helloMessage = hostname;
+    *(this->helloMessage) = hostname;
+    component->repaint();
+}
+
+NetworkServer::NetworkServer (NetworkClient* client) : InterprocessConnectionServer() {
+    this->client = client;
+}
+
+InterprocessConnection* NetworkServer::createConnectionObject() {
+    // just support one client at a time for now
+    if (client->isConnected()) {
+        this->stop();
+        return nullptr;
+    }
+    return client;
 }

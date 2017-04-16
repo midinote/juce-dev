@@ -15,13 +15,17 @@
 
 #define PORT 9001
 #define TIMEOUT 100 // miliseconds
-#define MAGIC_NUMBER 0xf2b49e2c // handshake number for network stuff; currently default and currently not incorporated into the code
+#define MAGIC_NUMBER 0xf2b49e2c
 
 class NetworkClient : public InterprocessConnection
 {
 public:
-    String helloMessage;
+    Component* component;
+    String* helloMessage;
+    NetworkClient (Component* component, String* helloMessage,
+                   uint32 magicMessageHeaderNumber = MAGIC_NUMBER);
     virtual void connectionMade();
+    virtual void connectionLost();
     virtual void messageReceived (const MemoryBlock &message);
 };
 
@@ -30,7 +34,7 @@ class NetworkServer : public InterprocessConnectionServer
 public:
     // just support one client at a time for now
     NetworkClient* client;
-    void setClient (NetworkClient* newClient);
+    NetworkServer (NetworkClient* client);
     virtual InterprocessConnection* createConnectionObject();
 };
 
