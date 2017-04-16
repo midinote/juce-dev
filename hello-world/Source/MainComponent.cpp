@@ -10,6 +10,7 @@
 #define MAINCOMPONENT_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "Network.h"
 
 //==============================================================================
 /*
@@ -26,6 +27,28 @@ public:
 
         // specify the number of input and output channels that we want to open
         setAudioChannels (2, 2);
+
+        // initialize network stuff
+        client = new NetworkClient();
+        server = new NetworkServer();
+        server->setClient (client);
+        server->helloMessage = "";
+
+        // try to connect to all possible IPv4 addresses
+        Array<IPAddress> interfaceIPs();
+        IPAddress::findAllAddresses (interfaceIPs);
+        for (auto ip : interfaceIPs) {
+            for (uint8 i = 1; i <= 255; ++i) {
+                IPAddress test (ip.address[0], ip.address[1], ip.address[2], i);
+                if (ip == test) continue; // avoid trying to connect to itself
+                client->connectToSocket (test.toString(), PORT, TIMEOUT);
+                if (client->isConnected()) break;
+            }
+        }
+
+        // otherwise, be a host server for someone else to connect to
+        if (!client->isConnected())
+            server->beginWaitingForSocket (PORT, ""); // empty string means listen on all host IPs
     }
 
     ~MainContentComponent()
@@ -76,6 +99,11 @@ public:
 
     void resized() override
     {
+        if (server && server->helloMessage != "") {
+            g.setColour (Colours::white);
+            g.setFont (24.0f);
+            g.drawText (helloMessage, getLocalBounds(), Justification::centred);
+        }
         // This is called when the MainContentComponent is resized.
         // If you add any child components, this is where you should
         // update their positions.
@@ -86,7 +114,8 @@ private:
     //==============================================================================
 
     // Your private member variables go here...
-
+    NetworkClient* client;
+    NetworkServer* server;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };
