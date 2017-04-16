@@ -43,7 +43,6 @@ NetworkServer::NetworkServer (NetworkClient* client) : InterprocessConnectionSer
 InterprocessConnection* NetworkServer::createConnectionObject() {
     // just support one client at a time for now
     if (client->isConnected()) {
-        this->stop();
         return nullptr;
     }
     return client;
