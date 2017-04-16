@@ -34,6 +34,23 @@ public:
         client = new NetworkClient(this, &helloMessage);
         server = new NetworkServer(client);
 
+        scanNetwork();
+    }
+
+    ~MainContentComponent()
+    {
+        client->disconnect();
+        server->stop();
+        delete client;
+        delete server;
+        shutdownAudio();
+    }
+
+    //==============================================================================
+
+    // Scans the network for possible connections and attempts to connect to them.
+    // If none are found, the server thread is left constantly scanning for any new clients
+    void scanNetwork() {
         server->beginWaitingForSocket (PORT, ""); // empty string means listen on all host IPs
         // try to connect to all possible IPv4 addresses
         Array<IPAddress> interfaceIPs;
@@ -50,18 +67,9 @@ public:
                 }
             }
         }
+        // note that server->stop() is only called if the client connects to someone else
     }
 
-    ~MainContentComponent()
-    {
-        client->disconnect();
-        server->stop();
-        delete client;
-        delete server;
-        shutdownAudio();
-    }
-
-    //==============================================================================
     void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override
     {
         // This function will be called when the audio device is started, or when
