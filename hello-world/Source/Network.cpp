@@ -32,7 +32,9 @@ void NetworkClient::connectionLost() {
 void NetworkClient::messageReceived (const MemoryBlock &message) {
     char hostname[256]; // 255 is the max length of a computer's hostname in POSIX
     message.copyTo (hostname, 0, message.getSize());
-    *(this->helloMessage) = "Hello World, from " + hostname;
+    String temp = "Hello World, from ";
+    temp += hostname;
+    *(this->helloMessage) = temp;
     component->repaint();
 }
 
