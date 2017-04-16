@@ -56,12 +56,14 @@ public:
         Array<IPAddress> interfaceIPs;
         IPAddress::findAllAddresses (interfaceIPs);
         for (auto ip : interfaceIPs) {
-            for (uint8 i = 1; i <= 255; ++i) {
+            //if (ip.address[0] == 127) continue; // skip localhost
+            for (uint8 i = 2; i <= 255; ++i) {
                 IPAddress test (ip.address[0], ip.address[1], ip.address[2], i);
-                if (ip == test) continue; // avoid trying to connect to itself
+                if (ip == test) continue; // avoid trying to connect to ourself
                 if (client->isConnected()
                 || client->connectToSocket (test.toString(), PORT, TIMEOUT)) {
                     // found a connection, so stop looking for more
+                    std::cout << "Connected to " << test.toString() << std::endl;
                     server->stop();
                     break;
                 }
