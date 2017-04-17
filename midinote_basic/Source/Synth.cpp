@@ -43,12 +43,14 @@ void Synth::paint (Graphics& g)
 float Synth::synthesize(double sampleRate)
 {
     double sample = 0.0;
+    lock.lock();
     for (std::map<int,std::pair<MidiMessage,Oscillator>>::iterator itor=currentNotes.begin();
          itor!=currentNotes.end(); ++itor)
     {
         currentFrequency = MidiMessage::getMidiNoteInHertz(itor->first, frequencySlider.getValue());
         sample += itor->second.second.oscillate(sampleRate, currentFrequency);
     }
+    lock.unlock();
     return sample;
 }
 
@@ -62,7 +64,9 @@ void Synth::addNote (MidiMessage message)
 
 void Synth::removeNote (MidiMessage message)
 {
+    lock.lock();
     currentNotes.erase (message.getNoteNumber());
+    lock.unlock();
 }
 
 void Synth::resized()

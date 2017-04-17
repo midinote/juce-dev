@@ -12,6 +12,7 @@
 #define SYNTH_H_INCLUDED
 
 #include <map>
+#include <mutex>
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Oscillator.h"
@@ -44,6 +45,7 @@ private:
     Slider panSlider;
     Label panLabel;
     std::map<int, std::pair<MidiMessage, Oscillator>> currentNotes;
+    std::mutex lock;
     
     float pan;
     double currentFrequency;
