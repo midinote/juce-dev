@@ -36,7 +36,6 @@ public:
 
 private:
     Oscillator::WaveType waveType;
-    Oscillator osc1;
 
     Slider frequencySlider;
     Label frequencyLabel;
@@ -44,7 +43,7 @@ private:
     Label levelLabel;
     Slider panSlider;
     Label panLabel;
-    std::map<int, MidiMessage> currentNotes;
+    std::map<int, std::pair<MidiMessage, Oscillator>> currentNotes;
     
     float pan;
     double currentFrequency;

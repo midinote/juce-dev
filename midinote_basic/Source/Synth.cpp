@@ -14,11 +14,8 @@
 //==============================================================================
 Synth::Synth()
 :   waveType(Oscillator::sine),
-    osc1(440.0, 0.125, waveType),
     noteOn(false)
-{
-    osc1.setPulseWidth(.1);
-    
+{    
     addAndMakeVisible (frequencySlider);
     frequencySlider.setRange (55.0, 14080.0);
     frequencySlider.setSkewFactorFromMidPoint (440.0);
@@ -46,17 +43,21 @@ void Synth::paint (Graphics& g)
 float Synth::synthesize(double sampleRate)
 {
     double sample = 0.0;
-    for (std::map<int,MidiMessage>::iterator itor=currentNotes.begin(); itor!=currentNotes.end(); ++itor)
+    for (std::map<int,std::pair<MidiMessage,Oscillator>>::iterator itor=currentNotes.begin();
+         itor!=currentNotes.end(); ++itor)
     {
         currentFrequency = MidiMessage::getMidiNoteInHertz(itor->first, frequencySlider.getValue());
-        sample += osc1.oscillate(sampleRate, currentFrequency);
+        sample += itor->second.second.oscillate(sampleRate, currentFrequency);
     }
     return sample;
 }
 
 void Synth::addNote (MidiMessage message)
 {
-    currentNotes.insert (std::pair<int, MidiMessage> (message.getNoteNumber(), message));
+    Oscillator osc (frequencySlider.getValue(), dBToVolume (levelSlider.getValue()), Oscillator::sine);
+    std::pair<MidiMessage, Oscillator> val (message, osc);
+    int key = message.getNoteNumber();
+    currentNotes.insert (std::pair<int, std::pair<MidiMessage, Oscillator>> (key, val));
 }
 
 void Synth::removeNote (MidiMessage message)
@@ -73,11 +74,5 @@ void Synth::resized()
 
 void Synth::sliderValueChanged(Slider* slider)
 {
-    if (slider == &frequencySlider)
-        osc1.setTuning(frequencySlider.getValue());
-    else if (slider == &levelSlider)
-        osc1.setLevel(dBToVolume(levelSlider.getValue()));
-    else if (slider == &panSlider)
-        pan = panSlider.getValue();
 }
 

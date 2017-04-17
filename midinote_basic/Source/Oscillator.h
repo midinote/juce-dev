@@ -17,7 +17,7 @@ class Oscillator
 public:
     enum WaveType {sine, square, triangle, sawtooth};
 
-    Oscillator (float, float, WaveType);
+    Oscillator (float freq, float lev, WaveType waveType);
     
     float oscillate (double, double);
     
