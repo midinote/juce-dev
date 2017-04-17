@@ -18,3 +18,10 @@ float volumeToDB (float volume)
 {
     return 8.0f * 20.0f * log10f(volume);
 }
+
+std::pair<float,float> applyPan (float pan, float level)
+{
+    float left = level * (0.5 - pan);
+    float right = level * (0.5 + pan);
+    return std::pair<float,float> (left, right);
+}

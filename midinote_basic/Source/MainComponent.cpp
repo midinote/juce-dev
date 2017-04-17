@@ -59,9 +59,9 @@ void MainContentComponent::getNextAudioBlock(const AudioSourceChannelInfo& buffe
     int bufferSize = bufferToFill.numSamples;
     for (int sample=0; sample < bufferSize; ++sample)
     {
-        float currentSample = synth.synthesize(currentSampleRate);
-        bufferL[sample] = currentSample;
-        bufferR[sample] = currentSample;
+        std::pair<float,float> currentSample = synth.synthesize(currentSampleRate);
+        bufferL[sample] = currentSample.first;
+        bufferR[sample] = currentSample.second;
     }
 }
 

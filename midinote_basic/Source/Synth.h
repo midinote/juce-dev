@@ -27,7 +27,7 @@ public:
     Synth();
     ~Synth();
     
-    float synthesize (double);
+    std::pair<float,float> synthesize (double);
     void addNote (MidiMessage);
     void removeNote (MidiMessage);
 

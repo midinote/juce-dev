@@ -29,6 +29,8 @@ Synth::Synth()
     levelSlider.addListener(this);
     
     addAndMakeVisible(panSlider);
+    panSlider.setRange(-0.5,0.5);
+    levelSlider.setValue(0.0);
     panSlider.addListener(this);
 }
 
@@ -40,7 +42,7 @@ void Synth::paint (Graphics& g)
 {
 }
 
-float Synth::synthesize(double sampleRate)
+std::pair<float,float> Synth::synthesize(double sampleRate)
 {
     double sample = 0.0;
     lock.lock();
@@ -51,7 +53,7 @@ float Synth::synthesize(double sampleRate)
         sample += itor->second.second.oscillate(sampleRate, currentFrequency);
     }
     lock.unlock();
-    return sample;
+    return applyPan(panSlider.getValue(), sample);
 }
 
 void Synth::addNote (MidiMessage message)
