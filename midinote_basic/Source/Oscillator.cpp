@@ -39,6 +39,8 @@ float Oscillator::oscillate (double sampleRate, double frequency)
                             break;
         case sawtooth : outputSample = sawtoothWaveFunction();
                             break;
+        case noise    : outputSample = NoiseFunction();
+                            break;
     }
     currentAngle += angleDelta;
     return outputSample;

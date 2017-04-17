@@ -14,24 +14,62 @@
 //==============================================================================
 Synth::Synth()
 :   waveType(Oscillator::sine),
-    noteOn(false)
-{    
+    labelFont(Font (12)),
+    labelJustification(Justification::centredTop)
+{
     addAndMakeVisible (frequencySlider);
+    frequencySlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    frequencySlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
     frequencySlider.setRange (55.0, 14080.0);
     frequencySlider.setSkewFactorFromMidPoint (440.0);
     frequencySlider.setValue(440.0);
     frequencySlider.addListener(this);
     
+    addAndMakeVisible(frequencyLabel);
+    frequencyLabel.setText("Coarse\nTuning", dontSendNotification);
+    frequencyLabel.setFont(labelFont);
+    frequencyLabel.setJustificationType(labelJustification);
+    frequencyLabel.attachToComponent(&frequencySlider, false);
+    
     addAndMakeVisible(levelSlider);
+    levelSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    levelSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
     levelSlider.setRange (-100, 6.0);
     levelSlider.setSkewFactorFromMidPoint(-6.0);
     levelSlider.setValue(0.0);
     levelSlider.addListener(this);
     
+    addAndMakeVisible(levelLabel);
+    levelLabel.setText("Level", dontSendNotification);
+    levelLabel.setFont(labelFont);
+    levelLabel.setJustificationType(labelJustification);
+    levelLabel.attachToComponent(&levelSlider, false);
+    
+    addAndMakeVisible (waveSlider);
+    waveSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    waveSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
+    waveSlider.setRange (0.0, 5.0);
+    waveSlider.setValue(0.0);
+    waveSlider.addListener(this);
+    
+    addAndMakeVisible(waveLabel);
+    waveLabel.setText("Wave", dontSendNotification);
+    waveLabel.setFont(labelFont);
+    waveLabel.setJustificationType(labelJustification);
+    waveLabel.attachToComponent(&waveSlider, false);
+    
     addAndMakeVisible(panSlider);
+    panSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    panSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
     panSlider.setRange(-0.5,0.5);
-    levelSlider.setValue(0.0);
+    panSlider.setValue(0.0);
     panSlider.addListener(this);
+    
+    addAndMakeVisible(panLabel);
+    panLabel.setText("Pan", dontSendNotification);
+    panLabel.setFont(labelFont);
+    panLabel.setJustificationType(labelJustification);
+    panLabel.attachToComponent(&panSlider, false);
 }
 
 Synth::~Synth()
@@ -58,7 +96,10 @@ std::pair<float,float> Synth::synthesize(double sampleRate)
 
 void Synth::addNote (MidiMessage message)
 {
-    Oscillator osc (frequencySlider.getValue(), dBToVolume (levelSlider.getValue()), Oscillator::sine);
+    
+    Oscillator osc (frequencySlider.getValue(),
+                    dBToVolume (levelSlider.getValue()),
+                    static_cast<Oscillator::WaveType> (floorf(waveSlider.getValue())));
     std::pair<MidiMessage, Oscillator> val (message, osc);
     int key = message.getNoteNumber();
     currentNotes.insert (std::pair<int, std::pair<MidiMessage, Oscillator>> (key, val));
@@ -73,9 +114,14 @@ void Synth::removeNote (MidiMessage message)
 
 void Synth::resized()
 {
-    frequencySlider.setBounds (10, 10, getWidth() - 20, 20);
-    levelSlider.setBounds (10, 20, getWidth() - 20, 40);
-    panSlider.setBounds (10, 30, getWidth() - 20, 60);
+    int knobHeight = 60;
+    int knobWidth = 60;
+    int vBorder = 25;
+    int border = 5;
+    frequencySlider.setBounds (border, vBorder, knobWidth, knobHeight);
+    levelSlider.setBounds (border * 2 + knobWidth, vBorder, knobWidth, knobHeight);
+    waveSlider.setBounds(border * 3 + knobWidth * 2, vBorder, knobWidth, knobHeight);
+    panSlider.setBounds (border, vBorder * 4 + knobHeight * 3, knobWidth, knobHeight);
 }
 
 void Synth::sliderValueChanged(Slider* slider)

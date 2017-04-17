@@ -42,6 +42,8 @@ private:
     Label frequencyLabel;
     Slider levelSlider;
     Label levelLabel;
+    Slider waveSlider;
+    Label waveLabel;
     Slider panSlider;
     Label panLabel;
     std::map<int, std::pair<MidiMessage, Oscillator>> currentNotes;
@@ -49,7 +51,8 @@ private:
     
     float pan;
     double currentFrequency;
-    bool noteOn;
+    Font labelFont;
+    Justification labelJustification;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Synth)
 };
