@@ -19,7 +19,8 @@ class MainContentComponent   : public AudioAppComponent,
                                public NetworkClient,
                                private MidiInputCallback,
                                private ComboBoxListener,
-                               private MidiKeyboardStateListener
+                               private MidiKeyboardStateListener,
+                               private SliderListener
 {
 public:
     MainContentComponent();
@@ -51,6 +52,7 @@ private:
     void connectionLost() override;
     void messageReceived(const MemoryBlock& message) override;
     NetworkServer* networkServer;
+    void sliderValueChanged(Slider*) override;
 
     String helloMessage;
     double currentSampleRate;

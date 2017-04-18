@@ -45,13 +45,7 @@ public:
     void updateSettings(Settings newSettings);
     void updateSettings(float A4Frequency, Oscillator::WaveType wave, float level, float pan);
     Settings* getSettings();
-
-private:
-    Settings settings;
-    void updateKnobs();
-
-    Oscillator::WaveType waveType;
-
+    
     Slider frequencySlider;
     Label frequencyLabel;
     Slider levelSlider;
@@ -60,6 +54,13 @@ private:
     Label waveLabel;
     Slider panSlider;
     Label panLabel;
+
+private:
+    Settings settings;
+    void updateKnobs();
+
+    Oscillator::WaveType waveType;
+
     std::map<int, std::pair<MidiMessage, Oscillator>> currentNotes;
     std::mutex lock;
     Font labelFont;

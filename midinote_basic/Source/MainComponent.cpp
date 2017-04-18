@@ -28,6 +28,11 @@ MainContentComponent::MainContentComponent()
     midiInputList.addListener(this);
 
     midiEditor.keyboardState.addListener(this);
+    synth.panSlider.addListener(this);
+    synth.frequencySlider.addListener(this);
+    synth.levelSlider.addListener(this);
+    synth.waveSlider.addListener(this);
+    
 
     for (int i; i < midiInputs.size(); ++i)
     {
@@ -146,4 +151,10 @@ void MainContentComponent::messageReceived(const MemoryBlock& message)
 {
     Synth::Settings newSettings = *static_cast<Synth::Settings*>(message.getData());
     synth.updateSettings(newSettings);
+}
+
+void MainContentComponent::sliderValueChanged(Slider* slider)
+{
+    Synth::Settings* settings = synth.getSettings();
+    sendMessage (MemoryBlock (settings, sizeof(settings)));
 }
