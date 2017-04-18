@@ -12,6 +12,7 @@
 #define MAINCOMPONENT_H_INCLUDED
 #include "MidiEditor.h"
 #include "Synth.h"
+#include "Network.h"
 #include "../JuceLibraryCode/JuceHeader.h"
 
 class MainContentComponent   : public AudioAppComponent,
@@ -45,7 +46,12 @@ private:
     MidiMessage currentNote;
     ComboBox midiInputList;
     Label midiInputListLabel;
+    void connectionMade();
+    void connectionLost();
+    void messageReceived();
     
+    NetworkClient* networkClient;
+    NetworkServer* networkServer;
     double currentSampleRate;
     int lastInputIndex;
     bool isAddingFromMidiInput;
