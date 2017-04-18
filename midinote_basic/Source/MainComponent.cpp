@@ -14,36 +14,36 @@ MainContentComponent::MainContentComponent()
     noteOn(false)
 {
     setSize(1280, 714);
-    
+
     addAndMakeVisible(midiEditor);
     addAndMakeVisible(synth);
-    
+
     addAndMakeVisible(midiInputListLabel);
     midiInputListLabel.setText("Midi Input: ", dontSendNotification);
     midiInputListLabel.attachToComponent(&midiInputList, true);
-    
+
     addAndMakeVisible(midiInputList);
     midiInputList.setTextWhenNoChoicesAvailable("No Midi Devices Available");
     const StringArray midiInputs (MidiInput::getDevices());
     midiInputList.addItemList(midiInputs, 1);
     midiInputList.addListener(this);
-    
+
     midiEditor.keyboardState.addListener(this);
-    
+
     for (int i; i < midiInputs.size(); ++i)
     {
         if (deviceManager.isMidiInputEnabled(midiInputs[i]))
         {
             setMidiInput (i);
-            
+
         }
     }
     if (midiInputList.getSelectedId() == 0)
         setMidiInput (0);
-    
+
     setAudioChannels(2, 2);
-    
 //    scanNetwork (this, this);
+    
 }
 
 MainContentComponent::~MainContentComponent()
