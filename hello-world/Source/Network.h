@@ -20,9 +20,11 @@
 class NetworkClient : public InterprocessConnection
 {
 public:
-    Component* component;
-    String* helloMessage;
-    NetworkClient (Component* component, String* helloMessage,
+    void (*connectionMadePointer)();
+    void (*connectionLostPointer)();
+    void (*messageReceivedPointer)(const MemoryBlock&);
+    NetworkClient (void (*connectionMadePointer)(), void (*connectionLostPointer)(),
+                   void (*messageReceivedPointer)(const MemoryBlock&),
                    uint32 magicMessageHeaderNumber = MAGIC_NUMBER);
     virtual void connectionMade();
     virtual void connectionLost();
@@ -37,5 +39,10 @@ public:
     NetworkServer (NetworkClient* client);
     virtual InterprocessConnection* createConnectionObject();
 };
+
+// Scans the network for possible connections and attempts to connect to
+// them. If none are found, the server thread is left constantly
+// scanning for any new clients.
+void scanNetwork (NetworkClient* client, NetworkServer* server);
 
 #endif  // NETWORK_H_INCLUDED

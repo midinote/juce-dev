@@ -31,16 +31,15 @@ public:
 
         // initialize network stuff
         helloMessage = "";
-        client = new NetworkClient(this, &helloMessage);
+        client = new NetworkClient(&MainContentComponent::connectionMade,
+                                   &MainContentComponent::connectionLost,
+                                   &MainContentComponent::messageReceived, MAGIC_NUMBER);
         server = new NetworkServer(client);
-
-        scanNetwork();
+        scanNetwork(client, server);
     }
 
     ~MainContentComponent()
     {
-        client->disconnect();
-        server->stop();
         delete client;
         delete server;
         shutdownAudio();
@@ -48,28 +47,24 @@ public:
 
     //==============================================================================
 
-    // Scans the network for possible connections and attempts to connect to them.
-    // If none are found, the server thread is left constantly scanning for any new clients
-    void scanNetwork() {
-        server->beginWaitingForSocket (PORT, ""); // empty string means listen on all host IPs
-        // try to connect to all possible IPv4 addresses
-        Array<IPAddress> interfaceIPs;
-        IPAddress::findAllAddresses (interfaceIPs);
-        for (auto ip : interfaceIPs) {
-            //if (ip.address[0] == 127) continue; // skip localhost
-            for (uint8 i = 2; i <= 255; ++i) {
-                IPAddress test (ip.address[0], ip.address[1], ip.address[2], i);
-                if (ip == test) continue; // avoid trying to connect to ourself
-                if (client->isConnected()
-                || client->connectToSocket (test.toString(), PORT, TIMEOUT)) {
-                    // found a connection, so stop looking for more
-                    std::cout << "Connected to " << test.toString() << std::endl;
-                    server->stop();
-                    return;
-                }
-            }
-        }
-        // note that server->stop() is only called if the client connects to someone else
+    void connectionMade() {
+        // we could just do this with InterprocessConnection::getConnectedHostName(), but I want
+        // to get the hang of MemoryBlock and really see these messages truly go back and forth
+        String hostname = SystemStats::getComputerName();
+        client->sendMessage (MemoryBlock (&hostname, sizeof (hostname)));
+    }
+
+    void connectionLost() {
+        helloMessage = "Connection lost";
+    }
+
+    void messageReceived (const MemoryBlock &message) {
+        char hostname[256]; // 255 is the max length of a computer's hostname in POSIX
+        message.copyTo (hostname, 0, message.getSize());
+        String temp = "Hello World, from ";
+        temp += hostname;
+        helloMessage = temp;
+        repaint();
     }
 
     void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override

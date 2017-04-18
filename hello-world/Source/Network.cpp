@@ -10,32 +10,26 @@
 
 #include "Network.h"
 
-NetworkClient::NetworkClient(Component* component, String* helloMessage,
-                             uint32 magicMessageHeaderNumber)
+NetworkClient::NetworkClient (void (*connectionMadePointer)(), void (*connectionLostPointer)(),
+               void (*messageReceivedPointer)(const MemoryBlock&),
+               uint32 magicMessageHeaderNumber)
     : InterprocessConnection(/*callbacksOnMessageThread*/ true, magicMessageHeaderNumber)
 {
-    this->component = component;
-    this->helloMessage = helloMessage;
+    this->connectionMadePointer = connectionMadePointer;
+    this->connectionLostPointer = connectionLostPointer;
+    this->messageReceivedPointer = messageReceivedPointer;
 }
 
 void NetworkClient::connectionMade() {
-    // we could just do this with InterprocessConnection::getConnectedHostName(), but I want
-    // to get the hang of MemoryBlock and really see these messages truly go back and forth
-    String hostname = SystemStats::getComputerName();
-    this->sendMessage (MemoryBlock (&hostname, sizeof (hostname)));
+    connectionMadePointer();
 }
 
 void NetworkClient::connectionLost() {
-    *(this->helloMessage) = "Connection lost";
+    connectionLostPointer();
 }
 
 void NetworkClient::messageReceived (const MemoryBlock &message) {
-    char hostname[256]; // 255 is the max length of a computer's hostname in POSIX
-    message.copyTo (hostname, 0, message.getSize());
-    String temp = "Hello World, from ";
-    temp += hostname;
-    *(this->helloMessage) = temp;
-    component->repaint();
+    messageReceivedPointer (message);
 }
 
 NetworkServer::NetworkServer (NetworkClient* client) : InterprocessConnectionServer() {
@@ -48,4 +42,26 @@ InterprocessConnection* NetworkServer::createConnectionObject() {
         return nullptr;
     }
     return client;
+}
+
+void scanNetwork (NetworkClient* client, NetworkServer* server) {
+    server->beginWaitingForSocket (PORT, ""); // empty string means listen on all host IPs
+    // try to connect to all possible IPv4 addresses
+    Array<IPAddress> interfaceIPs;
+    IPAddress::findAllAddresses (interfaceIPs);
+    for (auto ip : interfaceIPs) {
+        //if (ip.address[0] == 127) continue; // skip localhost
+        for (uint8 i = 2; i <= 255; ++i) {
+            IPAddress test (ip.address[0], ip.address[1], ip.address[2], i);
+            if (ip == test) continue; // avoid trying to connect to ourself
+            if (client->isConnected()
+            || client->connectToSocket (test.toString(), PORT, TIMEOUT)) {
+                // found a connection, so stop looking for more
+                std::cout << "Connected to " << test.toString() << std::endl;
+                server->stop();
+                return;
+            }
+        }
+    }
+    // note that server->stop() is only called if the client connects to someone else
 }
