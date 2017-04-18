@@ -34,7 +34,6 @@ MainContentComponent::MainContentComponent()
         if (deviceManager.isMidiInputEnabled(midiInputs[i]))
         {
             setMidiInput (i);
-
         }
     }
     if (midiInputList.getSelectedId() == 0)
@@ -42,7 +41,7 @@ MainContentComponent::MainContentComponent()
 
     setAudioChannels(2, 2);
     networkServer = new NetworkServer (this);
-//    scanNetwork (this, networkServer);
+    scanNetwork (this, networkServer);
 
 }
 

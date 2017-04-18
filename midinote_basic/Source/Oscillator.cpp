@@ -117,7 +117,7 @@ float Oscillator::sawtoothWaveFunction()
 //    double anglePiF = currentAngle * double_Pi * currentFrequency;
 //    return 0.0 - 2.0 * level / double_Pi * atan(cos(anglePiF)/sin(anglePiF));
     double tf = currentTime * currentFrequency;
-    return 2 * (tf - floor(0.5 + tf));
+    return 2 * (tf - floor(0.5 + tf)) * level;
 }
 
 float Oscillator::NoiseFunction()
