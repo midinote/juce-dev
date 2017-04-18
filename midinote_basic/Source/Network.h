@@ -21,7 +21,7 @@ class NetworkClient : public InterprocessConnection
 {
 public:
     NetworkClient (uint32 magicMessageHeaderNumber = MAGIC_NUMBER)
-    : InterprocessConnection(/*callbacksOnMessageThread*/ true, magicMessageHeaderNumber);
+    : InterprocessConnection(/*callbacksOnMessageThread*/ true, magicMessageHeaderNumber) {};
     virtual void connectionMade()=0;
     virtual void connectionLost()=0;
     virtual void messageReceived (const MemoryBlock &message)=0;

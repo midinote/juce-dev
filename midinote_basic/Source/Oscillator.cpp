@@ -43,6 +43,7 @@ float Oscillator::oscillate (double sampleRate, double frequency)
                             break;
     }
     currentAngle += angleDelta;
+    currentTime += currentSampleSize;
     return outputSample;
 }
 
@@ -113,8 +114,10 @@ float Oscillator::triangleWaveFunction()
 
 float Oscillator::sawtoothWaveFunction()
 {
-    double anglePiF = currentAngle * double_Pi * currentFrequency;
-    return 0.0 - 2.0 * level / double_Pi * atan(cos(anglePiF)/sin(anglePiF));
+//    double anglePiF = currentAngle * double_Pi * currentFrequency;
+//    return 0.0 - 2.0 * level / double_Pi * atan(cos(anglePiF)/sin(anglePiF));
+    double tf = currentTime * currentFrequency;
+    return 2 * (tf - floor(0.5 + tf));
 }
 
 float Oscillator::NoiseFunction()

@@ -42,7 +42,7 @@ private:
     void updateAngleDelta (double);
     
     WaveType wave;
-    double currentAngle, angleDelta, currentFrequency, currentSampleSize;
+    double currentAngle, angleDelta, currentFrequency, currentSampleSize, currentTime;
     float frequencyA4, level, pulseWidth;
     Random random;
 };

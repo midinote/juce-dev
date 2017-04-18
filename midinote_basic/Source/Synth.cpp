@@ -144,7 +144,7 @@ void Synth::updateSettings(float A4Frequency, Oscillator::WaveType wave, float l
 {
     settings.A4Frequency = A4Frequency;
     settings.wave = wave;
-    settings.level = level;
+    settings.level = dBToVolume (level);
     settings.pan = pan;
     updateKnobs();
 }
