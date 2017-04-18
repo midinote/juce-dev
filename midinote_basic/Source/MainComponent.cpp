@@ -7,7 +7,8 @@
 */
 
 MainContentComponent::MainContentComponent()
-:   lastInputIndex (0),
+:   NetworkServer(this),
+    lastInputIndex (0),
     isAddingFromMidiInput (false),
     noteOn(false)
 {
@@ -41,11 +42,7 @@ MainContentComponent::MainContentComponent()
     
     setAudioChannels(2, 2);
     
-    networkClient = new NetworkClient(MainContentComponent::connectionMade(),
-                                      MainContentComponent::connectionLost(),
-                                      MainContentComponent::messageReceived(),
-                                      MAGIC_NUMBER);
-    networkServer = new NetworkServer(networkClient);
+//    scanNetwork (this,this);
 }
 
 MainContentComponent::~MainContentComponent()
@@ -69,30 +66,6 @@ void MainContentComponent::getNextAudioBlock(const AudioSourceChannelInfo& buffe
         bufferL[sample] = currentSample.first;
         bufferR[sample] = currentSample.second;
     }
-}
-
-// Scans the network for possible connections and attempts to connect to them.
-// If none are found, the server thread is left constantly scanning for any new clients
-void scanNetwork() {
-    networkServer->beginWaitingForSocket (PORT, ""); // empty string means listen on all host IPs
-    // try to connect to all possible IPv4 addresses
-    Array<IPAddress> interfaceIPs;
-    IPAddress::findAllAddresses (interfaceIPs);
-    for (auto ip : interfaceIPs) {
-        //if (ip.address[0] == 127) continue; // skip localhost
-        for (uint8 i = 2; i <= 255; ++i) {
-            IPAddress test (ip.address[0], ip.address[1], ip.address[2], i);
-            if (ip == test) continue; // avoid trying to connect to ourself
-            if (networkClient->isConnected()
-                || networkClient->connectToSocket (test.toString(), PORT, TIMEOUT)) {
-                // found a connection, so stop looking for more
-                std::cout << "Connected to " << test.toString() << std::endl;
-                networkServer->stop();
-                return;
-            }
-        }
-    }
-    // note that server->stop() is only called if the client connects to someone else
 }
 
 void MainContentComponent::releaseResources()
@@ -158,15 +131,24 @@ void MainContentComponent::setMidiInput (int ind)
 
 void MainContentComponent::connectionMade()
 {
-    
+    // we could just do this with InterprocessConnection::getConnectedHostName(), but I want
+    // to get the hang of MemoryBlock and really see these messages truly go back and forth
+    String hostname = SystemStats::getComputerName();
+    sendMessage (MemoryBlock (&hostname, sizeof (hostname)));
 }
 
 void MainContentComponent::connectionLost()
 {
-    
+    helloMessage = "Connection lost";
+    repaint();
 }
 
-void MainContentComponent::messageReceived()
+void MainContentComponent::messageReceived(const MemoryBlock& message)
 {
-    
+    char hostname[256]; // 255 is the max length of a computer's hostname in POSIX
+    message.copyTo (hostname, 0, message.getSize());
+    String temp = "Hello World, from ";
+    temp += hostname;
+    helloMessage = temp;
+    repaint();
 }

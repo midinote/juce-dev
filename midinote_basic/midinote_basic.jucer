@@ -23,8 +23,8 @@
             file="Source/MainComponent.cpp"/>
       <FILE id="gnHvvW" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="zDML2k" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
-      <FILE id="o7HLV4" name="Network.h" compile="0" resource="0" file="Source/Network.h"/>
-      <FILE id="Ljj8BU" name="Network.cpp" compile="1" resource="0" file="Source/Network.cpp"/>
+      <FILE id="YrtJHM" name="Network.h" compile="0" resource="0" file="../../../Source/Network.h"/>
+      <FILE id="JOKsCc" name="Network.cpp" compile="1" resource="0" file="../../../Source/Network.cpp"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

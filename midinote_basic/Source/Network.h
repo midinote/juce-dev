@@ -20,8 +20,7 @@
 class NetworkClient : public InterprocessConnection
 {
 public:
-    NetworkClient (void (*connectionMadePointer) (), void (*connectionLostPointer) (),
-                   void (*messageReceivedPointer) (), uint32 magicMessageHeaderNumber = MAGIC_NUMBER);
+    NetworkClient (uint32 magicMessageHeaderNumber = MAGIC_NUMBER);
     virtual void connectionMade()=0;
     virtual void connectionLost()=0;
     virtual void messageReceived (const MemoryBlock &message)=0;
@@ -32,7 +31,7 @@ class NetworkServer : public InterprocessConnectionServer
 public:
     // just support one client at a time for now
     NetworkServer (NetworkClient* client);
-    virtual InterprocessConnection* createConnectionObject()=0;
+    virtual InterprocessConnection* createConnectionObject();
 };
 
 #endif  // NETWORK_H_INCLUDED
