@@ -16,7 +16,7 @@ float dBToVolume (float dB)
 
 float volumeToDB (float volume)
 {
-    return 8.0f * 20.0f * log10f(volume);
+    return 20.0f * log10f(8.0f * volume);
 }
 
 std::pair<float,float> applyPan (float pan, float level)
