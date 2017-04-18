@@ -5,6 +5,8 @@
               jucerVersion="4.3.1">
   <MAINGROUP id="Edegd5" name="hello-world">
     <GROUP id="{AEC5FAAC-F7E2-3A34-9CE0-CEFA98E13364}" name="Source">
+      <FILE id="MCfAl0" name="Network.cpp" compile="1" resource="0" file="Source/Network.cpp"/>
+      <FILE id="UWVZA8" name="Network.h" compile="0" resource="0" file="Source/Network.h"/>
       <FILE id="y0bojk" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
       <FILE id="WlhOuP" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
