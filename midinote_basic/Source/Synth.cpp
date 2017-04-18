@@ -70,6 +70,11 @@ Synth::Synth()
     panLabel.setFont(labelFont);
     panLabel.setJustificationType(labelJustification);
     panLabel.attachToComponent(&panSlider, false);
+    
+    updateSettings(frequencySlider.getValue(),
+                   static_cast<Oscillator::WaveType> (floorf(waveSlider.getValue())),
+                   dBToVolume(levelSlider.getValue()),
+                   panSlider.getValue());
 }
 
 Synth::~Synth()
@@ -83,6 +88,7 @@ void Synth::paint (Graphics& g)
 std::pair<float,float> Synth::synthesize(double sampleRate)
 {
     double sample = 0.0;
+    float currentFrequency;
     lock.lock();
     for (std::map<int,std::pair<MidiMessage,Oscillator>>::iterator itor=currentNotes.begin();
          itor!=currentNotes.end(); ++itor)
@@ -128,3 +134,30 @@ void Synth::sliderValueChanged(Slider* slider)
 {
 }
 
+void Synth::updateSettings(Synth::Settings newSettings)
+{
+    settings = newSettings;
+    updateKnobs();
+}
+
+void Synth::updateSettings(float A4Frequency, Oscillator::WaveType wave, float level, float pan)
+{
+    settings.A4Frequency = A4Frequency;
+    settings.wave = wave;
+    settings.level = level;
+    settings.pan = pan;
+    updateKnobs();
+}
+
+void Synth::updateKnobs()
+{
+    frequencySlider.setValue(settings.A4Frequency);
+    waveSlider.setValue(static_cast<float>(settings.wave));
+    levelSlider.setValue(settings.level);
+    panSlider.setValue(settings.pan);
+}
+
+Synth::Settings* Synth::getSettings()
+{
+    return &settings;
+}

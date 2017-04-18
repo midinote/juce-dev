@@ -16,8 +16,8 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 class MainContentComponent   : public AudioAppComponent,
-                               private NetworkServer,
-                               private NetworkClient,
+                               public NetworkServer,
+                               public NetworkClient,
                                private MidiInputCallback,
                                private ComboBoxListener,
                                private MidiKeyboardStateListener

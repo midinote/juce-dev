@@ -24,6 +24,13 @@ class Synth    : public Component,
                  public Slider::Listener
 {
 public:
+    struct Settings {
+        float A4Frequency;
+        Oscillator::WaveType wave;
+        float level;
+        float pan;
+    };
+    
     Synth();
     ~Synth();
     
@@ -34,8 +41,15 @@ public:
     void paint (Graphics&) override;
     void resized() override;
     void sliderValueChanged(Slider*) override;
+    
+    void updateSettings(Settings newSettings);
+    void updateSettings(float A4Frequency, Oscillator::WaveType wave, float level, float pan);
+    Settings* getSettings();
 
 private:
+    Settings settings;
+    void updateKnobs();
+    
     Oscillator::WaveType waveType;
 
     Slider frequencySlider;
@@ -48,9 +62,6 @@ private:
     Label panLabel;
     std::map<int, std::pair<MidiMessage, Oscillator>> currentNotes;
     std::mutex lock;
-    
-    float pan;
-    double currentFrequency;
     Font labelFont;
     Justification labelJustification;
     

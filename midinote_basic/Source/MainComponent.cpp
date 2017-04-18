@@ -1,4 +1,5 @@
 #include "MainComponent.h"
+#include "Network.h"
 
 //==============================================================================
 /*
@@ -42,7 +43,7 @@ MainContentComponent::MainContentComponent()
     
     setAudioChannels(2, 2);
     
-//    scanNetwork (this,this);
+//    scanNetwork (this, this);
 }
 
 MainContentComponent::~MainContentComponent()
@@ -133,22 +134,17 @@ void MainContentComponent::connectionMade()
 {
     // we could just do this with InterprocessConnection::getConnectedHostName(), but I want
     // to get the hang of MemoryBlock and really see these messages truly go back and forth
-    String hostname = SystemStats::getComputerName();
-    sendMessage (MemoryBlock (&hostname, sizeof (hostname)));
+    Synth::Settings* settings = synth.getSettings();
+    sendMessage (MemoryBlock (settings, sizeof(settings)));
 }
 
 void MainContentComponent::connectionLost()
 {
-    helloMessage = "Connection lost";
-    repaint();
+    String message = "Connection lost";
 }
 
 void MainContentComponent::messageReceived(const MemoryBlock& message)
 {
-    char hostname[256]; // 255 is the max length of a computer's hostname in POSIX
-    message.copyTo (hostname, 0, message.getSize());
-    String temp = "Hello World, from ";
-    temp += hostname;
-    helloMessage = temp;
-    repaint();
+    Synth::Settings newSettings = *static_cast<Synth::Settings*>(message.getData());
+    synth.updateSettings(newSettings);
 }
