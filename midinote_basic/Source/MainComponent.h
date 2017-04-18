@@ -16,7 +16,6 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 class MainContentComponent   : public AudioAppComponent,
-                               public NetworkServer,
                                public NetworkClient,
                                private MidiInputCallback,
                                private ComboBoxListener,
@@ -25,23 +24,23 @@ class MainContentComponent   : public AudioAppComponent,
 public:
     MainContentComponent();
     ~MainContentComponent();
-    
+
     void prepareToPlay(int, double) override;
     void getNextAudioBlock(const AudioSourceChannelInfo&) override;
     void releaseResources() override;
-    
+
     void paint (Graphics& g) override;
     void resized() override;
-    
+
     void handleNoteOn(MidiKeyboardState*, int, int, float) override;
     void handleNoteOff(MidiKeyboardState*, int, int, float) override;
-    
+
     void handleIncomingMidiMessage (MidiInput*, const MidiMessage&) override;
-    
+
     void comboBoxChanged (ComboBox*) override;
-    
+
     void setMidiInput (int);
-    
+
 private:
     MidiEditor midiEditor;
     Synth synth;
@@ -51,7 +50,8 @@ private:
     void connectionMade() override;
     void connectionLost() override;
     void messageReceived(const MemoryBlock& message) override;
-    
+    NetworkServer* networkServer;
+
     String helloMessage;
     double currentSampleRate;
     int lastInputIndex;

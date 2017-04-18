@@ -8,8 +8,7 @@
 */
 
 MainContentComponent::MainContentComponent()
-:   NetworkServer(this),
-    lastInputIndex (0),
+:   lastInputIndex (0),
     isAddingFromMidiInput (false),
     noteOn(false)
 {
@@ -42,8 +41,9 @@ MainContentComponent::MainContentComponent()
         setMidiInput (0);
 
     setAudioChannels(2, 2);
-//    scanNetwork (this, this);
-    
+    networkServer = new NetworkServer (this);
+//    scanNetwork (this, networkServer);
+
 }
 
 MainContentComponent::~MainContentComponent()
