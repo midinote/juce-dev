@@ -24,13 +24,13 @@ Synth::Synth()
     frequencySlider.setSkewFactorFromMidPoint (440.0);
     frequencySlider.setValue(440.0);
     frequencySlider.addListener(this);
-    
+
     addAndMakeVisible(frequencyLabel);
     frequencyLabel.setText("Coarse\nTuning", dontSendNotification);
     frequencyLabel.setFont(labelFont);
     frequencyLabel.setJustificationType(labelJustification);
     frequencyLabel.attachToComponent(&frequencySlider, false);
-    
+
     addAndMakeVisible(levelSlider);
     levelSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     levelSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
@@ -38,39 +38,39 @@ Synth::Synth()
     levelSlider.setSkewFactorFromMidPoint(-6.0);
     levelSlider.setValue(0.0);
     levelSlider.addListener(this);
-    
+
     addAndMakeVisible(levelLabel);
     levelLabel.setText("Level", dontSendNotification);
     levelLabel.setFont(labelFont);
     levelLabel.setJustificationType(labelJustification);
     levelLabel.attachToComponent(&levelSlider, false);
-    
+
     addAndMakeVisible (waveSlider);
     waveSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     waveSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
     waveSlider.setRange (0.0, 5.0);
     waveSlider.setValue(0.0);
     waveSlider.addListener(this);
-    
+
     addAndMakeVisible(waveLabel);
     waveLabel.setText("Wave", dontSendNotification);
     waveLabel.setFont(labelFont);
     waveLabel.setJustificationType(labelJustification);
     waveLabel.attachToComponent(&waveSlider, false);
-    
+
     addAndMakeVisible(panSlider);
     panSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     panSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
     panSlider.setRange(-0.5,0.5);
     panSlider.setValue(0.0);
     panSlider.addListener(this);
-    
+
     addAndMakeVisible(panLabel);
     panLabel.setText("Pan", dontSendNotification);
     panLabel.setFont(labelFont);
     panLabel.setJustificationType(labelJustification);
     panLabel.attachToComponent(&panSlider, false);
-    
+
     updateSettings(frequencySlider.getValue(),
                    static_cast<Oscillator::WaveType> (floorf(waveSlider.getValue())),
                    dBToVolume(levelSlider.getValue()),
@@ -102,7 +102,7 @@ std::pair<float,float> Synth::synthesize(double sampleRate)
 
 void Synth::addNote (MidiMessage message)
 {
-    
+
     Oscillator osc (frequencySlider.getValue(),
                     dBToVolume (levelSlider.getValue()),
                     static_cast<Oscillator::WaveType> (floorf(waveSlider.getValue())));

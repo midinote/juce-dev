@@ -16,6 +16,8 @@
 #define PORT 9001
 #define TIMEOUT 100 // miliseconds
 #define MAGIC_NUMBER 0xf2b49e2c
+#define HOST_IP "10.42.1.1"
+#define CLIENT_IP "10.42.1.83"
 
 class NetworkClient : public InterprocessConnection
 {

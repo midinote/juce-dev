@@ -30,10 +30,10 @@ public:
         float level;
         float pan;
     };
-    
+
     Synth();
     ~Synth();
-    
+
     std::pair<float,float> synthesize (double);
     void addNote (MidiMessage);
     void removeNote (MidiMessage);
@@ -41,7 +41,7 @@ public:
     void paint (Graphics&) override;
     void resized() override;
     void sliderValueChanged(Slider*) override;
-    
+
     void updateSettings(Settings newSettings);
     void updateSettings(float A4Frequency, Oscillator::WaveType wave, float level, float pan);
     Settings* getSettings();
@@ -49,7 +49,7 @@ public:
 private:
     Settings settings;
     void updateKnobs();
-    
+
     Oscillator::WaveType waveType;
 
     Slider frequencySlider;
@@ -64,7 +64,7 @@ private:
     std::mutex lock;
     Font labelFont;
     Justification labelJustification;
-    
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Synth)
 };
 

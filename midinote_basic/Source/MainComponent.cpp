@@ -47,7 +47,9 @@ MainContentComponent::MainContentComponent()
 
 MainContentComponent::~MainContentComponent()
 {
+    delete networkServer;
     shutdownAudio();
+    delete this;
 }
 
 void MainContentComponent::prepareToPlay(int /*samplesPerBlockExpected*/, double sampleRate)
@@ -131,8 +133,6 @@ void MainContentComponent::setMidiInput (int ind)
 
 void MainContentComponent::connectionMade()
 {
-    // we could just do this with InterprocessConnection::getConnectedHostName(), but I want
-    // to get the hang of MemoryBlock and really see these messages truly go back and forth
     Synth::Settings* settings = synth.getSettings();
     sendMessage (MemoryBlock (settings, sizeof(settings)));
 }
