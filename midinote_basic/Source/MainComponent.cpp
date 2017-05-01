@@ -47,6 +47,8 @@ MainContentComponent::MainContentComponent()
     setAudioChannels(2, 2);
     networkServer = new NetworkServer (this);
     scanNetwork (this, networkServer);
+    
+    
 
 }
 

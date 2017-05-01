@@ -10,42 +10,48 @@
 
 #ifndef OSCILLATOR_H_INCLUDED
 #define OSCILLATOR_H_INCLUDED
+
+#include <typeinfo>
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class Oscillator
+class SquareWave : SynthesiserSound
 {
-public:
-    enum WaveType {sine, square, triangle, sawtooth, noise};
-
-    Oscillator (float freq, float lev, WaveType waveType);
-    
-    float oscillate (double, double);
-    
-    WaveType getWaveType ();
-    float getTuning ();
-    float getLevel ();
-    float getPulseWidth ();
-    
-    void setWave (WaveType);
-    void setTuning (float);
-    void setLevel (float);
-    void setPulseWidth (float);
-
-private:
-    
-    float squareWaveFunction ();
-    float sineWaveFunction ();
-    float triangleWaveFunction ();
-    float sawtoothWaveFunction ();
-    float NoiseFunction ();
-    
-    void updateAngleDelta (double);
-    
-    WaveType wave;
-    double currentAngle, angleDelta, currentFrequency, currentSampleSize, currentTime;
-    float frequencyA4, level, pulseWidth;
-    Random random;
+    SquareWave ();
+    bool appliesToNote (int midiNoteNumber);
+    bool appliesToChannel (int midiChannel);
 };
 
+class SineWave : SynthesiserSound
+{
+    SineWave ();
+    bool appliesToNote (int midiNoteNumber);
+    bool appliesToChannel (int midiChannel);
+};
+
+class SawtoothWave : SynthesiserSound
+{
+    SawtoothWave ();
+    bool appliesToNote (int midiNoteNumber);
+    bool appliesToChannel (int midiChannel);
+};
+
+class TriangleWave : SynthesiserSound
+{
+    TriangleWave();
+    bool appliesToNote (int midiNoteNumber);
+    bool appliesToChannel (int midiChannel);
+};
+
+class Noise : SynthesiserSound
+{
+    Noise ();
+    bool appliesToNote (int midiNoteNumber);
+    bool appliesToChannel (int midiChannel);
+};
+
+class Oscillator : public SynthesizerVoice
+{
+    Oscillator()
+}
 
 #endif  // OSCILLATOR_H_INCLUDED
