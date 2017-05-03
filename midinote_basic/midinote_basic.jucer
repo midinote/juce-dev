@@ -14,12 +14,6 @@
             file="Source/MidiNoteFunctionLib.h"/>
       <FILE id="zERO2l" name="Synth.cpp" compile="1" resource="0" file="Source/Synth.cpp"/>
       <FILE id="TDSiRb" name="Synth.h" compile="0" resource="0" file="Source/Synth.h"/>
-      <FILE id="pFTXk5" name="MidiEditorGrid.cpp" compile="1" resource="0"
-            file="Source/MidiEditorGrid.cpp"/>
-      <FILE id="WHhQrf" name="MidiEditorGrid.h" compile="0" resource="0"
-            file="Source/MidiEditorGrid.h"/>
-      <FILE id="nZ6ONf" name="MidiEditor.cpp" compile="1" resource="0" file="Source/MidiEditor.cpp"/>
-      <FILE id="BKmZZU" name="MidiEditor.h" compile="0" resource="0" file="Source/MidiEditor.h"/>
       <FILE id="jzm4Ft" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
       <FILE id="gnHvvW" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>

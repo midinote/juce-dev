@@ -15,50 +15,31 @@
 #include "Network.h"
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class MainContentComponent   : public AudioAppComponent,
+class MainContentComponent   : public Component,
                                public NetworkClient,
-                               private MidiInputCallback,
-                               private ComboBoxListener,
-                               private MidiKeyboardStateListener,
                                private SliderListener
 {
 public:
     MainContentComponent();
     ~MainContentComponent();
 
-    void prepareToPlay(int, double) override;
-    void getNextAudioBlock(const AudioSourceChannelInfo&) override;
-    void releaseResources() override;
-
+    static AudioDeviceManager& getSharedAudioDeviceManager();
+    
     void paint (Graphics& g) override;
     void resized() override;
 
-    void handleNoteOn(MidiKeyboardState*, int, int, float) override;
-    void handleNoteOff(MidiKeyboardState*, int, int, float) override;
-
-    void handleIncomingMidiMessage (MidiInput*, const MidiMessage&) override;
-
-    void comboBoxChanged (ComboBox*) override;
-
-    void setMidiInput (int);
-
 private:
-    MidiEditor midiEditor;
-    Synth synth;
-    MidiMessage currentNote;
-    ComboBox midiInputList;
-    Label midiInputListLabel;
+    static void runtimePermissionsCallback (bool wasGranted);
+
+    SynthComponent synth;
     void connectionMade() override;
     void connectionLost() override;
     void messageReceived(const MemoryBlock& message) override;
     NetworkServer* networkServer;
-    void sliderValueChanged(Slider*) override;
+    
+    void sliderValueChanged(Slider* slider) override;
 
     String helloMessage;
-    double currentSampleRate;
-    int lastInputIndex;
-    bool isAddingFromMidiInput;
-    bool noteOn;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };
 Component* createMainContentComponent()     { return new MainContentComponent(); }

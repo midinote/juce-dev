@@ -7,6 +7,8 @@
 
   ==============================================================================
 */
+#ifndef LIBRARY_FUNCTIONS
+#define LIBRARY_FUNCTIONS
 #include "../JuceLibraryCode/JuceHeader.h"
 
 float dBToVolume (float dB)
@@ -21,7 +23,9 @@ float volumeToDB (float volume)
 
 std::pair<float,float> applyPan (float pan, float level)
 {
-    float left = level * (0.5 - pan);
-    float right = level * (0.5 + pan);
+    float left = level * (0.5 - pan / 2);
+    float right = level * (0.5 + pan / 2);
     return std::pair<float,float> (left, right);
 }
+
+#endif

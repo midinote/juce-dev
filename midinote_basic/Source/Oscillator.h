@@ -13,45 +13,44 @@
 
 #include <typeinfo>
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "MidiNoteFunctionLib.h"
 
-class SquareWave : SynthesiserSound
+class WaveSound : public SynthesiserSound
 {
-    SquareWave ();
-    bool appliesToNote (int midiNoteNumber);
-    bool appliesToChannel (int midiChannel);
+public:
+    enum Wave {square, sine, sawtooth, triangle, noise};
+    
+    WaveSound (double lev, double leftRight, Wave w);
+    bool appliesToNote (int midiNoteNumber) override;
+    bool appliesToChannel (int midiChannel) override;
+    double level, pan;
+    Wave wave;
 };
 
-class SineWave : SynthesiserSound
+class Oscillator : public SynthesiserVoice
 {
-    SineWave ();
-    bool appliesToNote (int midiNoteNumber);
-    bool appliesToChannel (int midiChannel);
+public:
+    Oscillator();
+    
+    bool canPlaySound (SynthesiserSound* sound) override;
+    void startNote (int midiNoteNumber, float velocity,
+                    SynthesiserSound* sound, int /*currentPitchWheelPosition*/) override;
+    void stopNote (float /*Velocity*/, bool allowTailOff) override;
+    void pitchWheelMoved (int /*newValue*/) override;
+    void controllerMoved (int /*controllerNumber*/, int /*newValue*/) override;
+    void renderNextBlock (AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override;
+    
+    float waveFunction ();
+    float squareWaveFunction ();
+    float sineWaveFunction ();
+    float sawtoothWaveFunction ();
+    float triangleWaveFunction ();
+    float noiseFunction ();
+private:
+    Random random;
+    WaveSound::Wave wave;
+    double currentAngle, angleDelta, currentFrequency, currentSampleSize, cyclesPerSample,
+           currentTime, baseLevel, level, frequencyA4, pulseWidth, tailOff, pan;
 };
-
-class SawtoothWave : SynthesiserSound
-{
-    SawtoothWave ();
-    bool appliesToNote (int midiNoteNumber);
-    bool appliesToChannel (int midiChannel);
-};
-
-class TriangleWave : SynthesiserSound
-{
-    TriangleWave();
-    bool appliesToNote (int midiNoteNumber);
-    bool appliesToChannel (int midiChannel);
-};
-
-class Noise : SynthesiserSound
-{
-    Noise ();
-    bool appliesToNote (int midiNoteNumber);
-    bool appliesToChannel (int midiChannel);
-};
-
-class Oscillator : public SynthesizerVoice
-{
-    Oscillator()
-}
 
 #endif  // OSCILLATOR_H_INCLUDED
