@@ -18,7 +18,8 @@ InterprocessConnection* NetworkServer::createConnectionObject() {
     return client;
 }
 
-int handshake (NetworkClient* client) {
+int handshake (NetworkClient* client, Array<IPAddress> interfaceIPs,
+               Array<DatagramSocket> scanners) {
     uint32 buffer = MAGIC_NUMBER;
     // fork this part for each scanner
     for (auto scanner : scanners) {
@@ -47,13 +48,13 @@ int handshake (NetworkClient* client) {
 int scanNetwork (NetworkClient* client) {
     Array<IPAddress> interfaceIPs;
     IPAddress::findAllAddresses (interfaceIPs);
-    DatagramSocket scanners[interfaceIPs.size()];
-    size_t i = 0;
-    for (auto scanner : scanners) {
-        scanner->bindToPort (PORT, interfaceIPs[i].toString());
-        scanner->joinMulticast (MULTICAST_GROUP);
-        ++i;
+    Array<DatagramSocket> scanners;
+    for (auto address : interfaceIPs) {
+        DatagramSocket scanner (/* bool enableBroadcasting = */ true);
+        scanners.add (scanner);
+        scanner.bindToPort (PORT, address->toString());
+        scanner.joinMulticast (MULTICAST_GROUP);
     }
-    while (handshake (client)); // make it keep looking until it connects
+    while (handshake (client, interfaceIPs, scanners)); // make it keep looking until it connects
     return 0;
 }
