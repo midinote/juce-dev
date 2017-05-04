@@ -31,23 +31,34 @@ public:
     void showEditor();
     void showFileExplorer();
 
-    void paint (Graphics&) override;
+    void paint (Graphics& g) override;
     void resized() override;
 
 private:
+    class CollapseButtonComponent  : public Button
+    {
+    public:
+        CollapseButtonComponent(float arrowDirection, Colour arrowColour);
+        CollapseButtonComponent(String buttonName, float arrowDirection, Colour arrowColour);
+        ~CollapseButtonComponent();
+        void paint (Graphics& g) override;
+        void resized() override;
+    private:
+        ArrowButton button;
+    };
+    
     void buttonClicked(Button* button) override;
     
     ToolBar toolbar;
     Arranger arranger;
     Editor editor;
-    ImageButton editorCollapser;
+    ArrowButton editorCollapser;
     FileExplorer fileExplorer;
-    ImageButton fileExplorerCollapser;
+    ArrowButton fileExplorerCollapser;
     
     bool editorIsVisible, fileExplorerIsVisible;
     const int toolbarHeight;
-    int editorHeight, editorCollapserHeight, editorCollapserWidth,
-        fileExplorerWidth, fileExplorerCollapserHeight, fileExplorerCollapserWidth;
+    int editorHeight, fileExplorerWidth, collapseButtonWidth;
     
     Image collapseButtonImageUp, collapseButtonImageDown, collapseButtonImageLeft, collapseButtonImageRight;
     
