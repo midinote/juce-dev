@@ -18,21 +18,10 @@ InterprocessConnection* NetworkServer::createConnectionObject() {
     return client;
 }
 
-// returns 0 on success, 1 on failure to find anyone to connect to,
-// and 2 on failure to connect to someone found in multicast group
-int scanNetwork (NetworkClient* client) {
-    Array<IPAddress> interfaceIPs;
-    IPAddress::findAllAddresses (interfaceIPs);
-    DatagramSocket scanners[interfaceIPs.size()];
-    size_t i = 0;
-    for (auto scanner : scanners) {
-        scanner->bindToPort (PORT, interfaceIPs[i].toString());
-        scanner->joinMulticast (MULTICAST_GROUP);
-        ++i;
-    }
+int handshake (NetworkClient* client) {
     uint32 buffer = MAGIC_NUMBER;
     // fork this part for each scanner
-    for (auto scanner : scanners ) {
+    for (auto scanner : scanners) {
         // multicast our message
         scanner->waitUntilReady (false, TIMEOUT); // false means wait to write
         scanner->write (MULTICAST_GROUP, PORT, buffer, sizeof buffer);
@@ -46,9 +35,25 @@ int scanNetwork (NetworkClient* client) {
         if (recv_buffer == MAGIC_NUMBER and senderPortNumber == PORT
             and !(interfaceIPs.contains(IPAddress (senderIPAddress)))) {
             if (client->connectToSocket (senderIPAddress, PORT, TIMEOUT))
-                return 0; // or whatever keyword exits a fork
+                return 0;
             else return 2;
         }
     }
-    return 1;
+}
+
+// returns 0 on success, 1 on failure to find anyone to connect to,
+// and 2 on failure to connect to someone found in multicast group
+// for now, just returns 0 or 1 or keeps looking
+int scanNetwork (NetworkClient* client) {
+    Array<IPAddress> interfaceIPs;
+    IPAddress::findAllAddresses (interfaceIPs);
+    DatagramSocket scanners[interfaceIPs.size()];
+    size_t i = 0;
+    for (auto scanner : scanners) {
+        scanner->bindToPort (PORT, interfaceIPs[i].toString());
+        scanner->joinMulticast (MULTICAST_GROUP);
+        ++i;
+    }
+    while (handshake (client)); // make it keep looking until it connects
+    return 0;
 }
