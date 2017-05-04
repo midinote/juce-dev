@@ -44,16 +44,17 @@ int handshake (NetworkClient* client, Array<IPAddress> interfaceIPs,
 
 // returns 0 on success, 1 on failure to find anyone to connect to,
 // and 2 on failure to connect to someone found in multicast group
-// for now, just returns 0 or 1 or keeps looking
+// for now, just returns 0 or keeps looking forever
 int scanNetwork (NetworkClient* client) {
     Array<IPAddress> interfaceIPs;
     IPAddress::findAllAddresses (interfaceIPs);
     Array<DatagramSocket> scanners;
     for (auto address : interfaceIPs) {
         DatagramSocket scanner (/* bool enableBroadcasting = */ true);
-        scanners.add (scanner);
-        scanner.bindToPort (PORT, address->toString());
-        scanner.joinMulticast (MULTICAST_GROUP);
+        scanners.add (scanner); // copy, not move, so we need a pointer
+        DatagramSocket* scannerPointer = scanners.end();
+        scannerPointer->bindToPort (PORT, address->toString());
+        scannerPointer->joinMulticast (MULTICAST_GROUP);
     }
     while (handshake (client, interfaceIPs, scanners)); // make it keep looking until it connects
     return 0;
