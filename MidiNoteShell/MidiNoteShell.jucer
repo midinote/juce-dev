@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="pV2M9e" name="MidiNoteShell" displaySplashScreen="1" reportAppUsage="1"
+              splashScreenColour="Dark" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.MidiNoteShell" includeBinaryInAppConfig="1"
+              jucerVersion="5.0.0">
+  <MAINGROUP id="pEf6X2" name="MidiNoteShell">
+    <GROUP id="{595F1F9C-1035-D938-48A5-82CC899B0FE1}" name="Source">
+      <GROUP id="{B1175E12-54D4-29B6-33BA-AEEBC5A62F00}" name="images">
+        <GROUP id="{50A10EC3-59EB-2FF5-BF75-1D1B969F9E13}" name="collapseButton">
+          <FILE id="ujZFUd" name="downButton.png" compile="0" resource="1" file="Source/images/collapseButton/downButton.png"/>
+          <FILE id="mWDTVZ" name="leftButton.png" compile="0" resource="1" file="Source/images/collapseButton/leftButton.png"/>
+          <FILE id="QQJytO" name="rightButton.png" compile="0" resource="1" file="Source/images/collapseButton/rightButton.png"/>
+          <FILE id="cxQMrB" name="upButton.png" compile="0" resource="1" file="Source/images/collapseButton/upButton.png"/>
+        </GROUP>
+      </GROUP>
+      <FILE id="pijmY7" name="MainArea.cpp" compile="1" resource="0" file="Source/MainArea.cpp"/>
+      <FILE id="nhQTKs" name="MainArea.h" compile="0" resource="0" file="Source/MainArea.h"/>
+      <FILE id="IfdG39" name="Chat.cpp" compile="1" resource="0" file="Source/Chat.cpp"/>
+      <FILE id="yozytP" name="Chat.h" compile="0" resource="0" file="Source/Chat.h"/>
+      <FILE id="nJjT6s" name="FileExplorer.cpp" compile="1" resource="0"
+            file="Source/FileExplorer.cpp"/>
+      <FILE id="kuyOMf" name="FileExplorer.h" compile="0" resource="0" file="Source/FileExplorer.h"/>
+      <FILE id="TjTM60" name="Editor.cpp" compile="1" resource="0" file="Source/Editor.cpp"/>
+      <FILE id="lR5RCG" name="Editor.h" compile="0" resource="0" file="Source/Editor.h"/>
+      <FILE id="lNW1VM" name="Arranger.cpp" compile="1" resource="0" file="Source/Arranger.cpp"/>
+      <FILE id="Jq0kxQ" name="Arranger.h" compile="0" resource="0" file="Source/Arranger.h"/>
+      <FILE id="MQug8W" name="ToolBar.cpp" compile="1" resource="0" file="Source/ToolBar.cpp"/>
+      <FILE id="GczgRC" name="ToolBar.h" compile="0" resource="0" file="Source/ToolBar.h"/>
+      <FILE id="NGHQWK" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="l6OFfy" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="LMroJ0" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MidiNoteShell"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MidiNoteShell"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_video" showAllCode="1" useLocalCopy="0"/>
+  </MODULES>
+  <JUCEOPTIONS/>
+</JUCERPROJECT>
