@@ -12,6 +12,7 @@
 #include "Arranger.h"
 #include "Editor.h"
 #include "FileExplorer.h"
+
 #include "../JuceLibraryCode/JuceHeader.h"
 
 
@@ -35,33 +36,19 @@ public:
     void resized() override;
 
 private:
-    class CollapseButtonComponent  : public Button
-    {
-    public:
-        CollapseButtonComponent(float arrowDirection, Colour arrowColour);
-        CollapseButtonComponent(String buttonName, float arrowDirection, Colour arrowColour);
-        ~CollapseButtonComponent();
-        void paint (Graphics& g) override;
-        void resized() override;
-    private:
-        ArrowButton button;
-    };
-    
     void buttonClicked(Button* button) override;
     
     ToolBar toolbar;
     Arranger arranger;
     Editor editor;
-    ArrowButton editorCollapser;
+    DrawableButton editorCollapser;
     FileExplorer fileExplorer;
-    ArrowButton fileExplorerCollapser;
+    DrawableButton fileExplorerCollapser;
     
-    bool editorIsVisible, fileExplorerIsVisible;
     const int toolbarHeight;
-    int editorHeight, fileExplorerWidth, collapseButtonWidth;
-    
-    Image collapseButtonImageUp, collapseButtonImageDown, collapseButtonImageLeft, collapseButtonImageRight;
-    
+    int editorHeight,fileExplorerWidth, collapserButtonHeight;
+    String absoluteSourceFilePath;
+    ScopedPointer<Drawable> buttonDrawableUp, buttonDrawableDown, buttonDrawableLeft, buttonDrawableRight;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };

@@ -11,35 +11,39 @@
 
 //==============================================================================
 MainContentComponent::MainContentComponent()
-: editorCollapser("Editor", 0.75f, Colours::black),
-      fileExplorerCollapser("File Explorer", 0.5f, Colours::black),
-      editorIsVisible(true),
-      fileExplorerIsVisible(true),
+    : editorCollapser("Collapse Editor", DrawableButton::ImageOnButtonBackground),
+      fileExplorerCollapser("Collapse File Explorer", DrawableButton::ImageOnButtonBackground),
       toolbarHeight(40),
       editorHeight(200),
       fileExplorerWidth(200),
-      collapseButtonWidth(15),
-      collapseButtonImageUp(PNGImageFormat().loadFrom(File(File::getCurrentWorkingDirectory().getChildFile ("upButton.png")))),
-      collapseButtonImageDown(PNGImageFormat().loadFrom(File(File::getCurrentWorkingDirectory().getChildFile ("downButton.png")))),
-      collapseButtonImageLeft(PNGImageFormat().loadFrom(File(File::getCurrentWorkingDirectory().getChildFile ("rightButton.png")))),
-      collapseButtonImageRight(PNGImageFormat().loadFrom(File(File::getCurrentWorkingDirectory().getChildFile ("leftButton.png"))))
+      collapserButtonHeight(18),
+      absoluteSourceFilePath("/Users/malcolmflint/dev/midinote/juce-dev/MidiNoteShell/Source/")
 {
+    buttonDrawableUp = Drawable::createFromImageFile(File(absoluteSourceFilePath + "images/collapseButton/upButton.png"));
+    buttonDrawableDown = Drawable::createFromImageFile(File(absoluteSourceFilePath + "images/collapseButton/downButton.png"));
+    buttonDrawableLeft = Drawable::createFromImageFile(File(absoluteSourceFilePath + "images/collapseButton/leftButton.png"));
+    buttonDrawableRight = Drawable::createFromImageFile(File(absoluteSourceFilePath + "images/collapseButton/rightButton.png"));
     
     addAndMakeVisible(toolbar);
     
     addAndMakeVisible(arranger);
     
-    addAndMakeVisible(editor);
+    addChildComponent(editor);
     addAndMakeVisible(editorCollapser);
-//    editorCollapser.setImages(true, true, false,
-//                              collapseButtonImageUp, 0.5f, Colour(9,60,66),
-//                              collapseButtonImageUp, 1.0f, Colour(9,60,66),
-//                              collapseButtonImageDown, 0.5f, Colour(9,60,66),
-//                              0.5f);
+
+    editorCollapser.setImages(buttonDrawableUp, nullptr, nullptr, nullptr,
+                              buttonDrawableDown, nullptr, nullptr, nullptr);
+    editorCollapser.setClickingTogglesState (true);
+    editorCollapser.setTooltip(editorCollapser.getName());
     editorCollapser.addListener(this);
     
-    addAndMakeVisible(fileExplorer);
+    addChildComponent(fileExplorer);
     addAndMakeVisible(fileExplorerCollapser);
+    fileExplorerCollapser.setImages(buttonDrawableLeft, nullptr, nullptr, nullptr,
+                                    buttonDrawableRight, nullptr, nullptr, nullptr);
+    fileExplorerCollapser.setClickingTogglesState (true);
+    fileExplorerCollapser.setTooltip(fileExplorerCollapser.getName());
+    fileExplorerCollapser.addListener(this);
         
     setSize (1280, 714);
 }
@@ -65,40 +69,25 @@ void MainContentComponent::resized()
     // update their positions.
     repaint();
     Rectangle<int> area = getBounds();
-    Rectangle<int> buttonRect (collapseButtonWidth, collapseButtonWidth);
     
     toolbar.setBounds(area.removeFromTop (toolbarHeight));
-    if (editorIsVisible) editor.setBounds(area.removeFromBottom(editorHeight));
-    if (fileExplorerIsVisible) fileExplorer.setBounds(area.removeFromRight(fileExplorerWidth));
+    if (editor.isVisible()) editor.setBounds(area.removeFromBottom(editorHeight));
+    if (fileExplorer.isVisible()) fileExplorer.setBounds(area.removeFromRight(fileExplorerWidth));
     arranger.setBounds(area);
-    buttonRect.setPosition(area.getX(), area.getBottom() - collapseButtonWidth);
-    editorCollapser.setBounds(buttonRect);
-    
+    editorCollapser.setBounds(area.getX(),
+                              area.getBottom() - collapserButtonHeight,
+                              collapserButtonHeight,
+                              collapserButtonHeight);
+    fileExplorerCollapser.setBounds(area.getRight() - collapserButtonHeight,
+                                    area.getY(),
+                                    collapserButtonHeight,
+                                    collapserButtonHeight);
 }
-
-MainContentComponent::CollapseButtonComponent::CollapseButtonComponent(float arrowDirection, Colour arrowColour)
-    : button("Collapse", arrowDirection, arrowColour)
-{
-    addAndMakeVisible(button);
-}
-
-MainContentComponent::CollapseButtonComponent::CollapseButtonComponent(String buttonName, float arrowDirection, Colour arrowColour)
-: button(buttonName, arrowDirection, arrowColour)
-{
-    addAndMakeVisible(button);
-}
-
-void MainContentComponent::CollapseButtonComponent::paint(Graphics& g)
-{
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
-    
-    g.setColour (Colours::grey);
-    g.drawRect (getLocalBounds(), 1);
-}
-
-void MainContentComponent::CollapseButtonComponent::resized()
 
 void MainContentComponent::buttonClicked(Button* button)
 {
-    
+    if (button == &editorCollapser) editor.setVisible(!editor.isVisible());
+    if (button == &fileExplorerCollapser) fileExplorer.setVisible(!fileExplorer.isVisible());
+    resized();
+
 }
