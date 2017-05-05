@@ -3,9 +3,10 @@
 <JUCERPROJECT id="pV2M9e" name="MidiNoteShell" displaySplashScreen="1" reportAppUsage="1"
               splashScreenColour="Dark" projectType="guiapp" version="1.0.0"
               bundleIdentifier="com.yourcompany.MidiNoteShell" includeBinaryInAppConfig="1"
-              jucerVersion="5.0.0">
+              jucerVersion="5.0.1">
   <MAINGROUP id="pEf6X2" name="MidiNoteShell">
     <GROUP id="{595F1F9C-1035-D938-48A5-82CC899B0FE1}" name="Source">
+      <FILE id="JtDlzO" name="Constants.h" compile="0" resource="0" file="Source/Constants.h"/>
       <GROUP id="{B1175E12-54D4-29B6-33BA-AEEBC5A62F00}" name="images">
         <GROUP id="{50A10EC3-59EB-2FF5-BF75-1D1B969F9E13}" name="collapseButton">
           <FILE id="ujZFUd" name="downButton.png" compile="0" resource="1" file="Source/images/collapseButton/downButton.png"/>

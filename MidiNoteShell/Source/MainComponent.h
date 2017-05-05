@@ -12,6 +12,7 @@
 #include "Arranger.h"
 #include "Editor.h"
 #include "FileExplorer.h"
+
 #include "../JuceLibraryCode/JuceHeader.h"
 
 
@@ -40,17 +41,14 @@ private:
     ToolBar toolbar;
     Arranger arranger;
     Editor editor;
-    ImageButton editorCollapser;
+    DrawableButton editorCollapser;
     FileExplorer fileExplorer;
-    ImageButton fileExplorerCollapser;
+    DrawableButton fileExplorerCollapser;
     
-    bool editorIsVisible, fileExplorerIsVisible;
     const int toolbarHeight;
-    int editorHeight, editorCollapserHeight, editorCollapserWidth,
-        fileExplorerWidth, fileExplorerCollapserHeight, fileExplorerCollapserWidth;
-    
-    Image collapseButtonImageUp, collapseButtonImageDown, collapseButtonImageLeft, collapseButtonImageRight;
-    
+    int editorHeight,fileExplorerWidth, collapserButtonHeight;
+    String absoluteSourceFilePath;
+    ScopedPointer<Drawable> buttonDrawableUp, buttonDrawableDown, buttonDrawableLeft, buttonDrawableRight;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };
