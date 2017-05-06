@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="DqKiZX" name="midinote_basic_synth" projectType="guiapp"
               version="1.0.0" bundleIdentifier="com.yourcompany.midinote_basic"
-              includeBinaryInAppConfig="1" jucerVersion="5.0.0" displaySplashScreen="1"
+              includeBinaryInAppConfig="1" jucerVersion="5.0.1" displaySplashScreen="1"
               reportAppUsage="1" splashScreenColour="Dark">
   <MAINGROUP id="jRKQcb" name="midinote_basic_synth">
     <GROUP id="{74527C40-4583-D851-BE95-156B1F115C9E}" name="Source">
@@ -10,7 +10,9 @@
         <FILE id="IM7qvo" name="Oscillator.cpp" compile="1" resource="0" file="Source/Oscillator.cpp"/>
         <FILE id="KPhrZV" name="Oscillator.h" compile="0" resource="0" file="Source/Oscillator.h"/>
       </GROUP>
-      <FILE id="FYh5Kh" name="MidiNoteFunctionLib.h" compile="1" resource="0"
+      <FILE id="rT6nGv" name="MidiNoteFunctionLib.cpp" compile="1" resource="0"
+            file="Source/MidiNoteFunctionLib.cpp"/>
+      <FILE id="FYh5Kh" name="MidiNoteFunctionLib.h" compile="0" resource="0"
             file="Source/MidiNoteFunctionLib.h"/>
       <FILE id="zERO2l" name="Synth.cpp" compile="1" resource="0" file="Source/Synth.cpp"/>
       <FILE id="TDSiRb" name="Synth.h" compile="0" resource="0" file="Source/Synth.h"/>

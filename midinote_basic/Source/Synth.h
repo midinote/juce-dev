@@ -61,7 +61,7 @@ public:
 
     void updateSettings(Settings newSettings);
     void updateSettings(float A4Frequency, WaveSound::Wave wave, float level, float pan);
-    Settings* getSettings();
+    Settings getSettings();
     
     Slider frequencySlider;
     Label frequencyLabel;
@@ -81,7 +81,7 @@ public:
 private:
     Settings settings;
     void updateKnobs();
-    std::map<WaveSound::Wave, Slider*> waveSliderMap;
+//    std::map<WaveSound::Wave, Slider*> waveSliderMap;
     WaveSound::Wave waveType;
 
     Font labelFont;
@@ -93,13 +93,15 @@ private:
 class SynthComponent    : public Component
 {
 public:
-    struct settings {
+    struct Settings {
         OscillatorComponent::Settings osc0Settings;
         OscillatorComponent::Settings osc1Settings;
         OscillatorComponent::Settings osc2Settings;
     };
     SynthComponent ();
     ~SynthComponent ();
+    Settings* getSettings();
+    void updateSettings(Settings newSettings);
     void paint (Graphics& g) override;
     void resized () override;
 private:
@@ -109,6 +111,7 @@ private:
     AudioSourcePlayer audioSourcePlayer;
     SynthAudioSource synthAudioSource;
     MidiKeyboardComponent keyboardComponent;
+    Settings settings;
 };
 
 

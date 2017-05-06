@@ -63,12 +63,12 @@ void MainContentComponent::connectionLost()
 
 void MainContentComponent::messageReceived(const MemoryBlock& message)
 {
-    Synth::Settings newSettings = *static_cast<Synth::Settings*>(message.getData());
+    SynthComponent::Settings newSettings = *static_cast<SynthComponent::Settings*>(message.getData());
     synth.updateSettings(newSettings);
 }
 
 void MainContentComponent::sliderValueChanged(Slider* slider)
 {
-    Synth::Settings* settings = synth.getSettings();
+    SynthComponent::Settings* settings = synth.getSettings();
     sendMessage (MemoryBlock (settings, sizeof(settings)));
 }

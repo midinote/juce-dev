@@ -79,6 +79,14 @@ void Oscillator::stopNote (float /*Velocity*/, bool allowTailOff)
     }
 }
 
+void Oscillator::pitchWheelMoved(int /*newValue*/)
+{
+}
+
+void Oscillator::controllerMoved(int /*controllerNumber*/, int /*newValue*/)
+{
+}
+
 void Oscillator::renderNextBlock (AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
     if (angleDelta != 0.0)

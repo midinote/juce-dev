@@ -209,12 +209,11 @@ void OscillatorComponent::updateKnobs()
     fineTuningSlider.setValue(0.0);
     levelSlider.setValue(settings.level);
     panSlider.setValue(settings.pan);
-    if 
 }
 
-OscillatorComponent::Settings* OscillatorComponent::getSettings()
+OscillatorComponent::Settings OscillatorComponent::getSettings()
 {
-    return &settings;
+    return settings;
 }
 
 /*
@@ -232,6 +231,9 @@ SynthComponent::SynthComponent ()
     addAndMakeVisible(osc1);
     addAndMakeVisible(osc2);
     
+    settings.osc0Settings = osc0.getSettings();
+    settings.osc1Settings = osc1.getSettings();
+    settings.osc2Settings = osc2.getSettings();
     audioSourcePlayer.setSource (&synthAudioSource);
     deviceManager.addAudioCallback (&audioSourcePlayer);
     deviceManager.addMidiInputCallback (String(), &(synthAudioSource.midiCollector));
@@ -243,6 +245,17 @@ SynthComponent::~SynthComponent ()
     deviceManager.removeMidiInputCallback (String(), &(synthAudioSource.midiCollector));
     deviceManager.removeAudioCallback (&audioSourcePlayer);
 }
+
+SynthComponent::Settings* SynthComponent::getSettings()
+{
+    return &settings;
+}
+
+void SynthComponent::updateSettings(Settings newSettings)
+{
+    settings = newSettings;
+}
+
 
 void SynthComponent::paint (Graphics& g)
 {
