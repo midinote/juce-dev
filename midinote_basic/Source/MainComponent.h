@@ -22,15 +22,11 @@ class MainContentComponent   : public Component,
 public:
     MainContentComponent();
     ~MainContentComponent();
-
-    static AudioDeviceManager& getSharedAudioDeviceManager();
     
     void paint (Graphics& g) override;
     void resized() override;
 
 private:
-    static void runtimePermissionsCallback (bool wasGranted);
-
     SynthComponent synth;
     void connectionMade() override;
     void connectionLost() override;
@@ -42,8 +38,6 @@ private:
     String helloMessage;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };
-static ScopedPointer<AudioDeviceManager> sharedAudioDeviceManager;
-
 Component* createMainContentComponent()     { return new MainContentComponent(); }
 
 #endif  // MAINCOMPONENT_H_INCLUDED

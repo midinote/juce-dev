@@ -17,7 +17,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Oscillator.h"
 #include "MidiNoteFunctionLib.h"
-#include "MainComponent.h"
+#include "AudioDeviceManagement.h"
 
 //==============================================================================
 /*
@@ -36,7 +36,7 @@ public:
 
     MidiMessageCollector midiCollector;
 private:
-    std::vector<WaveSound*> sounds;
+    Array<WaveSound*> sounds;
     MidiKeyboardState& keyboardState;
     Synthesiser synth;
 };
@@ -83,7 +83,7 @@ public:
 private:
     Settings settings;
     void updateKnobs();
-//    std::map<WaveSound::Wave, Slider*> waveSliderMap;
+    std::map<WaveSound::Wave, Slider*> waveSliderMap;
     WaveSound::Wave waveType;
 
     Font labelFont;

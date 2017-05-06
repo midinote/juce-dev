@@ -10,6 +10,7 @@
 
 #include "Synth.h"
 
+
 //==============================================================================
 
 /*
@@ -22,20 +23,20 @@ SynthAudioSource::SynthAudioSource (MidiKeyboardState& keyState) : keyboardState
 {
     sounds = {};
     for (int i = 0; i < 64; i++) synth.addVoice (new Oscillator());
-    for (int i = 0; i < 3; i++) addWaveSound(WaveSound::sine, 1.0, 0.0, i);
+//    for (int i = 0; i < 3; i++) addWaveSound(WaveSound::sine, 1.0, 0.0, i);
 }
 
 void SynthAudioSource::addWaveSound(WaveSound::Wave wave, float level, float pan, int oscNum)
 {
-    WaveSound* sound = new WaveSound(level, pan, wave);
-    sounds.at (oscNum) = sound;
+    ScopedPointer<WaveSound> sound = new WaveSound(level, pan, wave);
+    sounds.insert(oscNum, sound);
 }
 
 void SynthAudioSource::applySounds ()
 {
     synth.clearSounds();
-    for (std::vector<WaveSound*>::iterator itor = sounds.begin(); itor != sounds.end(); ++itor)
-        synth.addSound(*itor);
+    for (int i = 0; i < sounds.size(); ++i)
+        synth.addSound(sounds[i]);
 }
 
 void SynthAudioSource::prepareToPlay (int /*samplesPerBlockExpected*/, double sampleRate)
@@ -160,7 +161,7 @@ void OscillatorComponent::paint (Graphics& g)
 
 void OscillatorComponent::resized()
 {
-    int knobHeight = 60;
+    int knobHeight = 75;
     int knobWidth = 60;
     int vBorder = 25;
     int border = 5;
@@ -221,18 +222,23 @@ OscillatorComponent::Settings OscillatorComponent::getSettings()
  */
 
 SynthComponent::SynthComponent ()
-    : deviceManager (MainContentComponent::getSharedAudioDeviceManager()),
+    : deviceManager (getSharedAudioDeviceManager()),
       synthAudioSource (keyboardState),
       keyboardComponent (keyboardState, MidiKeyboardComponent::horizontalKeyboard)
 {
     addAndMakeVisible(osc0);
     addAndMakeVisible(osc1);
     addAndMakeVisible(osc2);
+    addAndMakeVisible(keyboardComponent);
     
     settings.osc0Settings = osc0.getSettings();
     settings.osc1Settings = osc1.getSettings();
     settings.osc2Settings = osc2.getSettings();
     audioSourcePlayer.setSource (&synthAudioSource);
+    synthAudioSource.addWaveSound(settings.osc0Settings.wave,
+                                  settings.osc0Settings.level,
+                                  settings.osc0Settings.A4Frequency,
+                                  settings.osc0Settings.pan);
     deviceManager.addAudioCallback (&audioSourcePlayer);
     deviceManager.addMidiInputCallback (String(), &(synthAudioSource.midiCollector));
 }
@@ -261,8 +267,11 @@ void SynthComponent::paint (Graphics& g)
 
 void SynthComponent::resized()
 {
-    int oscHeight = 70;
-    osc0.setBounds(0, 0, 265, oscHeight);
-    osc1.setBounds(0, oscHeight, 265, oscHeight);
-    osc2.setBounds(0, oscHeight * 2, 265, oscHeight);
+    Rectangle<int> area = getBounds();
+    int oscHeight = 115;
+    int keyboardHeight = 100;
+    osc0.setBounds(area.removeFromTop(oscHeight));
+    osc1.setBounds(area.removeFromTop(oscHeight));
+    osc2.setBounds(area.removeFromTop(oscHeight));
+    keyboardComponent.setBounds(area.removeFromTop(keyboardHeight));
 }

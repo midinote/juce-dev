@@ -21,17 +21,6 @@ MainContentComponent::~MainContentComponent()
     delete this;
 }
 
-AudioDeviceManager& MainContentComponent::getSharedAudioDeviceManager()
-{
-    if (sharedAudioDeviceManager == nullptr)
-    {
-        sharedAudioDeviceManager = new AudioDeviceManager();
-        RuntimePermissions::request (RuntimePermissions::recordAudio, runtimePermissionsCallback);
-    }
-    
-    return *sharedAudioDeviceManager;
-}
-
 void MainContentComponent::paint(Graphics& g)
 {
 }
@@ -40,12 +29,6 @@ void MainContentComponent::resized()
 {
     Rectangle<int> area = getLocalBounds();
     synth.setBounds(0, 0, area.getWidth(), area.getHeight());
-}
-
-void MainContentComponent::runtimePermissionsCallback (bool wasGranted)
-{
-    int numInputChannels = wasGranted ? 2 : 0;
-    sharedAudioDeviceManager->initialise (numInputChannels, 2, nullptr, true, String(), nullptr);
 }
 
 void MainContentComponent::connectionMade()
