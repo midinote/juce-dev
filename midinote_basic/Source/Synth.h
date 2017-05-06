@@ -16,6 +16,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Oscillator.h"
+#include "MidiNoteFunctionLib.h"
+#include "MainComponent.h"
 
 //==============================================================================
 /*
@@ -86,8 +88,6 @@ private:
 
     Font labelFont;
     Justification labelJustification;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OscillatorComponent)
 };
 
 class SynthComponent    : public Component

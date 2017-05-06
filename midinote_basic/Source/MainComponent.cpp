@@ -1,8 +1,6 @@
 #include "MainComponent.h"
 #include "Network.h"
 
-static ScopedPointer<AudioDeviceManager> sharedAudioDeviceManager;
-
 MainContentComponent::MainContentComponent()
 {
     setSize(1280, 714);

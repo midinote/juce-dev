@@ -42,6 +42,8 @@ private:
     String helloMessage;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };
+static ScopedPointer<AudioDeviceManager> sharedAudioDeviceManager;
+
 Component* createMainContentComponent()     { return new MainContentComponent(); }
 
 #endif  // MAINCOMPONENT_H_INCLUDED
