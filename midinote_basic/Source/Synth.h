@@ -83,7 +83,6 @@ public:
 private:
     Settings settings;
     void updateKnobs();
-    std::map<WaveSound::Wave, Slider*> waveSliderMap;
     WaveSound::Wave waveType;
 
     Font labelFont;
@@ -112,6 +111,7 @@ private:
     SynthAudioSource synthAudioSource;
     MidiKeyboardComponent keyboardComponent;
     Settings settings;
+//    Array<Oscillator> oscillators;
 };
 
 

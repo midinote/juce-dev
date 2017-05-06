@@ -114,23 +114,28 @@ OscillatorComponent::OscillatorComponent()
     addAndMakeVisible(squareButton);
     squareButton.setClickingTogglesState(true);
     squareButton.setRadioGroupId(0);
+    squareButton.setConnectedEdges(Button::ConnectedOnRight);
     
     addAndMakeVisible(sineButton);
     sineButton.setClickingTogglesState(true);
     sineButton.setRadioGroupId(0);
     sineButton.setToggleState(true, dontSendNotification);
+    sineButton.setConnectedEdges(Button::ConnectedOnLeft | Button::ConnectedOnRight);
 
     addAndMakeVisible(sawtoothButton);
     sawtoothButton.setClickingTogglesState(true);
     sawtoothButton.setRadioGroupId(0);
+    sawtoothButton.setConnectedEdges(Button::ConnectedOnLeft | Button::ConnectedOnRight);
 
     addAndMakeVisible(triangleButton);
     triangleButton.setClickingTogglesState(true);
     triangleButton.setRadioGroupId(0);
+    triangleButton.setConnectedEdges(Button::ConnectedOnLeft | Button::ConnectedOnRight);
 
     addAndMakeVisible(noiseButton);
     noiseButton.setClickingTogglesState(true);
     noiseButton.setRadioGroupId(0);
+    noiseButton.setConnectedEdges(Button::ConnectedOnLeft);
 
     addAndMakeVisible(panSlider);
     panSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
@@ -161,14 +166,21 @@ void OscillatorComponent::paint (Graphics& g)
 
 void OscillatorComponent::resized()
 {
-    int knobHeight = 75;
-    int knobWidth = 60;
-    int vBorder = 25;
-    int border = 5;
-    frequencySlider.setBounds (border, vBorder, knobWidth, knobHeight);
-    fineTuningSlider.setBounds (border * 2 + knobWidth, vBorder, knobWidth, knobHeight);
-    levelSlider.setBounds (border * 3 + knobWidth * 2, vBorder, knobWidth, knobHeight);
-    panSlider.setBounds (border * 4 + knobWidth * 3, vBorder, knobWidth, knobHeight);
+    Rectangle<int> area = getBounds();
+    int buttonHeight = 20;
+    int knobWidth = 65;
+    
+    Rectangle<int> buttonArea = area.removeFromTop(buttonHeight);
+    squareButton.setBounds(buttonArea.removeFromLeft(25));
+    sineButton.setBounds(buttonArea.removeFromLeft(25));
+    sawtoothButton.setBounds(buttonArea.removeFromLeft(25));
+    triangleButton.setBounds(buttonArea.removeFromLeft(25));
+    noiseButton.setBounds(buttonArea.removeFromLeft(25));
+    
+    frequencySlider.setBounds (area.removeFromLeft(knobWidth));
+    fineTuningSlider.setBounds (area.removeFromLeft(knobWidth));
+    levelSlider.setBounds (area.removeFromLeft(knobWidth));
+    panSlider.setBounds (area.removeFromLeft(knobWidth));
 }
 
 void OscillatorComponent::sliderValueChanged(Slider* slider)
