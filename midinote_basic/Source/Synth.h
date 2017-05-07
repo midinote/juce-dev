@@ -73,6 +73,7 @@ public:
     Label levelLabel;
     Slider panSlider;
     Label panLabel;
+    GroupComponent waveButtons;
     TextButton squareButton;
     TextButton sineButton;
     TextButton sawtoothButton;

@@ -66,10 +66,39 @@ void SynthAudioSource::getNextAudioBlock (const AudioSourceChannelInfo& bufferTo
  */
 
 OscillatorComponent::OscillatorComponent()
-:   waveType(WaveSound::sine),
+:   waveButtons("group", "Wave"),
+    squareButton("square"),
+    sineButton("sine"),
+    sawtoothButton("sawtooth"),
+    triangleButton("triangle"),
+    noiseButton("noise"),
+    waveType(WaveSound::sine),
     labelFont(Font (12)),
     labelJustification(Justification::centredTop)
 {
+    addAndMakeVisible(waveButtons);
+
+    addAndMakeVisible(squareButton);
+    squareButton.setClickingTogglesState(true);
+    squareButton.setRadioGroupId(100);
+    
+    addAndMakeVisible(sineButton);
+    sineButton.setClickingTogglesState(true);
+    sineButton.setRadioGroupId(100);
+    sineButton.setToggleState(true, dontSendNotification);
+    
+    addAndMakeVisible(sawtoothButton);
+    sawtoothButton.setClickingTogglesState(true);
+    sawtoothButton.setRadioGroupId(100);
+    
+    addAndMakeVisible(triangleButton);
+    triangleButton.setClickingTogglesState(true);
+    triangleButton.setRadioGroupId(100);
+    
+    addAndMakeVisible(noiseButton);
+    noiseButton.setClickingTogglesState(true);
+    noiseButton.setRadioGroupId(100);
+    
     addAndMakeVisible (frequencySlider);
     frequencySlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     frequencySlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
@@ -111,32 +140,6 @@ OscillatorComponent::OscillatorComponent()
     levelLabel.setJustificationType(labelJustification);
     levelLabel.attachToComponent(&levelSlider, false);
 
-    addAndMakeVisible(squareButton);
-    squareButton.setClickingTogglesState(true);
-    squareButton.setRadioGroupId(0);
-    squareButton.setConnectedEdges(Button::ConnectedOnRight);
-    
-    addAndMakeVisible(sineButton);
-    sineButton.setClickingTogglesState(true);
-    sineButton.setRadioGroupId(0);
-    sineButton.setToggleState(true, dontSendNotification);
-    sineButton.setConnectedEdges(Button::ConnectedOnLeft | Button::ConnectedOnRight);
-
-    addAndMakeVisible(sawtoothButton);
-    sawtoothButton.setClickingTogglesState(true);
-    sawtoothButton.setRadioGroupId(0);
-    sawtoothButton.setConnectedEdges(Button::ConnectedOnLeft | Button::ConnectedOnRight);
-
-    addAndMakeVisible(triangleButton);
-    triangleButton.setClickingTogglesState(true);
-    triangleButton.setRadioGroupId(0);
-    triangleButton.setConnectedEdges(Button::ConnectedOnLeft | Button::ConnectedOnRight);
-
-    addAndMakeVisible(noiseButton);
-    noiseButton.setClickingTogglesState(true);
-    noiseButton.setRadioGroupId(0);
-    noiseButton.setConnectedEdges(Button::ConnectedOnLeft);
-
     addAndMakeVisible(panSlider);
     panSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     panSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
@@ -167,15 +170,23 @@ void OscillatorComponent::paint (Graphics& g)
 void OscillatorComponent::resized()
 {
     Rectangle<int> area = getBounds();
-    int buttonHeight = 20;
+    int buttonHeight = 22;
+    int buttonWidth = 100;
     int knobWidth = 65;
+    int buttonGroupBorder = 10;
+    int buttonGroupTopBorder = 20;
     
-    Rectangle<int> buttonArea = area.removeFromTop(buttonHeight);
-    squareButton.setBounds(buttonArea.removeFromLeft(25));
-    sineButton.setBounds(buttonArea.removeFromLeft(25));
-    sawtoothButton.setBounds(buttonArea.removeFromLeft(25));
-    triangleButton.setBounds(buttonArea.removeFromLeft(25));
-    noiseButton.setBounds(buttonArea.removeFromLeft(25));
+    Rectangle<int> buttonArea = area.removeFromLeft(buttonWidth);
+    waveButtons.setBounds(buttonArea);
+    buttonArea = buttonArea.withTrimmedTop(buttonGroupTopBorder);
+    buttonArea = buttonArea.withTrimmedLeft(buttonGroupBorder);
+    buttonArea = buttonArea.withTrimmedRight(buttonGroupBorder);
+    
+    squareButton.setBounds(buttonArea.removeFromTop(buttonHeight));
+    sineButton.setBounds(buttonArea.removeFromTop(buttonHeight));
+    sawtoothButton.setBounds(buttonArea.removeFromTop(buttonHeight));
+    triangleButton.setBounds(buttonArea.removeFromTop(buttonHeight));
+    noiseButton.setBounds(buttonArea.removeFromTop(buttonHeight));
     
     frequencySlider.setBounds (area.removeFromLeft(knobWidth));
     fineTuningSlider.setBounds (area.removeFromLeft(knobWidth));
@@ -251,6 +262,14 @@ SynthComponent::SynthComponent ()
                                   settings.osc0Settings.level,
                                   settings.osc0Settings.A4Frequency,
                                   settings.osc0Settings.pan);
+    synthAudioSource.addWaveSound(settings.osc1Settings.wave,
+                                  settings.osc1Settings.level,
+                                  settings.osc1Settings.A4Frequency,
+                                  settings.osc1Settings.pan);
+    synthAudioSource.addWaveSound(settings.osc2Settings.wave,
+                                  settings.osc2Settings.level,
+                                  settings.osc2Settings.A4Frequency,
+                                  settings.osc2Settings.pan);
     deviceManager.addAudioCallback (&audioSourcePlayer);
     deviceManager.addMidiInputCallback (String(), &(synthAudioSource.midiCollector));
 }
@@ -280,10 +299,10 @@ void SynthComponent::paint (Graphics& g)
 void SynthComponent::resized()
 {
     Rectangle<int> area = getBounds();
-    int oscHeight = 115;
+    int oscHeight = 140;
     int keyboardHeight = 100;
     osc0.setBounds(area.removeFromTop(oscHeight));
     osc1.setBounds(area.removeFromTop(oscHeight));
     osc2.setBounds(area.removeFromTop(oscHeight));
-    keyboardComponent.setBounds(area.removeFromTop(keyboardHeight));
+    keyboardComponent.setBounds(area.removeFromBottom(keyboardHeight));
 }
