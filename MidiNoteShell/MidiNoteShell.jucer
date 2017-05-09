@@ -41,19 +41,19 @@
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MidiNoteShell"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_cryptography" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_video" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../bin/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../bin/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../bin/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../bin/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../bin/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../bin/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../bin/JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../../../../bin/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../bin/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../bin/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../bin/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../bin/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../bin/JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
   </EXPORTFORMATS>
