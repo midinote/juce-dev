@@ -12,7 +12,6 @@
 #define MAINCOMPONENT_H_INCLUDED
 #include "MidiEditor.h"
 #include "Synth.h"
-#include "Network.h"
 #include "../JuceLibraryCode/JuceHeader.h"
 
 class MainContentComponent   : public AudioAppComponent,
@@ -51,10 +50,10 @@ private:
     void connectionMade() override;
     void connectionLost() override;
     void messageReceived(const MemoryBlock& message) override;
-    NetworkServer* networkServer;
+    //NetworkServer* networkServer;
     void sliderValueChanged(Slider*) override;
 
-    String helloMessage;
+    //String helloMessage;
     double currentSampleRate;
     int lastInputIndex;
     bool isAddingFromMidiInput;

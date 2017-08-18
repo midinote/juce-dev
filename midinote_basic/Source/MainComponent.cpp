@@ -1,5 +1,4 @@
 #include "MainComponent.h"
-#include "Network.h"
 
 //==============================================================================
 /*
@@ -32,7 +31,7 @@ MainContentComponent::MainContentComponent()
     synth.frequencySlider.addListener(this);
     synth.levelSlider.addListener(this);
     synth.waveSlider.addListener(this);
-    
+
 
     for (int i; i < midiInputs.size(); ++i)
     {
@@ -45,14 +44,14 @@ MainContentComponent::MainContentComponent()
         setMidiInput (0);
 
     setAudioChannels(2, 2);
-    networkServer = new NetworkServer (this);
-    scanNetwork (this, networkServer);
+    //networkServer = new NetworkServer (this);
+    //scanNetwork (this, networkServer);
 
 }
 
 MainContentComponent::~MainContentComponent()
 {
-    delete networkServer;
+    //delete networkServer;
     shutdownAudio();
     delete this;
 }
