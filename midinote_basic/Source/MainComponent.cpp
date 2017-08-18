@@ -44,8 +44,6 @@ MainContentComponent::MainContentComponent()
         setMidiInput (0);
 
     setAudioChannels(2, 2);
-    //networkServer = new NetworkServer (this);
-    //scanNetwork (this, networkServer);
 
 }
 
@@ -133,27 +131,4 @@ void MainContentComponent::setMidiInput (int ind)
     deviceManager.addMidiInputCallback(newMidiInput, this);
     midiInputList.setSelectedId(ind+1, dontSendNotification);
     lastInputIndex = ind;
-}
-
-void MainContentComponent::connectionMade()
-{
-    Synth::Settings* settings = synth.getSettings();
-    sendMessage (MemoryBlock (settings, sizeof(settings)));
-}
-
-void MainContentComponent::connectionLost()
-{
-    String message = "Connection lost";
-}
-
-void MainContentComponent::messageReceived(const MemoryBlock& message)
-{
-    Synth::Settings newSettings = *static_cast<Synth::Settings*>(message.getData());
-    synth.updateSettings(newSettings);
-}
-
-void MainContentComponent::sliderValueChanged(Slider* slider)
-{
-    Synth::Settings* settings = synth.getSettings();
-    sendMessage (MemoryBlock (settings, sizeof(settings)));
 }
