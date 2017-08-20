@@ -38,7 +38,9 @@ public:
 
     void comboBoxChanged (ComboBox*) override;
 
-    void setMidiInput (int);
+    void setMidiInput (int
+
+    void sliderValueChanged(Slider*) override;
 
 private:
     MidiEditor midiEditor;

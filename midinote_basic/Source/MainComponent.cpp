@@ -132,3 +132,7 @@ void MainContentComponent::setMidiInput (int ind)
     midiInputList.setSelectedId(ind+1, dontSendNotification);
     lastInputIndex = ind;
 }
+
+void MainContentComponent::sliderValueChanged(Slider* slider)
+{
+}
