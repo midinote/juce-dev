@@ -2,7 +2,9 @@
 
 <JUCERPROJECT id="DqKiZX" name="midinote_basic_synth" projectType="guiapp"
               version="1.0.0" bundleIdentifier="com.yourcompany.midinote_basic"
-              includeBinaryInAppConfig="1" jucerVersion="4.3.1">
+              includeBinaryInAppConfig="1" jucerVersion="5.2.0" displaySplashScreen="0"
+              reportAppUsage="1" splashScreenColour="Dark" cppLanguageStandard="14"
+              companyCopyright="">
   <MAINGROUP id="jRKQcb" name="midinote_basic_synth">
     <GROUP id="{74527C40-4583-D851-BE95-156B1F115C9E}" name="Source">
       <GROUP id="{0654C488-4958-0FA4-0452-9FDF4300E881}" name="SynthParts">
@@ -10,7 +12,7 @@
         <FILE id="KPhrZV" name="Oscillator.h" compile="0" resource="0" file="Source/Oscillator.h"/>
       </GROUP>
       <FILE id="FYh5Kh" name="MidiNoteFunctionLib.h" compile="1" resource="0"
-            file="Source/MidiNoteFunctionLib.h"/>
+            file="Source/MidiNoteFunctionLib.h" xcodeResource="0"/>
       <FILE id="zERO2l" name="Synth.cpp" compile="1" resource="0" file="Source/Synth.cpp"/>
       <FILE id="TDSiRb" name="Synth.h" compile="0" resource="0" file="Source/Synth.h"/>
       <FILE id="pFTXk5" name="MidiEditorGrid.cpp" compile="1" resource="0"
@@ -28,8 +30,10 @@
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="midinote_basic"/>
-        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="midinote_basic"/>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="midinote_basic"
+                       enablePluginBinaryCopyStep="1"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="midinote_basic"
+                       enablePluginBinaryCopyStep="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../JUCE/modules"/>
@@ -48,10 +52,12 @@
         <MODULEPATH id="juce_audio_utils" path="../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" cppLanguageStandard="-std=c++14">
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="midinote_basic_synth"/>
-        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="midinote_basic_synth"/>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" linkTimeOptimisation="0"
+                       targetName="midinote_basic_synth"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" linkTimeOptimisation="1"
+                       targetName="midinote_basic_synth"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="../JUCE/modules"/>
