@@ -62,7 +62,7 @@ public:
     {
     public:
         MainWindow (String name)  : DocumentWindow (name,
-                                                    Colours::lightgrey,
+                                                    Colours::grey,
                                                     DocumentWindow::allButtons)
         {
             setUsingNativeTitleBar (true);

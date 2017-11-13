@@ -11,7 +11,7 @@ MainContentComponent::MainContentComponent()
     isAddingFromMidiInput (false),
     noteOn(false)
 {
-    setSize(1280, 714);
+    setSize(1024, 576);
 
     addAndMakeVisible(midiEditor);
     addAndMakeVisible(synth);
@@ -49,7 +49,7 @@ MainContentComponent::MainContentComponent()
 
 MainContentComponent::~MainContentComponent()
 {
-    //delete networkServer;
+    //any future networking objects should be deleted/freed here
     shutdownAudio();
     delete this;
 }

@@ -45,7 +45,7 @@ public:
     void updateSettings(Settings newSettings);
     void updateSettings(float A4Frequency, Oscillator::WaveType wave, float level, float pan);
     Settings* getSettings();
-    
+
     Slider frequencySlider;
     Label frequencyLabel;
     Slider levelSlider;
