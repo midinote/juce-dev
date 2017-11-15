@@ -5,19 +5,14 @@ top bar will have menu items like:
 
 less wide slider so its obvs an on/off switch
 
-put 2 knobs in 2nd row to make room for graph
-
-make drop-down look more like drop-down:
--envelope (ADSR)
--filter
--LFO
-
 ADSR:
-4 circular knobs under graph
-only do knobs OR graph at first
+-4 circular knobs under graph
+-make lines between points curve in the standard ADSR way (see mockup v2)
+-4 buttons next to envelope for the wave types
 
-4 buttons next to envelope for the wave types
+add top right profile pics
 
+decide whether menu toolbar should be one button (v2) or spread out (v1)
 
 when in doubt, model it after xfer
 
