@@ -16,10 +16,46 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Oscillator.h"
+#include "Graph.h"
 
 //==============================================================================
 /*
 */
+
+class ADSR     : public Graph
+{
+public:
+    ADSR(Colour backgroundColour = Colour (36, 36, 36), // dark gray
+         Colour colour = Colour (66, 162, 200)); // cool blue
+    ~ADSR();
+
+    Point<float> getAttack();
+    Point<float> getDecay();
+    Point<float> getSustain();
+    Point<float> getRelease();
+    void setAttack (Point<float> point);
+    void setAttack (int x, int y);
+    void setDecay (Point<float> point);
+    void setDecay (int x, int y);
+    void setSustain (Point<float> point);
+    void setSustain (int x, int y);
+    void setRelease (Point<float> point);
+    void setRelease (int x, int y);
+
+private:
+    // stored in miliseconds and decibels; converted to pixels in redraw()
+    // keep in mind that means the Y axis increases when going up--the
+    // opposite of what pixel values do
+    Point<float> attack;
+    Point<float> decay;
+    Point<float> sustain;
+    // release (x,y) is just the endpoint and the bottom of the graph
+
+    void redraw(); // needed because a path has to be redrawn to insert
+                   // a point between two other points
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ADSR)
+};
+
 class Synth    : public Component,
                  public Slider::Listener
 {
@@ -50,10 +86,13 @@ public:
     Label frequencyLabel;
     Slider levelSlider;
     Label levelLabel;
-    Slider waveSlider;
-    Label waveLabel;
     Slider panSlider;
     Label panLabel;
+    Slider waveSlider;
+    Label waveLabel;
+
+    ComboBox envelopeMenu;
+    ADSR envelopeADSR;
 
 private:
     Settings settings;

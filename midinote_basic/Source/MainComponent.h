@@ -14,6 +14,27 @@
 #include "Synth.h"
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#define headerMenuHeight 36
+#define headerMenuMargin 4
+
+class MenuComponent         : public Component
+{
+public:
+    ComboBox midiInputList;
+    Label midiInputListLabel;
+    ComboBox presetsList;
+    Label presetsListLabel;
+
+    MenuComponent();
+    ~MenuComponent();
+
+    void paint (Graphics& g) override;
+    void resized() override;
+
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MenuComponent)
+};
+
 class MainContentComponent   : public AudioAppComponent,
                                private MidiInputCallback,
                                private ComboBoxListener,
@@ -43,11 +64,11 @@ public:
     void sliderValueChanged(Slider*) override;
 
 private:
+    MenuComponent headerMenu;
     MidiEditor midiEditor;
-    Synth synth;
+    Synth osc1;
+    Synth osc2;
     MidiMessage currentNote;
-    ComboBox midiInputList;
-    Label midiInputListLabel;
 
     double currentSampleRate;
     int lastInputIndex;

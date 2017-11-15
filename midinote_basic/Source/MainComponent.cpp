@@ -6,31 +6,71 @@
     your controls and content.
 */
 
+MenuComponent::MenuComponent()
+{
+    addAndMakeVisible(midiInputListLabel);
+    midiInputListLabel.setColour(Label::textColourId, Colours::white);
+    midiInputListLabel.setText("Midi Input: ", dontSendNotification);
+    midiInputListLabel.attachToComponent(&midiInputList, true);
+
+    addAndMakeVisible(presetsListLabel);
+    presetsListLabel.setColour(Label::textColourId, Colours::white);
+    presetsListLabel.setText("Preset: ", dontSendNotification);
+    presetsListLabel.attachToComponent(&presetsList, true);
+
+    addAndMakeVisible(midiInputList);
+    midiInputList.setTextWhenNoChoicesAvailable("No Devices Available");
+
+    addAndMakeVisible(presetsList);
+    presetsList.setTextWhenNoChoicesAvailable("None");
+}
+
+MenuComponent::~MenuComponent()
+{
+}
+
+void MenuComponent::paint (Graphics& g)
+{
+    g.fillAll (Colour (55, 56, 55));
+}
+
+void MenuComponent::resized()
+{
+    int menuItemsSpace = 0;
+    menuItemsSpace += 85; // length of "Midi Input: " text
+    midiInputList.setBounds(menuItemsSpace, 10, 250, headerMenuHeight - 16);
+    menuItemsSpace += midiInputList.getRight();
+    presetsList.setBounds(menuItemsSpace, 10, 180, headerMenuHeight - 16);
+    menuItemsSpace += presetsList.getRight();
+}
+
 MainContentComponent::MainContentComponent()
 :   lastInputIndex (0),
     isAddingFromMidiInput (false),
     noteOn(false)
 {
-    setSize(1024, 576);
+    addAndMakeVisible(headerMenu);
 
     addAndMakeVisible(midiEditor);
-    addAndMakeVisible(synth);
+    addAndMakeVisible(osc1);
+    addAndMakeVisible(osc2);
 
-    addAndMakeVisible(midiInputListLabel);
-    midiInputListLabel.setText("Midi Input: ", dontSendNotification);
-    midiInputListLabel.attachToComponent(&midiInputList, true);
-
-    addAndMakeVisible(midiInputList);
-    midiInputList.setTextWhenNoChoicesAvailable("No Midi Devices Available");
     const StringArray midiInputs (MidiInput::getDevices());
-    midiInputList.addItemList(midiInputs, 1);
-    midiInputList.addListener(this);
+    headerMenu.midiInputList.addItemList(midiInputs, 1);
+    headerMenu.midiInputList.addListener(this);
+    headerMenu.presetsList.addListener(this);
+    osc1.envelopeMenu.addListener(this);
+    osc2.envelopeMenu.addListener(this);
 
     midiEditor.keyboardState.addListener(this);
-    synth.panSlider.addListener(this);
-    synth.frequencySlider.addListener(this);
-    synth.levelSlider.addListener(this);
-    synth.waveSlider.addListener(this);
+    osc1.panSlider.addListener(this);
+    osc1.frequencySlider.addListener(this);
+    osc1.levelSlider.addListener(this);
+    osc1.waveSlider.addListener(this);
+    osc2.panSlider.addListener(this);
+    osc2.frequencySlider.addListener(this);
+    osc2.levelSlider.addListener(this);
+    osc2.waveSlider.addListener(this);
 
 
     for (int i; i < midiInputs.size(); ++i)
@@ -40,9 +80,10 @@ MainContentComponent::MainContentComponent()
             setMidiInput (i);
         }
     }
-    if (midiInputList.getSelectedId() == 0)
+    if (headerMenu.midiInputList.getSelectedId() == 0)
         setMidiInput (0);
 
+    setSize(1024, 576);
     setAudioChannels(2, 2);
 
 }
@@ -66,7 +107,7 @@ void MainContentComponent::getNextAudioBlock(const AudioSourceChannelInfo& buffe
     int bufferSize = bufferToFill.numSamples;
     for (int sample=0; sample < bufferSize; ++sample)
     {
-        std::pair<float,float> currentSample = synth.synthesize(currentSampleRate);
+        std::pair<float,float> currentSample = osc1.synthesize(currentSampleRate);
         bufferL[sample] = currentSample.first;
         bufferR[sample] = currentSample.second;
     }
@@ -83,12 +124,14 @@ void MainContentComponent::paint(Graphics& g)
 void MainContentComponent::resized()
 {
     Rectangle<int> area = getLocalBounds();
-    int midiInputListHeight = 36;
-    int midiEditorHeight = 130;
-    int synthHeight = area.getHeight() - (midiEditorHeight + midiInputListHeight);
-    midiInputList.setBounds(100, 10, 250, midiInputListHeight - 16)
-    ;    midiEditor.setBounds(0, synthHeight + midiInputListHeight, area.getWidth(), midiEditorHeight);
-    synth.setBounds(0, midiInputListHeight, area.getWidth(), synthHeight);
+    int midiEditorHeight = 130 - headerMenuMargin;
+    int synthHeight = (area.getHeight() - (midiEditorHeight + headerMenuHeight))
+                       / 2 - headerMenuMargin * 2;
+    headerMenu.setBounds (0, 0, area.getWidth(), headerMenuHeight);
+    midiEditor.setBounds(0, headerMenuHeight + headerMenuMargin * 3 + synthHeight * 2,
+                         area.getWidth(), midiEditorHeight);
+    osc1.setBounds(0, headerMenuHeight + headerMenuMargin, area.getWidth(), synthHeight);
+    osc2.setBounds(0, osc1.getBottom() + headerMenuMargin, area.getWidth(), synthHeight);
 }
 
 void MainContentComponent::handleNoteOn(MidiKeyboardState* state,
@@ -96,7 +139,7 @@ void MainContentComponent::handleNoteOn(MidiKeyboardState* state,
                                         int midiNoteNumber,
                                         float velocity)
 {
-    synth.addNote (MidiMessage::noteOn (midiChannel, midiNoteNumber, velocity));
+    osc1.addNote (MidiMessage::noteOn (midiChannel, midiNoteNumber, velocity));
 }
 
 void MainContentComponent::handleNoteOff(MidiKeyboardState* state,
@@ -104,19 +147,21 @@ void MainContentComponent::handleNoteOff(MidiKeyboardState* state,
                                         int midiNoteNumber,
                                         float velocity)
 {
-    synth.removeNote(MidiMessage::noteOff (midiChannel, midiNoteNumber, velocity));
+    osc1.removeNote(MidiMessage::noteOff (midiChannel, midiNoteNumber, velocity));
 }
 
 void MainContentComponent::handleIncomingMidiMessage (MidiInput*, const MidiMessage& m)
 {
-    if (m.isNoteOn()) synth.addNote(m);
-    else if (m.isNoteOff()) synth.removeNote(m);
+    if (m.isNoteOn()) osc1.addNote(m);
+    else if (m.isNoteOff()) osc1.removeNote(m);
 }
 
 void MainContentComponent::comboBoxChanged (ComboBox* box)
 {
-    if (box == &midiInputList) {
-        setMidiInput(midiInputList.getSelectedItemIndex());
+    if (box == &(headerMenu.midiInputList)) {
+        setMidiInput(headerMenu.midiInputList.getSelectedItemIndex());
+    } else if (box == &(headerMenu.presetsList)) {
+        // do stuff around setting presets
     }
 }
 
@@ -129,7 +174,7 @@ void MainContentComponent::setMidiInput (int ind)
         deviceManager.setMidiInputEnabled(newMidiInput, true);
     }
     deviceManager.addMidiInputCallback(newMidiInput, this);
-    midiInputList.setSelectedId(ind+1, dontSendNotification);
+    headerMenu.midiInputList.setSelectedId(ind+1, dontSendNotification);
     lastInputIndex = ind;
 }
 

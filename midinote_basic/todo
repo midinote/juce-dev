@@ -1,0 +1,38 @@
+top bar will have menu items like:
+-midi light showing midi device connected, and a light showing midi events
+-midi panic button (exclamation point)
+-master volume knob
+
+less wide slider so its obvs an on/off switch
+
+put 2 knobs in 2nd row to make room for graph
+
+make drop-down look more like drop-down:
+-envelope (ADSR)
+-filter
+-LFO
+
+ADSR:
+4 circular knobs under graph
+only do knobs OR graph at first
+
+4 buttons next to envelope for the wave types
+
+
+when in doubt, model it after xfer
+
+
+FIX:
+-segfault on exit
+-midi "inputs" looks for outputs on linux
+-envelope graph is invisible
+-resize limits aren't actually doing anything (at least on linux)
+
+AUDIO TODO:
+-have on/off switch be between midi device and in-window keyboard
+-making 2nd osc functional is low priority
+-F#5 was very quiet after attack once (can't reproduce)
+-A3 is set to 440, not A4
+-crackling (by modifying envelope to have less harsh attack)
+
+knobs: https://forum.juce.com/t/creating-custom-guis/8764

@@ -8,7 +8,13 @@
   ==============================================================================
 */
 
+#include <limits>
+
 #include "../JuceLibraryCode/JuceHeader.h"
+
+// minimum window size; change as needed if the UI changes
+#define MIN_WIDTH 609
+#define MIN_HEIGHT 532
 
 Component* createMainContentComponent();
 
@@ -62,12 +68,14 @@ public:
     {
     public:
         MainWindow (String name)  : DocumentWindow (name,
-                                                    Colours::grey,
+                                                    Colours::black,
                                                     DocumentWindow::allButtons)
         {
             setUsingNativeTitleBar (true);
             setContentOwned (createMainContentComponent(), true);
             setResizable (true, true);
+            int max = std::numeric_limits<int>::max();
+            setResizeLimits (MIN_WIDTH, MIN_HEIGHT, max, max);
 
             centreWithSize (getWidth(), getHeight());
             setVisible (true);
