@@ -10,7 +10,7 @@
 
 #include "Graph.h"
 
-Graph::Graph (Colour backgroundColour, Colour Colour)
+Graph::Graph (Colour backgroundColour, Colour colour)
 {
     drawGraph = false;
     background = backgroundColour;
@@ -27,7 +27,7 @@ void Graph::addPoint (Point<float> relativePoint) // relative to where the entir
 {
     Rectangle<int> area = getBounds();
     if (path.isEmpty()) {
-        Point<float> firstPoint = Point<float> (startPoint + static_cast<float> (area.getX()),
+        Point<float> firstPoint = Point<float> (startPoint,
                                                 static_cast<float> (area.getBottom()));
         path.startNewSubPath (firstPoint);
         //points.add (firstPoint);
@@ -95,10 +95,10 @@ void Graph::paint (Graphics& g)
         Rectangle<float> sizeOfGraph = path.getBounds();
         float smallestBound = smallerNumber (sizeOfGraph.getWidth(), sizeOfGraph.getHeight());
         float cornerRadius = smallestBound / 20.0;
+        path.lineTo (endPoint + static_cast<float> (area.getX()),
+                     static_cast<float> (area.getBottom()));
         auto fill = path.createPathWithRoundedCorners (cornerRadius);
         // don't worry, it's better if the bottom points aren't rounded
-        fill.lineTo (endPoint + static_cast<float> (area.getRight()),
-                     static_cast<float> (area.getBottom()));
         fill.closeSubPath();
         g.setColour (colour);
         g.fillPath (fill);
@@ -109,7 +109,4 @@ void Graph::resized()
 {
     Rectangle<int> area = getBounds();
     endPoint = static_cast<float> (area.getWidth()) - endPoint;
-    path.scaleToFit (static_cast<float>(area.getX()), static_cast<float>(area.getY()),
-                     static_cast<float>(area.getWidth()), static_cast<float>(area.getHeight()),
-                     /* preserveProportions = */ true);
 }

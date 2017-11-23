@@ -15,13 +15,14 @@
 
 ADSR::ADSR (Colour backgroundColour, Colour colour) : Graph(backgroundColour, colour)
 {
-    startPoint += 5.0; // provide a bit of a margin
-    endPoint -= 20.0; // don't default to such a long envelope
     // defaults
-    setAttack (20, 20);
-    setDecay (40, 20);
-    setSustain (100, 20);
-    setRelease (120, 0.0);
+    maxMS = 10000;
+    maxdB = 60;
+    startPointMS = 50;
+    setAttack (100, 50);
+    setDecay (500, 30);
+    setSustain (5000, 30);
+    setReleaseX (5500); // this sets endPointMS
 }
 
 ADSR::~ADSR()
@@ -51,16 +52,23 @@ Point<float> ADSR::getRelease()
 void ADSR::redraw()
 {
     clear();
+    // use multiplication to make the bounds of the graph represent the
+    // bounds of the miliseconds and decibels
     Rectangle<int> area = getLocalBounds();
-    auto attackPoint = Point<float> (attack.getX(),
-                                     static_cast<float> (area.getHeight()) - attack.getY());
-    auto decayPoint = Point<float> (decay.getX(),
-                                    static_cast<float> (area.getHeight()) - decay.getY());
-    auto sustainPoint = Point<float> (sustain.getX(),
-                                      static_cast<float> (area.getHeight()) - sustain.getY());
+    float Xmult = static_cast<float> (area.getWidth()) / static_cast<float> (maxMS);
+    float Ymult = static_cast<float> (area.getHeight()) / static_cast<float> (maxdB);
+    startPoint = startPointMS * Xmult;
+    endPoint = endPointMS * Xmult;
+    auto attackPoint = Point<float> (attack.getX() * Xmult,
+                                     static_cast<float> (area.getHeight()) - attack.getY() * Ymult);
+    auto decayPoint = Point<float> (decay.getX() * Xmult,
+                                    static_cast<float> (area.getHeight()) - decay.getY() * Ymult);
+    auto sustainPoint = Point<float> (sustain.getX() * Xmult,
+                                      static_cast<float> (area.getHeight()) - sustain.getY() * Ymult);
     addPoint (attackPoint);
     addPoint (decayPoint);
     addPoint (sustainPoint);
+    repaint();
 }
 
 void ADSR::setAttack (Point<float> point)
@@ -96,15 +104,21 @@ void ADSR::setSustain (int x, int y)
     setSustain (Point<float> (static_cast<float> (x), static_cast<float> (y)));
 }
 
-void ADSR::setRelease (Point<float> point)
+void ADSR::setReleaseX (Point<float> point)
 {
-    endPoint = point.getX();
+    endPointMS = point.getX();
     redraw();
 }
 
-void ADSR::setRelease (int x, int y)
+void ADSR::setReleaseX (int x)
 {
-    setRelease (Point<float> (static_cast<float> (x), static_cast<float> (y)));
+    setReleaseX (Point<float> (static_cast<float> (x), 0.0));
+}
+
+void ADSR::resized()
+{
+    Graph::resized();
+    redraw();
 }
 
 

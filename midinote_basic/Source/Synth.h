@@ -39,13 +39,19 @@ public:
     void setDecay (int x, int y);
     void setSustain (Point<float> point);
     void setSustain (int x, int y);
-    void setRelease (Point<float> point);
-    void setRelease (int x, int y);
+    void setReleaseX (Point<float> point);
+    void setReleaseX (int x);
+
+    void resized() override;
 
 private:
     // stored in miliseconds and decibels; converted to pixels in redraw()
     // keep in mind that means the Y axis increases when going up--the
     // opposite of what pixel values do
+    int maxMS; // how many miliseconds the width of the graph represents
+    int maxdB; // how many decibels the height of the graph represents
+    float startPointMS; // Graph::startPoint in miliseconds
+    float endPointMS; // Graph::endPoint in miliseconds
     Point<float> attack;
     Point<float> decay;
     Point<float> sustain;
