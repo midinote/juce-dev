@@ -32,6 +32,7 @@ when in doubt, model it after xfer
 FIX:
 -segfault on exit
 -making ADSR slider ranges depend on other ADSR values causes the Sustain and Release x-axis sliders to not update, even on a repaint() call, and specifically Sustain might also be ignored setValue() calls (Release can still be manipulated even though the slider doesn't move)
+-Release value can be moved beyond bounds of graph
 -resize limits aren't actually doing anything (at least on linux)
 -midi "inputs" looks for outputs on linux
 

@@ -252,7 +252,7 @@ Synth::Synth()
     attackSliderX.addListener(this);
 
     addAndMakeVisible(attackLabelX);
-    attackLabelX.setText("Attack Pos", dontSendNotification);
+    attackLabelX.setText("Duration", dontSendNotification);
     attackLabelX.setFont(labelFont);
     attackLabelX.setJustificationType(labelJustification);
     attackLabelX.attachToComponent(&attackSliderX, false);
@@ -268,7 +268,7 @@ Synth::Synth()
     decaySliderX.addListener(this);
 
     addAndMakeVisible(decayLabelX);
-    decayLabelX.setText("Decay Pos", dontSendNotification);
+    decayLabelX.setText("Duration", dontSendNotification);
     decayLabelX.setFont(labelFont);
     decayLabelX.setJustificationType(labelJustification);
     decayLabelX.attachToComponent(&decaySliderX, false);
@@ -284,7 +284,7 @@ Synth::Synth()
     sustainSliderX.addListener(this);
 
     addAndMakeVisible(sustainLabelX);
-    sustainLabelX.setText("Sustain Pos", dontSendNotification);
+    sustainLabelX.setText("Duration", dontSendNotification);
     sustainLabelX.setFont(labelFont);
     sustainLabelX.setJustificationType(labelJustification);
     sustainLabelX.attachToComponent(&sustainSliderX, false);
@@ -300,7 +300,7 @@ Synth::Synth()
     releaseSliderX.addListener(this);
 
     addAndMakeVisible(releaseLabelX);
-    releaseLabelX.setText("Release Pos", dontSendNotification);
+    releaseLabelX.setText("Release", dontSendNotification);
     releaseLabelX.setFont(labelFont);
     releaseLabelX.setJustificationType(labelJustification);
     releaseLabelX.attachToComponent(&releaseSliderX, false);
@@ -373,21 +373,23 @@ void Synth::resized()
     envelopeADSR.setBounds (leftSlidersWidth, topMarginKnob, graphWidth, graphHeight);
     // center justification
     int envelopeKnobs = 7;
-    int sideMargin = (graphWidth - (envelopeKnobs * (knobWidth + border))) / 2;
-    attackSliderX.setBounds  (leftSlidersWidth + sideMargin + border * 1 + knobWidth * 0,
-                              graphHeight + vBorder, knobWidth, knobHeight);
-    attackSliderY.setBounds  (leftSlidersWidth + sideMargin + border * 2 + knobWidth * 1,
-                              graphHeight + vBorder, knobWidth, knobHeight);
-    decaySliderX.setBounds   (leftSlidersWidth + sideMargin + border * 3 + knobWidth * 2,
-                              graphHeight + vBorder, knobWidth, knobHeight);
-    decaySliderY.setBounds   (leftSlidersWidth + sideMargin + border * 4 + knobWidth * 3,
-                              graphHeight + vBorder, knobWidth, knobHeight);
-    sustainSliderX.setBounds (leftSlidersWidth + sideMargin + border * 5 + knobWidth * 4,
-                              graphHeight + vBorder, knobWidth, knobHeight);
-    sustainSliderY.setBounds (leftSlidersWidth + sideMargin + border * 6 + knobWidth * 5,
-                              graphHeight + vBorder, knobWidth, knobHeight);
-    releaseSliderX.setBounds (leftSlidersWidth + sideMargin + border * 7 + knobWidth * 6,
-                              graphHeight + vBorder, knobWidth, knobHeight);
+    int betweenMargin = knobWidth / 2;
+    int sideMargin = (graphWidth - (envelopeKnobs * (knobWidth + border)))
+                   / 2 - (betweenMargin * (envelopeKnobs / 2));
+    attackSliderY.setBounds  (leftSlidersWidth + sideMargin + border * 1 + knobWidth * 0
+                              + betweenMargin * 0, graphHeight + vBorder, knobWidth, knobHeight);
+    attackSliderX.setBounds  (leftSlidersWidth + sideMargin + border * 2 + knobWidth * 1
+                              + betweenMargin * 0, graphHeight + vBorder, knobWidth, knobHeight);
+    decaySliderY.setBounds   (leftSlidersWidth + sideMargin + border * 3 + knobWidth * 2
+                              + betweenMargin * 1, graphHeight + vBorder, knobWidth, knobHeight);
+    decaySliderX.setBounds   (leftSlidersWidth + sideMargin + border * 4 + knobWidth * 3
+                              + betweenMargin * 1, graphHeight + vBorder, knobWidth, knobHeight);
+    sustainSliderY.setBounds (leftSlidersWidth + sideMargin + border * 5 + knobWidth * 4
+                              + betweenMargin * 2, graphHeight + vBorder, knobWidth, knobHeight);
+    sustainSliderX.setBounds (leftSlidersWidth + sideMargin + border * 6 + knobWidth * 5
+                              + betweenMargin * 2, graphHeight + vBorder, knobWidth, knobHeight);
+    releaseSliderX.setBounds (leftSlidersWidth + sideMargin + border * 7 + knobWidth * 6
+                              + betweenMargin * 3, graphHeight + vBorder, knobWidth, knobHeight);
 }
 
 void Synth::sliderValueChanged(Slider* slider)
