@@ -29,18 +29,28 @@ public:
          Colour colour = Colour (66, 162, 200)); // cool blue
     ~ADSR();
 
+    float getStartPoint();
+    int getMaxMS();
+    int getMaxdB();
     Point<float> getAttack();
     Point<float> getDecay();
     Point<float> getSustain();
     Point<float> getRelease();
-    void setAttack (Point<float> point);
-    void setAttack (int x, int y);
-    void setDecay (Point<float> point);
-    void setDecay (int x, int y);
-    void setSustain (Point<float> point);
-    void setSustain (int x, int y);
-    void setReleaseX (Point<float> point);
-    void setReleaseX (int x);
+    // their sliders can also be updated along with the graph if passed in
+    void setAttack (Point<float> point, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
+    void setAttack (int x, int y, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
+    void setAttackX (int x, Slider* sliderX = nullptr);
+    void setAttackY (int y, Slider* sliderY = nullptr);
+    void setDecay (Point<float> point, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
+    void setDecay (int x, int y, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
+    void setDecayX (int x, Slider* sliderX = nullptr);
+    void setDecayY (int y, Slider* sliderY = nullptr);
+    void setSustain (Point<float> point, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
+    void setSustain (int x, int y, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
+    void setSustainX (int x, Slider* sliderX = nullptr);
+    void setSustainY (int y, Slider* sliderY = nullptr);
+    void setReleaseX (Point<float> point, Slider* sliderX = nullptr);
+    void setReleaseX (int x, Slider* sliderX = nullptr);
 
     void resized() override;
 
@@ -84,6 +94,7 @@ public:
     void resized() override;
     void sliderValueChanged(Slider*) override;
 
+    void updateADSR();
     void updateSettings(Settings newSettings);
     void updateSettings(float A4Frequency, Oscillator::WaveType wave, float level, float pan);
     Settings* getSettings();
@@ -99,10 +110,26 @@ public:
 
     ComboBox envelopeMenu;
     ADSR envelopeADSR;
+    Slider attackSliderX;
+    Label attackLabelX;
+    Slider attackSliderY;
+    Label attackLabelY;
+    Slider decaySliderX;
+    Label decayLabelX;
+    Slider decaySliderY;
+    Label decayLabelY;
+    Slider sustainSliderX;
+    Label sustainLabelX;
+    Slider sustainSliderY;
+    Label sustainLabelY;
+    Slider releaseSliderX;
+    Label releaseLabelX;
 
 private:
     Settings settings;
     void updateKnobs();
+
+    bool updateADSRLock;
 
     Oscillator::WaveType waveType;
 

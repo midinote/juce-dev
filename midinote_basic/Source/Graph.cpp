@@ -23,17 +23,15 @@ Graph::~Graph()
 {
 }
 
-void Graph::addPoint (Point<float> relativePoint) // relative to where the entire component is
+void Graph::addPoint (Point<float> point)
 {
     Rectangle<int> area = getBounds();
     if (path.isEmpty()) {
         Point<float> firstPoint = Point<float> (startPoint,
-                                                static_cast<float> (area.getBottom()));
+                                                static_cast<float> (area.getHeight()));
         path.startNewSubPath (firstPoint);
         //points.add (firstPoint);
     }
-    Point<float> point = Point<float> (relativePoint.getX() + static_cast<float> (area.getX()),
-                                       relativePoint.getY() + static_cast<float> (area.getY()));
     path.lineTo (point);
     //points.add (point);
 }
@@ -96,7 +94,7 @@ void Graph::paint (Graphics& g)
         float smallestBound = smallerNumber (sizeOfGraph.getWidth(), sizeOfGraph.getHeight());
         float cornerRadius = smallestBound / 20.0;
         path.lineTo (endPoint + static_cast<float> (area.getX()),
-                     static_cast<float> (area.getBottom()));
+                     static_cast<float> (area.getHeight()));
         auto fill = path.createPathWithRoundedCorners (cornerRadius);
         // don't worry, it's better if the bottom points aren't rounded
         fill.closeSubPath();

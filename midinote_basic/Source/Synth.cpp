@@ -18,32 +18,42 @@ ADSR::ADSR (Colour backgroundColour, Colour colour) : Graph(backgroundColour, co
     // defaults
     maxMS = 10000;
     maxdB = 60;
-    startPointMS = 50;
-    setAttack (100, 50);
-    setDecay (500, 30);
-    setSustain (5000, 30);
-    setReleaseX (5500); // this sets endPointMS
+    startPointMS = 0;
+    setAttack (1000, 50);
+    setDecay (1500, 30);
+    setSustain (6000, 30);
+    setReleaseX (6500); // this sets endPointMS
 }
 
 ADSR::~ADSR()
 {
 }
 
+float ADSR::getStartPoint()
+{
+    return startPointMS;
+}
+int ADSR::getMaxMS()
+{
+    return maxMS;
+}
+int ADSR::getMaxdB()
+{
+    return maxdB;
+}
+
 Point<float> ADSR::getAttack()
 {
     return attack;
 }
-
 Point<float> ADSR::getDecay()
 {
     return decay;
 }
-
 Point<float> ADSR::getSustain()
 {
     return sustain;
 }
-
 Point<float> ADSR::getRelease()
 {
     return Point<float> (endPoint, 0.0);
@@ -71,48 +81,75 @@ void ADSR::redraw()
     repaint();
 }
 
-void ADSR::setAttack (Point<float> point)
+void ADSR::setAttack (Point<float> point, Slider* sliderX, Slider* sliderY)
 {
     attack = point;
+    if (sliderX != nullptr) sliderX->setValue (point.getX());
+    if (sliderY != nullptr) sliderY->setValue (point.getY());
     redraw();
 }
-
-void ADSR::setAttack (int x, int y)
+void ADSR::setAttack (int x, int y, Slider* sliderX, Slider* sliderY)
 {
-    setAttack (Point<float> (static_cast<float> (x), static_cast<float> (y)));
+    setAttack (Point<float> (static_cast<float> (x), static_cast<float> (y)), sliderX, sliderY);
+}
+void ADSR::setAttackX (int x, Slider* sliderX)
+{
+    setAttack (Point<float> (static_cast<float> (x), attack.getY()), sliderX, nullptr);
+}
+void ADSR::setAttackY (int y, Slider* sliderY)
+{
+    setAttack (Point<float> (attack.getX(), static_cast<float> (y)), nullptr, sliderY);
 }
 
-void ADSR::setDecay (Point<float> point)
+void ADSR::setDecay (Point<float> point, Slider* sliderX, Slider* sliderY)
 {
     decay = point;
+    if (sliderX != nullptr) sliderX->setValue (point.getX());
+    if (sliderY != nullptr) sliderY->setValue (point.getY());
     redraw();
 }
-
-void ADSR::setDecay (int x, int y)
+void ADSR::setDecay (int x, int y, Slider* sliderX, Slider* sliderY)
 {
-    setDecay (Point<float> (static_cast<float> (x), static_cast<float> (y)));
+    setDecay (Point<float> (static_cast<float> (x), static_cast<float> (y)), sliderX, sliderY);
+}
+void ADSR::setDecayX (int x, Slider* sliderX)
+{
+    setDecay (Point<float> (static_cast<float> (x), decay.getY()), sliderX, nullptr);
+}
+void ADSR::setDecayY (int y, Slider* sliderY)
+{
+    setDecay (Point<float> (decay.getX(), static_cast<float> (y)), nullptr, sliderY);
 }
 
-void ADSR::setSustain (Point<float> point)
+void ADSR::setSustain (Point<float> point, Slider* sliderX, Slider* sliderY)
 {
     sustain = point;
+    if (sliderX != nullptr) sliderX->setValue (point.getX());
+    if (sliderY != nullptr) sliderY->setValue (point.getY());
     redraw();
 }
-
-void ADSR::setSustain (int x, int y)
+void ADSR::setSustain (int x, int y, Slider* sliderX, Slider* sliderY)
 {
-    setSustain (Point<float> (static_cast<float> (x), static_cast<float> (y)));
+    setSustain (Point<float> (static_cast<float> (x), static_cast<float> (y)), sliderX, sliderY);
+}
+void ADSR::setSustainX (int x, Slider* sliderX)
+{
+    setSustain (Point<float> (static_cast<float> (x), sustain.getY()), sliderX, nullptr);
+}
+void ADSR::setSustainY (int y, Slider* sliderY)
+{
+    setSustain (Point<float> (sustain.getX(), static_cast<float> (y)), nullptr, sliderY);
 }
 
-void ADSR::setReleaseX (Point<float> point)
+void ADSR::setReleaseX (Point<float> point, Slider* sliderX)
 {
     endPointMS = point.getX();
+    if (sliderX != nullptr) sliderX->setValue (point.getX());
     redraw();
 }
-
-void ADSR::setReleaseX (int x)
+void ADSR::setReleaseX (int x, Slider* sliderX)
 {
-    setReleaseX (Point<float> (static_cast<float> (x), 0.0));
+    setReleaseX (Point<float> (static_cast<float> (x), 0.0), sliderX);
 }
 
 void ADSR::resized()
@@ -189,6 +226,85 @@ Synth::Synth()
     addAndMakeVisible (envelopeADSR);
     envelopeADSR.drawOn();
 
+    addAndMakeVisible (attackSliderX);
+    attackSliderX.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    attackSliderX.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
+    addAndMakeVisible (attackSliderY);
+    attackSliderY.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    attackSliderY.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
+    addAndMakeVisible (decaySliderX);
+    decaySliderX.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    decaySliderX.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
+    addAndMakeVisible (decaySliderY);
+    decaySliderY.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    decaySliderY.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
+    addAndMakeVisible (sustainSliderX);
+    sustainSliderX.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    sustainSliderX.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
+    addAndMakeVisible (sustainSliderY);
+    sustainSliderY.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    sustainSliderY.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
+    addAndMakeVisible (releaseSliderX);
+    releaseSliderX.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    releaseSliderX.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
+    updateADSR();
+
+    attackSliderX.addListener(this);
+
+    addAndMakeVisible(attackLabelX);
+    attackLabelX.setText("Attack Pos", dontSendNotification);
+    attackLabelX.setFont(labelFont);
+    attackLabelX.setJustificationType(labelJustification);
+    attackLabelX.attachToComponent(&attackSliderX, false);
+
+    attackSliderY.addListener(this);
+
+    addAndMakeVisible(attackLabelY);
+    attackLabelY.setText("Attack", dontSendNotification);
+    attackLabelY.setFont(labelFont);
+    attackLabelY.setJustificationType(labelJustification);
+    attackLabelY.attachToComponent(&attackSliderY, false);
+
+    decaySliderX.addListener(this);
+
+    addAndMakeVisible(decayLabelX);
+    decayLabelX.setText("Decay Pos", dontSendNotification);
+    decayLabelX.setFont(labelFont);
+    decayLabelX.setJustificationType(labelJustification);
+    decayLabelX.attachToComponent(&decaySliderX, false);
+
+    decaySliderY.addListener(this);
+
+    addAndMakeVisible(decayLabelY);
+    decayLabelY.setText("Decay", dontSendNotification);
+    decayLabelY.setFont(labelFont);
+    decayLabelY.setJustificationType(labelJustification);
+    decayLabelY.attachToComponent(&decaySliderY, false);
+
+    sustainSliderX.addListener(this);
+
+    addAndMakeVisible(sustainLabelX);
+    sustainLabelX.setText("Sustain Pos", dontSendNotification);
+    sustainLabelX.setFont(labelFont);
+    sustainLabelX.setJustificationType(labelJustification);
+    sustainLabelX.attachToComponent(&sustainSliderX, false);
+
+    sustainSliderY.addListener(this);
+
+    addAndMakeVisible(sustainLabelY);
+    sustainLabelY.setText("Sustain", dontSendNotification);
+    sustainLabelY.setFont(labelFont);
+    sustainLabelY.setJustificationType(labelJustification);
+    sustainLabelY.attachToComponent(&sustainSliderY, false);
+
+    releaseSliderX.addListener(this);
+
+    addAndMakeVisible(releaseLabelX);
+    releaseLabelX.setText("Release Pos", dontSendNotification);
+    releaseLabelX.setFont(labelFont);
+    releaseLabelX.setJustificationType(labelJustification);
+    releaseLabelX.attachToComponent(&releaseSliderX, false);
+
     updateSettings(frequencySlider.getValue(),
                    static_cast<Oscillator::WaveType> (floorf(waveSlider.getValue())),
                    dBToVolume(levelSlider.getValue()),
@@ -240,22 +356,109 @@ void Synth::removeNote (MidiMessage message)
 void Synth::resized()
 {
     Rectangle<int> area = getBounds();
+    int topMargin = 4;
+    int topMarginKnob = 24;
     int knobHeight = 60;
     int knobWidth = 60;
-    int vBorder = 25;
+    int vBorder = 50;
     int border = 5;
-    frequencySlider.setBounds (border, vBorder, knobWidth, knobHeight);
-    levelSlider.setBounds (border * 2 + knobWidth, vBorder, knobWidth, knobHeight);
-    panSlider.setBounds(border, vBorder * 2 + knobHeight, knobWidth, knobHeight);
-    waveSlider.setBounds (border * 2 + knobWidth, vBorder * 2 + knobHeight, knobWidth, knobHeight);
-    envelopeMenu.setBounds (border * 3 + knobWidth * 2, 4, 250, 16);
-    envelopeADSR.setBounds (border * 3 + knobWidth * 2, 24,
-                            area.getWidth() - (border * 4 + knobWidth * 2),
-                            (vBorder + knobHeight) * 2 - 24);
+    int graphHeight = (vBorder / 2 + knobHeight) * 2 - topMarginKnob - knobHeight;
+    int graphWidth = area.getWidth() - (border * 4 + knobWidth * 2);
+    frequencySlider.setBounds (border, topMarginKnob, knobWidth, knobHeight);
+    levelSlider.setBounds (border * 2 + knobWidth, topMarginKnob, knobWidth, knobHeight);
+    panSlider.setBounds(border, vBorder + knobHeight + topMarginKnob, knobWidth, knobHeight);
+    waveSlider.setBounds (border * 2 + knobWidth, vBorder + knobHeight + topMarginKnob, knobWidth, knobHeight);
+    int leftSlidersWidth = border * 3 + knobWidth * 2;
+    envelopeMenu.setBounds (leftSlidersWidth, topMargin, 250, 16);
+    envelopeADSR.setBounds (leftSlidersWidth, topMarginKnob, graphWidth, graphHeight);
+    // center justification
+    int envelopeKnobs = 7;
+    int sideMargin = (graphWidth - (envelopeKnobs * (knobWidth + border))) / 2;
+    attackSliderX.setBounds  (leftSlidersWidth + sideMargin + border * 1 + knobWidth * 0,
+                              graphHeight + vBorder, knobWidth, knobHeight);
+    attackSliderY.setBounds  (leftSlidersWidth + sideMargin + border * 2 + knobWidth * 1,
+                              graphHeight + vBorder, knobWidth, knobHeight);
+    decaySliderX.setBounds   (leftSlidersWidth + sideMargin + border * 3 + knobWidth * 2,
+                              graphHeight + vBorder, knobWidth, knobHeight);
+    decaySliderY.setBounds   (leftSlidersWidth + sideMargin + border * 4 + knobWidth * 3,
+                              graphHeight + vBorder, knobWidth, knobHeight);
+    sustainSliderX.setBounds (leftSlidersWidth + sideMargin + border * 5 + knobWidth * 4,
+                              graphHeight + vBorder, knobWidth, knobHeight);
+    sustainSliderY.setBounds (leftSlidersWidth + sideMargin + border * 6 + knobWidth * 5,
+                              graphHeight + vBorder, knobWidth, knobHeight);
+    releaseSliderX.setBounds (leftSlidersWidth + sideMargin + border * 7 + knobWidth * 6,
+                              graphHeight + vBorder, knobWidth, knobHeight);
 }
 
 void Synth::sliderValueChanged(Slider* slider)
 {
+    bool ADSRchanged = false;
+    if (slider == &attackSliderX) {
+        envelopeADSR.setAttackX (slider->getValue());
+        ADSRchanged = true;
+    } else if (slider == &attackSliderY) {
+        envelopeADSR.setAttackY (slider->getValue());
+        ADSRchanged = true;
+    } else if (slider == &decaySliderX) {
+        envelopeADSR.setDecayX (slider->getValue());
+        ADSRchanged = true;
+    } else if (slider == &decaySliderY) {
+        envelopeADSR.setDecayY (slider->getValue());
+        ADSRchanged = true;
+    } else if (slider == &sustainSliderX) {
+        envelopeADSR.setSustainX (slider->getValue());
+        ADSRchanged = true;
+    } else if (slider == &sustainSliderY) {
+        envelopeADSR.setSustainY (slider->getValue());
+        ADSRchanged = true;
+    } else if (slider == &releaseSliderX) {
+        envelopeADSR.setReleaseX (slider->getValue());
+        ADSRchanged = true;
+    }
+    if (ADSRchanged) updateADSR();
+}
+
+void Synth::updateADSR()
+{
+    attackSliderX.setRange  (envelopeADSR.getStartPoint(),
+                             envelopeADSR.getDecay().getX() - 1.0,
+                             dontSendNotification);
+    attackSliderX.setValue  (envelopeADSR.getAttack().getX(),
+                             dontSendNotification);
+    attackSliderY.setRange  (0.0, envelopeADSR.getMaxdB(),
+                             dontSendNotification);
+    attackSliderY.setValue  (envelopeADSR.getAttack().getY(),
+                             dontSendNotification);
+    decaySliderX.setRange   (envelopeADSR.getAttack().getX() + 1.0,
+                             envelopeADSR.getSustain().getX() - 1.0,
+                             dontSendNotification);
+    decaySliderX.setValue   (envelopeADSR.getDecay().getX(),
+                             dontSendNotification);
+    decaySliderY.setRange   (0.0, envelopeADSR.getMaxdB(),
+                             dontSendNotification);
+    decaySliderY.setValue   (envelopeADSR.getDecay().getY(),
+                             dontSendNotification);
+    sustainSliderX.setRange (envelopeADSR.getDecay().getX() + 1.0,
+                             envelopeADSR.getRelease().getX() - 1.0,
+                             dontSendNotification);
+    sustainSliderX.setValue (envelopeADSR.getSustain().getX(),
+                             dontSendNotification);
+    sustainSliderY.setRange (0.0, envelopeADSR.getMaxdB(),
+                             dontSendNotification);
+    sustainSliderY.setValue (envelopeADSR.getSustain().getY(),
+                             dontSendNotification);
+    releaseSliderX.setRange (envelopeADSR.getSustain().getX() + 1.0,
+                             envelopeADSR.getMaxMS(),
+                             dontSendNotification);
+    releaseSliderX.setValue (envelopeADSR.getRelease().getX(),
+                             dontSendNotification);
+    attackSliderX.repaint();
+    attackSliderY.repaint();
+    decaySliderX.repaint();
+    decaySliderY.repaint();
+    sustainSliderX.repaint();
+    sustainSliderY.repaint();
+    releaseSliderX.repaint();
 }
 
 void Synth::updateSettings(Synth::Settings newSettings)
