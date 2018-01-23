@@ -1,0 +1,50 @@
+Almost everything is in Synth.h/cpp!
+
+MainComponent.cpp: initialization
+	-Whatever code you've come up with that first establishes the connection between users will have to be called in MainContentComponent's constructor (MainComponent.cpp:47), and you'll have to differentiate between the osc1 and osc2 objects. You could probably do that by having which oscillator each function is referring to be a parameter. Let me know if you want me to have the osc objects be in an array instead of osc1 and osc2, so that you can specify them with an int or something.
+	-Because so much of this is defined within the Synth class and much less accessible from MainContentComponent, you'll want to then establish a "separate" connection object for each synth object, because each one will be calling Synth functions directly to upload/download information.
+
+Send/Receive Functions
+	-I'm hoping you already know about sendMessage() and messageReceived(), the InterprocessConnection functions, and that JUCE automatically calls messageReceived() when it receives a message.
+	-You'll want to have those functions call or be called by functions in Synth. Specifically, Synth::sliderValueChanged() can call sendMessage(), and Synth::updateSettings() as well as Synth::updateADSR() can be called by messageReceived().
+	-You don't actually have to know more than that to get a connection working, but what follows is details on the variables in the Synth and ADSR classes that will be network-ified, so that you have an easy time figuring out the data structure of the packet(s).
+
+Synth class: relevant variables and functions
+    struct Settings {
+        float A4Frequency;
+        Oscillator::WaveType wave;
+        float level;
+        float pan;
+    };
+	-These are the basic settings of each synth. They're all self-explanatory besides WaveType.
+	-WaveType is an enum that Malcom defined in Oscillator.h:
+		enum WaveType {sine, square, triangle, sawtooth, noise};
+	-(Speaking of, Oscillator.h/cpp might be code we want to dive into when we're optimizing the networking to be as fast as possible, but that sort of optimization is so low priority it probably won't even happen on the MVP, so don't worry about it for now.)
+
+ADSR class: relevant variables and functions
+	-It's actually only relevant functions, because the variables are all private, and said functions are pretty self-explanatory:
+    float getStartPoint();
+    Point<float> getAttack();
+    Point<float> getDecay();
+    Point<float> getSustain();
+    Point<float> getRelease();
+    void setAttack (Point<float> point, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
+    void setAttack (int x, int y, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
+    void setAttackX (int x, Slider* sliderX = nullptr);
+    void setAttackY (int y, Slider* sliderY = nullptr);
+    void setDecay (Point<float> point, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
+    void setDecay (int x, int y, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
+    void setDecayX (int x, Slider* sliderX = nullptr);
+    void setDecayY (int y, Slider* sliderY = nullptr);
+    void setSustain (Point<float> point, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
+    void setSustain (int x, int y, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
+    void setSustainX (int x, Slider* sliderX = nullptr);
+    void setSustainY (int y, Slider* sliderY = nullptr);
+    void setReleaseX (float x, Slider* sliderX = nullptr);
+    void setReleaseX (Point<float> point, Slider* sliderX = nullptr);
+
+Future Worries:
+	-I think MainContentComponent's handleNoteOn(), handleNoteOff(), and handleIncomingMidiMessage() might become relevant to the networking code if/when we add support for sending MIDI events to the 2nd oscillator, which we don't yet.
+	-There are some features that aren't implemented yet, that will have to be incorporated into the network code when they are. The only vital one that we're definitely going to add is the filter. That will just be 2 knobs (Cutoff and Resonance) with a drop-down menu deciding whether it's a low-, high-, or band-pass. In other words, 2 floats and an enum, probably inside their own Filter class.
+
+KEEP IN MIND WHILE TESTING: The Sustain and Release knobs currently refuse to be updated visually, and the Release knob can't even be manipulated. The underlying ADSR values are working as intended, as can be seen with std::cout. It might be a bug in JUCE with knobs whose ranges depend on each others' values.

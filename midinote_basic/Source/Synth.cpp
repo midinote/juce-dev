@@ -141,16 +141,22 @@ void ADSR::setSustainY (int y, Slider* sliderY)
     setSustain (Point<float> (sustain.getX(), static_cast<float> (y)), nullptr, sliderY);
 }
 
-void ADSR::setReleaseX (Point<float> point, Slider* sliderX)
+void ADSR::setReleaseX (float x, Slider* sliderX)
 {
-    endPointMS = point.getX();
-    if (sliderX != nullptr) sliderX->setValue (point.getX());
+    endPointMS = x;
+    if (sliderX != nullptr) sliderX->setValue (x);
     redraw();
 }
+void ADSR::setReleaseX (Point<float> point, Slider* sliderX)
+{
+    setReleaseX (point.getX(), sliderX);
+}
+/* this one causes ambiguous overload
 void ADSR::setReleaseX (int x, Slider* sliderX)
 {
-    setReleaseX (Point<float> (static_cast<float> (x), 0.0), sliderX);
+    setReleaseX (static_cast<float> (x), sliderX);
 }
+*/
 
 void ADSR::resized()
 {
@@ -247,7 +253,7 @@ Synth::Synth()
     addAndMakeVisible (releaseSliderX);
     releaseSliderX.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     releaseSliderX.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
-    updateADSR();
+    updateADSRKnobs();
 
     attackSliderX.addListener(this);
 
@@ -417,10 +423,19 @@ void Synth::sliderValueChanged(Slider* slider)
         envelopeADSR.setReleaseX (slider->getValue());
         ADSRchanged = true;
     }
-    if (ADSRchanged) updateADSR();
+    if (ADSRchanged) updateADSRKnobs();
 }
 
-void Synth::updateADSR()
+void Synth::updateADSR (Point<float> attack, Point<float> decay, Point<float> sustain, float release)
+{
+    envelopeADSR.setAttack (attack, &attackSliderX, &attackSliderY);
+    envelopeADSR.setDecay (decay, &decaySliderX, &decaySliderY);
+    envelopeADSR.setSustain (sustain, &sustainSliderX, &sustainSliderY);
+    envelopeADSR.setReleaseX (release, &releaseSliderX);
+    updateADSRKnobs();
+}
+
+void Synth::updateADSRKnobs()
 {
     attackSliderX.setRange  (envelopeADSR.getStartPoint(),
                              envelopeADSR.getDecay().getX() - 1.0,

@@ -49,8 +49,9 @@ public:
     void setSustain (int x, int y, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
     void setSustainX (int x, Slider* sliderX = nullptr);
     void setSustainY (int y, Slider* sliderY = nullptr);
+    void setReleaseX (float x, Slider* sliderX = nullptr);
     void setReleaseX (Point<float> point, Slider* sliderX = nullptr);
-    void setReleaseX (int x, Slider* sliderX = nullptr);
+    //void setReleaseX (int x, Slider* sliderX = nullptr); this one causes ambiguous overload
 
     void resized() override;
 
@@ -92,11 +93,13 @@ public:
 
     void paint (Graphics&) override;
     void resized() override;
-    void sliderValueChanged(Slider*) override;
+    void sliderValueChanged (Slider*) override;
 
-    void updateADSR();
-    void updateSettings(Settings newSettings);
-    void updateSettings(float A4Frequency, Oscillator::WaveType wave, float level, float pan);
+    void updateADSR (Point<float> attack, Point<float> decay, Point<float> sustain, float release);
+    void updateADSRKnobs();
+
+    void updateSettings (Settings newSettings);
+    void updateSettings (float A4Frequency, Oscillator::WaveType wave, float level, float pan);
     Settings* getSettings();
 
     Slider frequencySlider;
