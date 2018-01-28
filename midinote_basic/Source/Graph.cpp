@@ -93,8 +93,7 @@ void Graph::paint (Graphics& g)
         Rectangle<float> sizeOfGraph = path.getBounds();
         float smallestBound = smallerNumber (sizeOfGraph.getWidth(), sizeOfGraph.getHeight());
         float cornerRadius = smallestBound / 20.0;
-        path.lineTo (endPoint + static_cast<float> (area.getX()),
-                     static_cast<float> (area.getHeight()));
+        path.lineTo (endPoint, static_cast<float> (area.getHeight()));
         auto fill = path.createPathWithRoundedCorners (cornerRadius);
         // don't worry, it's better if the bottom points aren't rounded
         fill.closeSubPath();
