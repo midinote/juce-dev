@@ -329,7 +329,7 @@ Synth::Synth()
     releaseLabelX.attachToComponent(&releaseSliderX, false);
 
     updateSettings(frequencySlider.getValue(),
-                   static_cast<Oscillator::WaveType> (floorf(waveSlider.getValue())),
+                   static_cast<Oscillator::WaveType> (static_cast<int>(floorf(waveSlider.getValue()))),
                    dBToVolume(levelSlider.getValue()),
                    panSlider.getValue());
 }
@@ -363,7 +363,7 @@ void Synth::addNote (MidiMessage message)
 
     Oscillator osc (frequencySlider.getValue(),
                     dBToVolume (levelSlider.getValue()),
-                    static_cast<Oscillator::WaveType> (floorf(waveSlider.getValue())));
+                    static_cast<Oscillator::WaveType> (static_cast<int>(floorf(waveSlider.getValue()))));
     std::pair<MidiMessage, Oscillator> val (message, osc);
     int key = message.getNoteNumber();
     currentNotes.insert (std::pair<int, std::pair<MidiMessage, Oscillator>> (key, val));

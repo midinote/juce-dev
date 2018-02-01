@@ -47,8 +47,15 @@ void MenuComponent::resized()
 MainContentComponent::MainContentComponent()
 :   lastInputIndex (0),
     isAddingFromMidiInput (false),
-    noteOn(false)
+    noteOn(false),
+	globalState(ValueTree("global_state")),
+	connection(globalState)
 {
+
+	//Default Address to use (127.0.0.1 for localhost)
+	std::string address = "127.0.0.1";
+	std::cout << "attempt_connection to " << address << ": " << connection.connectToSocket(address, PORT, TIMEOUT) << "\n";
+
     addAndMakeVisible(headerMenu);
 
     addAndMakeVisible(midiEditor);
