@@ -13,7 +13,7 @@
 /*
  Oscillator class implementation
  */
-Oscillator::Oscillator(float freq, float lev, WaveType waveType)
+Oscillator::Oscillator(float freq, float lev, WaveType waveType, ADSR* _envelope)
 :   currentAngle (0.0),
     angleDelta (0.0),
     currentSampleSize (0.0)
@@ -21,6 +21,9 @@ Oscillator::Oscillator(float freq, float lev, WaveType waveType)
     wave = waveType;
     frequencyA4 = freq;
     level = lev;
+    this->envelope = _envelope;
+    if (envelope != nullptr) hasEnvelope = true;
+    else hasEnvelope = false;
 }
 
 float Oscillator::oscillate (double sampleRate, double frequency)

@@ -10,7 +10,6 @@ top bar will have menu items like:
 less wide slider so its obvs an on/off switch
 
 ADSR:
--separate into new file & test including & using that in Oscillator.cpp
 -redo ADSR to be attack time, decay time, sustain volume, that's it
 -make lines between points curve in the standard ADSR way (see mockup v2)
 -make it logarithmic
