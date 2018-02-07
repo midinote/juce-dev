@@ -1,3 +1,5 @@
+-a single filter that can be low-, high-, or band-pass, with Cutoff and Resonance
+
 top bar will have menu items like:
 -midi light showing midi device connected, and a light showing midi events
 -midi panic button (exclamation point)
@@ -8,19 +10,17 @@ top bar will have menu items like:
 less wide slider so its obvs an on/off switch
 
 ADSR:
+-separate into new file & test including & using that in Oscillator.cpp
+-redo ADSR to be attack time, decay time, sustain volume, that's it
 -make lines between points curve in the standard ADSR way (see mockup v2)
--5 buttons next to envelope for the wave types: sin, square/pulse, triangle, sawtooth, noise
--envelope (amplitude) AND filter (frequency) as 2 ADSRs
 -make it logarithmic
--have A, D, S, R in 4 separate graphs, with a dial for how long each of the 4 is (up to a minute or more) without that changing the actual graphical size of the graph
+-have A, D, S, R in 4 separate graphs?, with a dial for how long each of the 4 is (up to a minute or more) without that changing the actual graphical size of the graph
 
 LFO:
 -depth
 -rate (frequency), decided by a clickable display box for each BPM and Hz (click one to choose what the knob does)
 
 Replace 2 graphs with a global one
-
-No more filter drop-down; just a single filter that can be low-, high-, or band-pass, with Cutoff and Resonance
 
 add top right profile pics
 
@@ -32,10 +32,12 @@ when in doubt, model it after xfer
 FIX:
 -segfault on exit
 -Release value can be moved beyond bounds of graph
+-renaming wavetype buttons' labels to just 2 characters (if window gets too small) can't be done because of a weird error--see comments in RadialButtons::paint()
 -resize limits aren't actually doing anything (at least on linux)
 -midi "inputs" looks for outputs on linux
 
 AUDIO TODO:
+-integrate ADSR & filter with synth in the backend
 -have on/off switch be between midi device and in-window keyboard
 -making 2nd osc functional is low priority
 -F#5 was very quiet after attack once (can't reproduce)

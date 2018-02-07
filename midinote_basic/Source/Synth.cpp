@@ -185,7 +185,9 @@ void ADSR::resized()
 Synth::Synth()
 :   waveType(Oscillator::sine),
     labelFont(Font (12)),
-    labelJustification(Justification::centredTop)
+    labelJustification(Justification::centredTop),
+    waveButtons (Oscillator::sine, 5, Font (12), Justification::centredLeft,
+                 { "Sine", "Square", "Triangle", "Sawtooth", "Noise" })
 {
     addAndMakeVisible (frequencySlider);
     frequencySlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
@@ -228,18 +230,14 @@ Synth::Synth()
     panLabel.setJustificationType(labelJustification);
     panLabel.attachToComponent(&panSlider, false);
 
-    addAndMakeVisible (waveSlider);
-    waveSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    waveSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
-    waveSlider.setRange (0.0, 5.0);
-    waveSlider.setValue(0.0);
-    waveSlider.addListener(this);
+    addAndMakeVisible (waveButtons);
+    waveButtons.addListenerToButtons (this);
 
     addAndMakeVisible(waveLabel);
-    waveLabel.setText("Wave", dontSendNotification);
+    waveLabel.setText("Wavetype", dontSendNotification);
     waveLabel.setFont(labelFont);
     waveLabel.setJustificationType(labelJustification);
-    waveLabel.attachToComponent(&waveSlider, false);
+    waveLabel.attachToComponent(&waveButtons, false);
 
     addAndMakeVisible (envelopeMenu);
     envelopeMenu.addItem("Envelope", 1);
@@ -329,7 +327,7 @@ Synth::Synth()
     releaseLabelX.attachToComponent(&releaseSliderX, false);
 
     updateSettings(frequencySlider.getValue(),
-                   static_cast<Oscillator::WaveType> (floorf(waveSlider.getValue())),
+                   static_cast<Oscillator::WaveType> (waveButtons.getValue()),
                    dBToVolume(levelSlider.getValue()),
                    panSlider.getValue());
 }
@@ -363,7 +361,7 @@ void Synth::addNote (MidiMessage message)
 
     Oscillator osc (frequencySlider.getValue(),
                     dBToVolume (levelSlider.getValue()),
-                    static_cast<Oscillator::WaveType> (floorf(waveSlider.getValue())));
+                    static_cast<Oscillator::WaveType> (waveButtons.getValue()));
     std::pair<MidiMessage, Oscillator> val (message, osc);
     int key = message.getNoteNumber();
     currentNotes.insert (std::pair<int, std::pair<MidiMessage, Oscillator>> (key, val));
@@ -379,25 +377,27 @@ void Synth::removeNote (MidiMessage message)
 void Synth::resized()
 {
     Rectangle<int> area = getBounds();
-    int topMargin = 4;
-    int topMarginKnob = 24;
-    int knobHeight = 60;
-    int knobWidth = 60;
-    int vBorder = 50;
-    int border = 5;
-    int graphHeight = (vBorder / 2 + knobHeight) * 2 - topMarginKnob - knobHeight;
-    int graphWidth = area.getWidth() - (border * 4 + knobWidth * 2);
+    const int topMargin = 4;
+    const int topMarginKnob = 24;
+    const int knobHeight = 60;
+    const int knobWidth = 60;
+    const int vBorder = 50;
+    const int border = 5;
+    const int graphHeight = (vBorder / 2 + knobHeight) * 2 - topMarginKnob - knobHeight;
+    const int graphWidth = area.getWidth() - (border * 4 + knobWidth * 2);
     frequencySlider.setBounds (border, topMarginKnob, knobWidth, knobHeight);
     levelSlider.setBounds (border * 2 + knobWidth, topMarginKnob, knobWidth, knobHeight);
-    panSlider.setBounds(border, vBorder + knobHeight + topMarginKnob, knobWidth, knobHeight);
-    waveSlider.setBounds (border * 2 + knobWidth, vBorder + knobHeight + topMarginKnob, knobWidth, knobHeight);
-    int leftSlidersWidth = border * 3 + knobWidth * 2;
+    panSlider.setBounds (border * 3 + knobWidth * 2, topMarginKnob, knobWidth, knobHeight);
+    const int leftSlidersHeight = vBorder + border + knobHeight;
+    waveButtons.setBounds (border, leftSlidersHeight, knobWidth * 3 + border * 2,
+                           area.getHeight() - leftSlidersHeight - border);
+    const int leftSlidersWidth = border * 4 + knobWidth * 3;
     envelopeMenu.setBounds (leftSlidersWidth, topMargin, 250, 16);
     envelopeADSR.setBounds (leftSlidersWidth, topMarginKnob, graphWidth, graphHeight);
-    // center justification
-    int envelopeKnobs = 7;
-    int betweenMargin = knobWidth / 2;
-    int sideMargin = (graphWidth - (envelopeKnobs * (knobWidth + border)))
+    // center justification of ADSR knobs
+    const int envelopeKnobs = 7;
+    const int betweenMargin = knobWidth / 2;
+    const int sideMargin = (graphWidth - (envelopeKnobs * (knobWidth + border)))
                    / 2 - (betweenMargin * (envelopeKnobs / 2));
     attackSliderY.setBounds  (leftSlidersWidth + sideMargin + border * 1 + knobWidth * 0
                               + betweenMargin * 0, graphHeight + vBorder, knobWidth, knobHeight);
@@ -441,6 +441,12 @@ void Synth::sliderValueChanged(Slider* slider)
         ADSRchanged = true;
     }
     if (ADSRchanged) updateADSRKnobs();
+}
+
+void Synth::buttonClicked (Button* button)
+{
+    if (waveButtons.contains (button))
+        settings.wave = static_cast<Oscillator::WaveType> (waveButtons.clicked (button));
 }
 
 void Synth::updateADSR (Point<float> attack, Point<float> decay, Point<float> sustain, float release)
@@ -513,7 +519,7 @@ void Synth::updateSettings(float A4Frequency, Oscillator::WaveType wave, float l
 void Synth::updateKnobs()
 {
     frequencySlider.setValue(settings.A4Frequency);
-    waveSlider.setValue(static_cast<float>(settings.wave));
+    waveButtons.setValue(settings.wave);
     levelSlider.setValue(settings.level);
     panSlider.setValue(settings.pan);
 }

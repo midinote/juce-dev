@@ -66,11 +66,9 @@ MainContentComponent::MainContentComponent()
     osc1.panSlider.addListener(this);
     osc1.frequencySlider.addListener(this);
     osc1.levelSlider.addListener(this);
-    osc1.waveSlider.addListener(this);
     osc2.panSlider.addListener(this);
     osc2.frequencySlider.addListener(this);
     osc2.levelSlider.addListener(this);
-    osc2.waveSlider.addListener(this);
 
 
     for (int i; i < midiInputs.size(); ++i)

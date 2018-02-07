@@ -17,6 +17,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Oscillator.h"
 #include "Graph.h"
+#include "RadialButtons.h"
 
 //==============================================================================
 /*
@@ -74,7 +75,8 @@ private:
 };
 
 class Synth    : public Component,
-                 public Slider::Listener
+                 public Slider::Listener,
+                 public Button::Listener
 {
 public:
     struct Settings {
@@ -93,7 +95,9 @@ public:
 
     void paint (Graphics&) override;
     void resized() override;
+
     void sliderValueChanged (Slider*) override;
+    void buttonClicked (Button* button) override;
 
     void updateADSR (Point<float> attack, Point<float> decay, Point<float> sustain, float release);
     void updateADSRKnobs();
@@ -108,7 +112,7 @@ public:
     Label levelLabel;
     Slider panSlider;
     Label panLabel;
-    Slider waveSlider;
+    RadialButtons waveButtons;
     Label waveLabel;
 
     ComboBox envelopeMenu;
