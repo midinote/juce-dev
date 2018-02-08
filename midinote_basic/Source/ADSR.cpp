@@ -13,13 +13,14 @@
 ADSR::ADSR (Colour backgroundColour, Colour colour) : Graph(backgroundColour, colour)
 {
     // defaults
-    maxMS = 10000;
-    maxdB = 60;
+    maxMS = 2000;
+    maxdB = 100;
     startPointMS = 0;
-    setAttack (1000, 50);
-    setDecay (1500, 30);
-    setSustain (6000, 30);
-    setReleaseX (6500); // this sets endPointMS
+    sustainLength = 200.0; // how much X distance between decay & sustain points on graph
+    setAttack (Point<float> (100.0, static_cast<float> (maxdB)));
+    setDecay (Point<float> (400.0, static_cast<float> (maxdB / 2)));
+    setSustain (Point<float> (getDecay() + sustainLength, static_cast<float> (maxdB / 2)));
+    setRelease (1200.0); // this sets endPointMS
 }
 
 ADSR::~ADSR()
@@ -39,22 +40,41 @@ int ADSR::getMaxdB()
     return maxdB;
 }
 
-Point<float> ADSR::getAttack()
+float ADSR::getAttack()
+{
+    return attack.getX();
+}
+Point<float> ADSR::getAttackGraph()
 {
     return attack;
 }
-Point<float> ADSR::getDecay()
+
+float ADSR::getDecay()
+{
+    return decay.getX();
+}
+Point<float> ADSR::getDecayGraph()
 {
     //auto adjustedPoint = Point<float> (decay.getX() + attack.getX(), decay.getY());
     return decay;
 }
-Point<float> ADSR::getSustain()
+
+float ADSR::getSustain()
+{
+    return sustain.getY();
+}
+Point<float> ADSR::getSustainGraph()
 {
     //auto adjustedPoint = Point<float> (sustain.getX() + decay.getX() + attack.getX(),
     //                                   decay.getY());
     return sustain;
 }
-Point<float> ADSR::getRelease()
+
+float ADSR::getRelease()
+{
+    return endPointMS;
+}
+Point<float> ADSR::getReleaseGraph()
 {
     //return Point<float> (endPointMS + sustain.getX() + decay.getX() + attack.getX(), 0.0);
     return Point<float> (endPointMS, 0.0);
@@ -69,12 +89,12 @@ void ADSR::redraw()
     float Xmult = static_cast<float> (area.getWidth()) / static_cast<float> (maxMS);
     float Ymult = static_cast<float> (area.getHeight()) / static_cast<float> (maxdB);
     startPoint = startPointMS * Xmult;
-    endPoint = getRelease().getX() * Xmult;
-    auto attackPoint = Point<float> (getAttack().getX() * Xmult,
+    endPoint = getReleaseGraph().getX() * Xmult;
+    auto attackPoint = Point<float> (getAttackGraph().getX() * Xmult,
                                      static_cast<float> (area.getHeight()) - attack.getY() * Ymult);
-    auto decayPoint = Point<float> (getDecay().getX() * Xmult,
+    auto decayPoint = Point<float> (getDecayGraph().getX() * Xmult,
                                     static_cast<float> (area.getHeight()) - decay.getY() * Ymult);
-    auto sustainPoint = Point<float> (getSustain().getX() * Xmult,
+    auto sustainPoint = Point<float> (getSustainGraph().getX() * Xmult,
                                       static_cast<float> (area.getHeight()) - sustain.getY() * Ymult);
     addPoint (attackPoint);
     addPoint (decayPoint);
@@ -89,21 +109,13 @@ void ADSR::setAttack (Point<float> point, Slider* sliderX, Slider* sliderY)
     //decay.setX (decay.getX() + diff);
     //sustain.setX (sustain.getX() + diff);
     //endPointMS += diff;
-    if (sliderX != nullptr) sliderX->setValue (getAttack().getX());
-    if (sliderY != nullptr) sliderY->setValue (getAttack().getY());
+    if (sliderX != nullptr) sliderX->setValue (getAttackGraph().getX());
+    if (sliderY != nullptr) sliderY->setValue (getAttackGraph().getY());
     redraw();
 }
-void ADSR::setAttack (int x, int y, Slider* sliderX, Slider* sliderY)
+void ADSR::setAttack (float MS, Slider* sliderX)
 {
-    setAttack (Point<float> (static_cast<float> (x), static_cast<float> (y)), sliderX, sliderY);
-}
-void ADSR::setAttackX (int x, Slider* sliderX)
-{
-    setAttack (Point<float> (static_cast<float> (x), attack.getY()), sliderX, nullptr);
-}
-void ADSR::setAttackY (int y, Slider* sliderY)
-{
-    setAttack (Point<float> (attack.getX(), static_cast<float> (y)), nullptr, sliderY);
+    setAttack (Point<float> (MS, getAttackGraph().getY()), sliderX, nullptr);
 }
 
 void ADSR::setDecay (Point<float> point, Slider* sliderX, Slider* sliderY)
@@ -113,21 +125,16 @@ void ADSR::setDecay (Point<float> point, Slider* sliderX, Slider* sliderY)
     decay = point;
     //sustain.setX (sustain.getX() + diff);
     //endPointMS += diff;
-    if (sliderX != nullptr) sliderX->setValue (getDecay().getX());
-    if (sliderY != nullptr) sliderY->setValue (getDecay().getY());
+    if (sliderX != nullptr) sliderX->setValue (getDecayGraph().getX());
+    if (sliderY != nullptr) sliderY->setValue (getDecayGraph().getY());
     redraw();
 }
-void ADSR::setDecay (int x, int y, Slider* sliderX, Slider* sliderY)
+void ADSR::setDecay (float MS, Slider* sliderX)
 {
-    setDecay (Point<float> (static_cast<float> (x), static_cast<float> (y)), sliderX, sliderY);
-}
-void ADSR::setDecayX (int x, Slider* sliderX)
-{
-    setDecay (Point<float> (static_cast<float> (x), decay.getY()), sliderX, nullptr);
-}
-void ADSR::setDecayY (int y, Slider* sliderY)
-{
-    setDecay (Point<float> (decay.getX(), static_cast<float> (y)), nullptr, sliderY);
+    float differenceMS = MS - getDecayGraph().getX();
+    setDecay (Point<float> (MS, getDecayGraph().getY()), sliderX, nullptr);
+    setSustain (Point<float> (MS + sustainLength, getSustainGraph().getY()), nullptr, nullptr);
+    setRelease (getRelease() + differenceMS, nullptr);
 }
 
 void ADSR::setSustain (Point<float> point, Slider* sliderX, Slider* sliderY)
@@ -137,40 +144,27 @@ void ADSR::setSustain (Point<float> point, Slider* sliderX, Slider* sliderY)
     //                                   point.getY());
     sustain = point;
     //endPointMS += diff;
-    if (sliderX != nullptr) sliderX->setValue (getSustain().getX());
-    if (sliderY != nullptr) sliderY->setValue (getSustain().getY());
+    if (sliderX != nullptr) sliderX->setValue (getSustainGraph().getX());
+    if (sliderY != nullptr) sliderY->setValue (getSustainGraph().getY());
     redraw();
 }
-void ADSR::setSustain (int x, int y, Slider* sliderX, Slider* sliderY)
+void ADSR::setSustain (float dB, Slider* sliderY)
 {
-    setSustain (Point<float> (static_cast<float> (x), static_cast<float> (y)), sliderX, sliderY);
-}
-void ADSR::setSustainX (int x, Slider* sliderX)
-{
-    setSustain (Point<float> (static_cast<float> (x), sustain.getY()), sliderX, nullptr);
-}
-void ADSR::setSustainY (int y, Slider* sliderY)
-{
-    setSustain (Point<float> (sustain.getX(), static_cast<float> (y)), nullptr, sliderY);
+    setSustain (Point<float> (getSustainGraph().getX(), dB), nullptr, sliderY);
+    setDecay (Point<float> (getDecayGraph().getX(), dB), nullptr, nullptr);
 }
 
-void ADSR::setReleaseX (float x, Slider* sliderX)
+void ADSR::setRelease (Point<float> point, Slider* sliderX)
+{
+    setRelease (point.getX(), sliderX);
+}
+void ADSR::setRelease (float MS, Slider* sliderX)
 {
     //endPointMS = x - sustain.getX() - decay.getX() - attack.getX();
-    endPointMS = x;
-    if (sliderX != nullptr) sliderX->setValue (getRelease().getX());
+    endPointMS = MS;
+    if (sliderX != nullptr) sliderX->setValue (getReleaseGraph().getX());
     redraw();
 }
-void ADSR::setReleaseX (Point<float> point, Slider* sliderX)
-{
-    setReleaseX (point.getX(), sliderX);
-}
-/* this one causes ambiguous overload
-void ADSR::setReleaseX (int x, Slider* sliderX)
-{
-    setReleaseX (static_cast<float> (x), sliderX);
-}
-*/
 
 void ADSR::resized()
 {

@@ -10,7 +10,6 @@ top bar will have menu items like:
 less wide slider so its obvs an on/off switch
 
 ADSR:
--redo ADSR to be attack time, decay time, sustain volume, that's it
 -make lines between points curve in the standard ADSR way (see mockup v2)
 -make it logarithmic
 -have A, D, S, R in 4 separate graphs?, with a dial for how long each of the 4 is (up to a minute or more) without that changing the actual graphical size of the graph

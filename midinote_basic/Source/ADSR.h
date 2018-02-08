@@ -27,27 +27,23 @@ public:
     float getStartPoint();
     int getMaxMS();
     int getMaxdB();
-    Point<float> getAttack();
-    Point<float> getDecay();
-    Point<float> getSustain();
-    Point<float> getRelease();
+    float getAttack();
+    Point<float> getAttackGraph();
+    float getDecay();
+    Point<float> getDecayGraph();
+    float getSustain();
+    Point<float> getSustainGraph();
+    float getRelease();
+    Point<float> getReleaseGraph();
     // their sliders can also be updated along with the graph if passed in
     void setAttack (Point<float> point, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
-    void setAttack (int x, int y, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
-    void setAttackX (int x, Slider* sliderX = nullptr);
-    void setAttackY (int y, Slider* sliderY = nullptr);
+    void setAttack (float MS, Slider* sliderX = nullptr);
     void setDecay (Point<float> point, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
-    void setDecay (int x, int y, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
-    void setDecayX (int x, Slider* sliderX = nullptr);
-    void setDecayY (int y, Slider* sliderY = nullptr);
+    void setDecay (float MS, Slider* sliderX = nullptr);
     void setSustain (Point<float> point, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
-    void setSustain (int x, int y, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
-    void setSustainX (int x, Slider* sliderX = nullptr);
-    void setSustainY (int y, Slider* sliderY = nullptr);
-    void setReleaseX (float x, Slider* sliderX = nullptr);
-    void setReleaseX (Point<float> point, Slider* sliderX = nullptr);
-    //void setReleaseX (int x, Slider* sliderX = nullptr); this one causes ambiguous overload
-
+    void setSustain (float dB, Slider* sliderY = nullptr);
+    void setRelease (Point<float> point, Slider* sliderX = nullptr);
+    void setRelease (float MS, Slider* sliderX = nullptr);
     void resized() override;
 
 private:
@@ -62,6 +58,7 @@ private:
     Point<float> decay;
     Point<float> sustain;
     // release (x,y) is just the endpoint and the bottom of the graph
+    float sustainLength;
 
     void redraw(); // needed because a path has to be redrawn to insert
                    // a point between two other points

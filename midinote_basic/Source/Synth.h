@@ -66,20 +66,14 @@ public:
 
     ComboBox envelopeMenu;
     ADSR envelopeADSR;
-    Slider attackSliderX;
-    Label attackLabelX;
-    Slider attackSliderY;
-    Label attackLabelY;
-    Slider decaySliderX;
-    Label decayLabelX;
-    Slider decaySliderY;
-    Label decayLabelY;
-    Slider sustainSliderX;
-    Label sustainLabelX;
-    Slider sustainSliderY;
-    Label sustainLabelY;
-    Slider releaseSliderX;
-    Label releaseLabelX;
+    Slider attackSlider;
+    Label attackLabel;
+    Slider decaySlider;
+    Label decayLabel;
+    Slider sustainSlider;
+    Label sustainLabel;
+    Slider releaseSlider;
+    Label releaseLabel;
 
 private:
     Settings settings;
