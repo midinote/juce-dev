@@ -14,6 +14,7 @@ Author:  ValentinoAbate (vabate@ucsc.edu)
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include <iostream>
+#include <type_traits>
 
 #define PORT 9001
 #define TIMEOUT 100 // miliseconds
@@ -71,6 +72,24 @@ public:
 protected:
 	//Base ID
 	Identifier id;
+	//Helper functions for defining updateTree and updateValues//
+	//Add one value to the tree. templated, but only works with values where juce::val(T) is defined
+	template<typename Value>
+	void addValue(ValueTree& t, Value v, const std::string& name, UndoManager* undo = nullptr)
+	{
+		t.setProperty(id + "_" + name, var(v), undo);
+	}
+	//Get one value from the tree. templated, but only works with values where juce::val(T) is defined
+	template<typename Value, typename std::enable_if<!std::is_enum<Value>::value>::type* = nullptr>
+	void setValue(ValueTree& t, Value& v, const std::string& name)
+	{
+		v = static_cast<Value>(t.getProperty(id + "_" + name));
+	}
+	template<typename E, typename std::enable_if<std::is_enum<E>::value>::type* = nullptr>
+	void setValue(ValueTree& t, E& v, const std::string& name)
+	{
+		v = static_cast<E>(static_cast<typename std::underlying_type<E>::type>(t.getProperty(id + "_" + name)));
+	}
 };
 
 //Network Classes//-----------------------------------------------------------------------------------------------------------------------------------------//
@@ -128,4 +147,3 @@ private:
 //void scanNetwork(NetworkClient* client, NetworkServer* server);
 
 #endif  // NETWORK_H_INCLUDED
-

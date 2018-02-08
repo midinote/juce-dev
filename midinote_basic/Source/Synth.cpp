@@ -520,19 +520,22 @@ void Synth::updateKnobs()
 
 void Synth::updateTree(ValueTree & t)
 {
-	t.setProperty(id, var(frequencySlider.getValue()), nullptr);
-	t.setProperty(id + "_1", var(waveSlider.getValue()), nullptr);
-	t.setProperty(id + "_2", var(levelSlider.getValue()), nullptr);
-	t.setProperty(id + "_3", var(panSlider.getValue()), nullptr);
-
+	addValue(t, frequencySlider.getValue(), "a4freq");
+	addValue(t, waveSlider.getValue(), "wave");
+	addValue(t, levelSlider.getValue(), "level");
+	addValue(t, panSlider.getValue(), "pan");
+	//t.setProperty(id, var(frequencySlider.getValue()), nullptr);
+	//t.setProperty(id + "_1", var(waveSlider.getValue()), nullptr);
+	//t.setProperty(id + "_2", var(levelSlider.getValue()), nullptr);
+	//t.setProperty(id + "_3", var(panSlider.getValue()), nullptr);
 }
 
 void Synth::updateValues(ValueTree & t)
 {
-	settings.A4Frequency = static_cast<float>(t[id]);
-	settings.wave = static_cast<Oscillator::WaveType>(static_cast<int>(t[id + "_1"]));
-	settings.level = static_cast<float>(t[id + "_2"]);
-	settings.pan = static_cast<float>(t[id + "_3"]);
+	setValue(t, settings.A4Frequency, "a4freq");
+	setValue(t, settings.wave, "wave");
+	setValue(t, settings.level, "level");
+	setValue(t, settings.pan, "pan");
 	updateKnobs();
 }
 
