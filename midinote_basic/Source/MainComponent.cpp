@@ -55,6 +55,10 @@ MainContentComponent::MainContentComponent()
 	//Default Address to use (127.0.0.1 for localhost)
 	std::string address = "127.0.0.1";
 	std::cout << "attempt_connection to " << address << ": " << connection.connectToSocket(address, PORT, TIMEOUT) << "\n";
+	osc1.setID("osc1");
+	globalState.registerObject(osc1);
+	osc2.setID("osc2");
+	globalState.registerObject(osc2);
 
     addAndMakeVisible(headerMenu);
 
@@ -147,6 +151,7 @@ void MainContentComponent::handleNoteOn(MidiKeyboardState* state,
                                         float velocity)
 {
     osc1.addNote (MidiMessage::noteOn (midiChannel, midiNoteNumber, velocity));
+	globalState.transmit(connection);
 }
 
 void MainContentComponent::handleNoteOff(MidiKeyboardState* state,

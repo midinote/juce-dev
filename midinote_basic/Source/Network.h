@@ -29,10 +29,8 @@ ValueTree memoryBlockToValueTree(const MemoryBlock& mb);
 MemoryBlock valueTreeToMemoryBlock(const ValueTree& v);
 String valueTreeToString(const ValueTree& v);
 
-//Aplication State Interfaces//-----------------------------------------------------------------------------------------------------------------------------//
+//Aplication State Classes//--------------------------------------------------------------------------------------------------------------------------------//
 
-//TODO:
-//make serialization be sepereate valueTree nodes and make serialization use juce::values wit valuetree::getPropertyAsValue to make everything auto-link
 
 class NetworkClient;
 class Transmittable;
@@ -62,15 +60,20 @@ private:
 class Transmittable
 {
 public:
+	friend class State;
 	//Build a Valuetree consisting of all values meant to be transmitted
 	virtual void updateTree(ValueTree& t) = 0;
 	//Set transmittable values from given ValueTree
 	virtual void updateValues(ValueTree& t) = 0;
+
+	inline Identifier getID() const { return id; }
+	inline void setID(const Identifier i) { id = i; }
+protected:
 	//Base ID
-	Identifier id = nullptr;
+	Identifier id;
 };
 
-//Network Classes//----------------------------------------------------------------------------------------------------------------------------------------//
+//Network Classes//-----------------------------------------------------------------------------------------------------------------------------------------//
 
 //Client side of the connection. also created server-side to handle incoming connections
 class NetworkClient : public InterprocessConnection
