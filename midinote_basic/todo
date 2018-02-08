@@ -1,4 +1,6 @@
 -a single filter that can be low-, high-, or band-pass, with Cutoff and Resonance
+-make sure State.transmission is called whenever anything changes
+-IP connect GUI interface
 
 top bar will have menu items like:
 -midi light showing midi device connected, and a light showing midi events
@@ -28,6 +30,8 @@ when in doubt, model it after xfer
 
 
 FIX:
+-network code has to get settings from slider.getValue() for some reason
+-dBToVolume() garbles that float for some reason (if it's negative)
 -segfault on exit
 -Release value can be moved beyond bounds of graph
 -renaming wavetype buttons' labels to just 2 characters (if window gets too small) can't be done because of a weird error--see comments in RadialButtons::paint()
