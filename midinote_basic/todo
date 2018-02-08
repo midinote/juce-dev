@@ -1,35 +1,4 @@
--a single filter that can be low-, high-, or band-pass, with Cutoff and Resonance
--make sure State.transmission is called whenever anything changes
--IP connect GUI interface
-
-top bar will have menu items like:
--midi light showing midi device connected, and a light showing midi events
--midi panic button (exclamation point)
--midi learn
--master volume knob with meter
--tempo (with tap button under it that you can just tap)
-
-less wide slider so its obvs an on/off switch
-
-ADSR:
--make lines between points curve in the standard ADSR way (see mockup v2)
--make it logarithmic
--have A, D, S, R in 4 separate graphs?, with a dial for how long each of the 4 is (up to a minute or more) without that changing the actual graphical size of the graph
-
-LFO:
--depth
--rate (frequency), decided by a clickable display box for each BPM and Hz (click one to choose what the knob does)
-
-Replace 2 graphs with a global one
-
-add top right profile pics
-
-decide whether menu toolbar should be one button (v2) or spread out (v1)
-
-when in doubt, model it after xfer
-
-
-FIX:
+BUGS:
 -network code has to get settings from slider.getValue() for some reason
 -dBToVolume() garbles that float for some reason (if it's negative)
 -segfault on exit
@@ -37,24 +6,44 @@ FIX:
 -renaming wavetype buttons' labels to just 2 characters (if window gets too small) can't be done because of a weird error--see comments in RadialButtons::paint()
 -resize limits aren't actually doing anything (at least on linux)
 -midi "inputs" looks for outputs on linux
-
-AUDIO TODO:
--integrate ADSR & filter with synth in the backend
--have on/off switch be between midi device and in-window keyboard
--making 2nd osc functional is low priority
 -F#5 was very quiet after attack once (can't reproduce)
 -A3 is set to 440, not A4
--crackling (by modifying envelope to have less harsh attack)
+
+GUI TOP PRIORITY:
+-a single filter that can be low-, high-, or band-pass, with Cutoff and Resonance
+-IP connect GUI interface
+-merge branches
+-make main component a listener of everything that calls globalState.transmit()
+-make each class inherit Transmittable & override the 2 virtual functions & add the right variables to them
+
+LESS PRIORITY:
+-master volume knob with meter
+-tempo (with tap button under it that you can just tap)
+-be able to mess with knobs while playing keyboard
+-midi light showing midi device connected, and a light showing midi events
+-midi panic button (exclamation point)
+-midi learn
+-make lines between points curve in the standard ADSR way (see mockup v2)
+-make ADSR logarithmic
+-have A, D, S, R in 4 separate graphs?, with a dial for how long each of the 4 is (up to a minute or more) without that changing the actual graphical size of the graph
+-replace 2 ADSR graphs with a global one for both synths?
+-LFO with depth & rate (frequency), decided by a clickable display box for each BPM and Hz (click one to choose what the knob does)
+-knobs: https://forum.juce.com/t/creating-custom-guis/8764
+
+AUDIO TOP PRIORITY:
+-crackle/pop issue--aliasing
+-integrate filter & ADSR with synth in the backend
+
+LESS PRIORITY:
+-have on/off switch be between midi device and in-window keyboard
+-make 2nd osc functional
 -3 visual oscillators (48 total voices)
 -2 routable LFOs that sync over network
 -LFO and square/pulse wave relationship not decided yet (Jesse's gonna ask David Kant)
 
-NETWORK TODO:
--establish 2-way connection
--application-level protocol converts raw data into synth data
--start with 1-way streaming of MIDI and state (master/slave)
--make MIDI and state independent, so one client can send MIDI while the other modulates
--then work out 2-way MIDI streaming
--finally, 2-way state streaming, which will probably need extra UI/UX work
+NETWORK TOP PRIORITY:
+-make update functions more modular so it passes less data at a time
 
-knobs: https://forum.juce.com/t/creating-custom-guis/8764
+LESS PRIORITY:
+-MIDI control syncing
+-locks
