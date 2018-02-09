@@ -15,6 +15,7 @@
 #include <mutex>
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "Network.h"
 #include "Oscillator.h"
 #include "ADSR.h"
 #include "RadialButtons.h"
@@ -25,7 +26,8 @@
 
 class Synth    : public Component,
                  public Slider::Listener,
-                 public Button::Listener
+                 public Button::Listener,
+				 public Transmittable
 {
 public:
     struct Settings {
@@ -54,6 +56,10 @@ public:
     void updateSettings (Settings newSettings);
     void updateSettings (float A4Frequency, Oscillator::WaveType wave, float level, float pan);
     Settings* getSettings();
+
+	// Inherited via Transmittable
+	virtual void updateTree(ValueTree & t) override;
+	virtual void updateValues(ValueTree & t) override;
 
     Slider frequencySlider;
     Label frequencyLabel;
@@ -89,6 +95,7 @@ private:
     Justification labelJustification;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Synth)
+
 };
 
 #endif  // SYNTH_H_INCLUDED

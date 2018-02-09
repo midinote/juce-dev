@@ -125,7 +125,7 @@ Synth::Synth()
     releaseLabel.attachToComponent(&releaseSlider, false);
 
     updateSettings(frequencySlider.getValue(),
-                   static_cast<Oscillator::WaveType> (waveButtons.getValue()),
+                   static_cast<Oscillator::WaveType> (static_cast<int>(waveButtons.getValue())),
                    dBToVolume(levelSlider.getValue()),
                    panSlider.getValue());
 }
@@ -159,7 +159,7 @@ void Synth::addNote (MidiMessage message)
 
     Oscillator osc (frequencySlider.getValue(),
                     dBToVolume (levelSlider.getValue()),
-                    static_cast<Oscillator::WaveType> (waveButtons.getValue()),
+                    static_cast<Oscillator::WaveType> (static_cast<int>(waveButtons.getValue())),
                     &envelopeADSR);
     std::pair<MidiMessage, Oscillator> val (message, osc);
     int key = message.getNoteNumber();
@@ -290,6 +290,27 @@ void Synth::updateKnobs()
     waveButtons.setValue(settings.wave);
     levelSlider.setValue(settings.level);
     panSlider.setValue(settings.pan);
+}
+
+void Synth::updateTree(ValueTree & t)
+{
+	addValue(t, frequencySlider.getValue(), "a4freq");
+	addValue(t, waveButtons.getValue(), "wave");
+	addValue(t, levelSlider.getValue(), "level");
+	addValue(t, panSlider.getValue(), "pan");
+	//t.setProperty(id, var(frequencySlider.getValue()), nullptr);
+	//t.setProperty(id + "_1", var(waveSlider.getValue()), nullptr);
+	//t.setProperty(id + "_2", var(levelSlider.getValue()), nullptr);
+	//t.setProperty(id + "_3", var(panSlider.getValue()), nullptr);
+}
+
+void Synth::updateValues(ValueTree & t)
+{
+	setValue(t, settings.A4Frequency, "a4freq");
+	setValue(t, settings.wave, "wave");
+	setValue(t, settings.level, "level");
+	setValue(t, settings.pan, "pan");
+	updateKnobs();
 }
 
 Synth::Settings* Synth::getSettings()

@@ -2,11 +2,13 @@
 
 <JUCERPROJECT id="DqKiZX" name="midinote_basic_synth" projectType="guiapp"
               version="1.0.0" bundleIdentifier="com.yourcompany.midinote_basic"
-              includeBinaryInAppConfig="1" jucerVersion="5.2.0" displaySplashScreen="0"
+              includeBinaryInAppConfig="1" jucerVersion="5.2.0" displaySplashScreen="1"
               reportAppUsage="1" splashScreenColour="Dark" cppLanguageStandard="14"
               companyCopyright="">
   <MAINGROUP id="jRKQcb" name="midinote_basic_synth">
     <GROUP id="{74527C40-4583-D851-BE95-156B1F115C9E}" name="Source">
+      <FILE id="TMKbiq" name="Network.cpp" compile="1" resource="0" file="Source/Network.cpp"/>
+      <FILE id="LS8keS" name="Network.h" compile="0" resource="0" file="Source/Network.h"/>
       <GROUP id="{0654C488-4958-0FA4-0452-9FDF4300E881}" name="SynthParts">
         <FILE id="XpEuPC" name="ADSR.cpp" compile="1" resource="0" file="Source/ADSR.cpp"/>
         <FILE id="yS9EEl" name="ADSR.h" compile="0" resource="0" file="Source/ADSR.h"/>
@@ -83,6 +85,32 @@
         <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
+    <VS2017 targetFolder="Builds/VisualStudio2017" windowsTargetPlatformVersion="10.0.16299.0">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
+                       linkTimeOptimisation="0" isDebug="1" optimisation="1" targetName="midinote_basic_synth"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
+                       linkTimeOptimisation="1" isDebug="0" optimisation="3" targetName="midinote_basic_synth"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_video" path="..\..\..\..\Desktop\JUCE\modules"/>
+        <MODULEPATH id="juce_opengl" path="..\..\..\..\Desktop\JUCE\modules"/>
+        <MODULEPATH id="juce_gui_extra" path="..\..\..\..\Desktop\JUCE\modules"/>
+        <MODULEPATH id="juce_gui_basics" path="..\..\..\..\Desktop\JUCE\modules"/>
+        <MODULEPATH id="juce_graphics" path="..\..\..\..\Desktop\JUCE\modules"/>
+        <MODULEPATH id="juce_events" path="..\..\..\..\Desktop\JUCE\modules"/>
+        <MODULEPATH id="juce_data_structures" path="..\..\..\..\Desktop\JUCE\modules"/>
+        <MODULEPATH id="juce_cryptography" path="..\..\..\..\Desktop\JUCE\modules"/>
+        <MODULEPATH id="juce_core" path="..\..\..\..\Desktop\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_utils" path="..\..\..\..\Desktop\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_processors" path="..\..\..\..\Desktop\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_formats" path="..\..\..\..\Desktop\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_devices" path="..\..\..\..\Desktop\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_basics" path="..\..\..\..\Desktop\JUCE\modules"/>
+      </MODULEPATHS>
+    </VS2017>
   </EXPORTFORMATS>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0"/>

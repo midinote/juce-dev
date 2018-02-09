@@ -12,6 +12,7 @@
 #define MAINCOMPONENT_H_INCLUDED
 #include "MidiEditor.h"
 #include "Synth.h"
+#include "Network.h"
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #define headerMenuHeight 36
@@ -64,6 +65,8 @@ public:
     void sliderValueChanged(Slider*) override;
 
 private:
+	State globalState;
+	NetworkClient connection;
     MenuComponent headerMenu;
     MidiEditor midiEditor;
     Synth osc1;
