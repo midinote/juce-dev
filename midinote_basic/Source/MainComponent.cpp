@@ -7,22 +7,29 @@
 */
 
 MenuComponent::MenuComponent()
+:   IPbox ("IPbox"),
+    IPbutton ("Connect",
+    /* tooltip */ "Connect to the specified IP address, or leave blank for localhost.")
 {
-    addAndMakeVisible(midiInputListLabel);
-    midiInputListLabel.setColour(Label::textColourId, Colours::white);
-    midiInputListLabel.setText("Midi Input: ", dontSendNotification);
-    midiInputListLabel.attachToComponent(&midiInputList, true);
+    addAndMakeVisible (midiInputListLabel);
+    midiInputListLabel.setColour (Label::textColourId, Colours::white);
+    midiInputListLabel.setText ("Midi Input: ", dontSendNotification);
+    midiInputListLabel.attachToComponent (&midiInputList, true);
 
-    addAndMakeVisible(presetsListLabel);
-    presetsListLabel.setColour(Label::textColourId, Colours::white);
-    presetsListLabel.setText("Preset: ", dontSendNotification);
-    presetsListLabel.attachToComponent(&presetsList, true);
+    addAndMakeVisible (presetsListLabel);
+    presetsListLabel.setColour (Label::textColourId, Colours::white);
+    presetsListLabel.setText ("Preset: ", dontSendNotification);
+    presetsListLabel.attachToComponent (&presetsList, true);
 
-    addAndMakeVisible(midiInputList);
-    midiInputList.setTextWhenNoChoicesAvailable("No Devices Available");
+    addAndMakeVisible (midiInputList);
+    midiInputList.setTextWhenNoChoicesAvailable ("No Devices Available");
 
-    addAndMakeVisible(presetsList);
-    presetsList.setTextWhenNoChoicesAvailable("None");
+    addAndMakeVisible (presetsList);
+    presetsList.setTextWhenNoChoicesAvailable ("None");
+
+    addAndMakeVisible (IPbox);
+    addAndMakeVisible (IPbutton);
+    IPbox.setTextToShowWhenEmpty ("IP Address", Colours::grey);
 }
 
 MenuComponent::~MenuComponent()
@@ -38,10 +45,16 @@ void MenuComponent::resized()
 {
     int menuItemsSpace = 0;
     menuItemsSpace += 85; // length of "Midi Input: " text
-    midiInputList.setBounds(menuItemsSpace, 10, 250, headerMenuHeight - 16);
+    midiInputList.setBounds (menuItemsSpace, 10, 250, headerMenuHeight - 16);
     menuItemsSpace += midiInputList.getRight();
-    presetsList.setBounds(menuItemsSpace, 10, 180, headerMenuHeight - 16);
+    presetsList.setBounds (menuItemsSpace, 10, 180, headerMenuHeight - 16);
     menuItemsSpace += presetsList.getRight();
+    menuItemsSpace -= 380; // VERY weird bug
+    IPbox.setBounds (menuItemsSpace, 10, 110, headerMenuHeight - 16);
+    menuItemsSpace += IPbox.getRight();
+    menuItemsSpace -= 630; // VERY weird bug
+    IPbutton.setBounds (menuItemsSpace, 10, 80, headerMenuHeight - 16);
+    menuItemsSpace += IPbutton.getRight();
 }
 
 MainContentComponent::MainContentComponent()
@@ -51,15 +64,6 @@ MainContentComponent::MainContentComponent()
 	globalState(ValueTree("global_state")),
 	connection(globalState)
 {
-
-	//Default Address to use (127.0.0.1 for localhost)
-	std::string address = "127.0.0.1";
-	std::cout << "attempt_connection to " << address << ": " << connection.connectToSocket(address, PORT, TIMEOUT) << "\n";
-	osc1.setID("osc1");
-	globalState.registerObject(osc1);
-	osc2.setID("osc2");
-	globalState.registerObject(osc2);
-
     addAndMakeVisible(headerMenu);
 
     addAndMakeVisible(midiEditor);
@@ -70,6 +74,8 @@ MainContentComponent::MainContentComponent()
     headerMenu.midiInputList.addItemList(midiInputs, 1);
     headerMenu.midiInputList.addListener(this);
     headerMenu.presetsList.addListener(this);
+    headerMenu.IPbox.addListener (this);
+    headerMenu.IPbutton.addListener (this);
     osc1.envelopeMenu.addListener(this);
     osc2.envelopeMenu.addListener(this);
 
@@ -102,6 +108,17 @@ MainContentComponent::~MainContentComponent()
     //any future networking objects should be deleted/freed here
     shutdownAudio();
     delete this;
+}
+
+void MainContentComponent::networkConnect (std::string address)
+{
+	//Default Address to use (127.0.0.1 for localhost)
+	if (address == "") address = "127.0.0.1";
+	std::cout << "attempt_connection to " << address << ": " << connection.connectToSocket(address, PORT, TIMEOUT) << "\n";
+	osc1.setID("osc1");
+	globalState.registerObject(osc1);
+	osc2.setID("osc2");
+	globalState.registerObject(osc2);
 }
 
 void MainContentComponent::prepareToPlay(int /*samplesPerBlockExpected*/, double sampleRate)
@@ -173,6 +190,24 @@ void MainContentComponent::comboBoxChanged (ComboBox* box)
     } else if (box == &(headerMenu.presetsList)) {
         // do stuff around setting presets
     }
+}
+
+void MainContentComponent::buttonClicked (Button* button)
+{
+    if (button == &(headerMenu.IPbutton)) {
+        if (headerMenu.IPbox.isEmpty()
+        or headerMenu.IPbox.getText().equalsIgnoreCase ("localhost")
+        or headerMenu.IPbox.getText().equalsIgnoreCase ("local"))
+            networkConnect(); // localhost
+        else // if some sort of check that it is a valid IP address
+            networkConnect (headerMenu.IPbox.getText().toStdString());
+    }
+}
+
+void MainContentComponent::textEditorReturnKeyPressed (TextEditor& box)
+{
+    if (box.getName().compare ("IPbox") == 0)
+        buttonClicked (&(headerMenu.IPbutton));
 }
 
 void MainContentComponent::setMidiInput (int ind)
