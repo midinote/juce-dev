@@ -40,11 +40,11 @@ private:
 
 class MainContentComponent   : public AudioAppComponent,
                                public TextEditor::Listener,
-                               public TextButton::Listener,
+                               public Button::Listener,
+                               public ComboBox::Listener,
+                               public Slider::Listener,
                                private MidiInputCallback,
-                               private ComboBoxListener,
-                               private MidiKeyboardStateListener,
-                               private SliderListener
+                               private MidiKeyboardStateListener
 {
 public:
     MainContentComponent();

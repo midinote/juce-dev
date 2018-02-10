@@ -26,7 +26,7 @@ Synth::Synth()
     frequencySlider.setRange (55.0, 14080.0);
     frequencySlider.setSkewFactorFromMidPoint (440.0);
     frequencySlider.setValue(440.0);
-    frequencySlider.addListener(this);
+    frequencySlider.addListener (this);
 
     addAndMakeVisible(frequencyLabel);
     frequencyLabel.setText("A4 Freq", dontSendNotification);
@@ -40,7 +40,7 @@ Synth::Synth()
     levelSlider.setRange (-100, 6.0);
     levelSlider.setSkewFactorFromMidPoint(-6.0);
     levelSlider.setValue(0.0);
-    levelSlider.addListener(this);
+    levelSlider.addListener (this);
 
     addAndMakeVisible(levelLabel);
     levelLabel.setText("Level", dontSendNotification);
@@ -53,7 +53,7 @@ Synth::Synth()
     panSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
     panSlider.setRange(-0.5,0.5);
     panSlider.setValue(0.0);
-    panSlider.addListener(this);
+    panSlider.addListener (this);
 
     addAndMakeVisible(panLabel);
     panLabel.setText("Pan", dontSendNotification);
@@ -92,7 +92,7 @@ Synth::Synth()
     releaseSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 60, 20);
     updateADSRKnobs();
 
-    attackSlider.addListener(this);
+    attackSlider.addListener (this);
 
     addAndMakeVisible(attackLabel);
     attackLabel.setText("Attack", dontSendNotification);
@@ -100,7 +100,7 @@ Synth::Synth()
     attackLabel.setJustificationType(labelJustification);
     attackLabel.attachToComponent(&attackSlider, false);
 
-    decaySlider.addListener(this);
+    decaySlider.addListener (this);
 
     addAndMakeVisible(decayLabel);
     decayLabel.setText("Decay", dontSendNotification);
@@ -108,7 +108,7 @@ Synth::Synth()
     decayLabel.setJustificationType(labelJustification);
     decayLabel.attachToComponent(&decaySlider, false);
 
-    sustainSlider.addListener(this);
+    sustainSlider.addListener (this);
 
     addAndMakeVisible(sustainLabel);
     sustainLabel.setText("Sustain", dontSendNotification);
@@ -116,7 +116,7 @@ Synth::Synth()
     sustainLabel.setJustificationType(labelJustification);
     sustainLabel.attachToComponent(&sustainSlider, false);
 
-    releaseSlider.addListener(this);
+    releaseSlider.addListener (this);
 
     addAndMakeVisible(releaseLabel);
     releaseLabel.setText("Release", dontSendNotification);

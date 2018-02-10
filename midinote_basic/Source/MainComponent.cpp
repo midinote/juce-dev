@@ -60,7 +60,7 @@ void MenuComponent::resized()
 MainContentComponent::MainContentComponent()
 :   lastInputIndex (0),
     isAddingFromMidiInput (false),
-    noteOn(false),
+    noteOn (false),
 	globalState(ValueTree("global_state")),
 	connection(globalState)
 {
@@ -72,20 +72,31 @@ MainContentComponent::MainContentComponent()
 
     const StringArray midiInputs (MidiInput::getDevices());
     headerMenu.midiInputList.addItemList(midiInputs, 1);
-    headerMenu.midiInputList.addListener(this);
-    headerMenu.presetsList.addListener(this);
+    headerMenu.midiInputList.addListener (this);
+    headerMenu.presetsList.addListener (this);
     headerMenu.IPbox.addListener (this);
     headerMenu.IPbutton.addListener (this);
-    osc1.envelopeMenu.addListener(this);
-    osc2.envelopeMenu.addListener(this);
+    osc1.envelopeMenu.addListener (this);
+    osc2.envelopeMenu.addListener (this);
 
-    midiEditor.keyboardState.addListener(this);
-    osc1.panSlider.addListener(this);
-    osc1.frequencySlider.addListener(this);
-    osc1.levelSlider.addListener(this);
-    osc2.panSlider.addListener(this);
-    osc2.frequencySlider.addListener(this);
-    osc2.levelSlider.addListener(this);
+    midiEditor.keyboardState.addListener (this);
+    osc1.panSlider.addListener (this);
+    osc1.frequencySlider.addListener (this);
+    osc1.levelSlider.addListener (this);
+    osc1.waveButtons.addListenerToButtons (this);
+    osc1.attackSlider.addListener (this);
+    osc1.decaySlider.addListener (this);
+    osc1.sustainSlider.addListener (this);
+    osc1.releaseSlider.addListener (this);
+
+    osc2.panSlider.addListener (this);
+    osc2.frequencySlider.addListener (this);
+    osc2.levelSlider.addListener (this);
+    osc2.waveButtons.addListenerToButtons (this);
+    osc2.attackSlider.addListener (this);
+    osc2.decaySlider.addListener (this);
+    osc2.sustainSlider.addListener (this);
+    osc2.releaseSlider.addListener (this);
 
 
     for (int i; i < midiInputs.size(); ++i)
@@ -190,6 +201,7 @@ void MainContentComponent::comboBoxChanged (ComboBox* box)
     } else if (box == &(headerMenu.presetsList)) {
         // do stuff around setting presets
     }
+    // conveniently, none (yet) of our ComboBox objects are something that should be sent over the network
 }
 
 void MainContentComponent::buttonClicked (Button* button)
@@ -201,11 +213,45 @@ void MainContentComponent::buttonClicked (Button* button)
             networkConnect(); // localhost
         else // if some sort of check that it is a valid IP address
             networkConnect (headerMenu.IPbox.getText().toStdString());
+    } else if (osc1.waveButtons.contains (button)
+            or osc2.waveButtons.contains (button)) {
+        globalState.transmit (connection);
     }
 }
 
 void MainContentComponent::sliderValueChanged(Slider* slider)
 {
+    bool knobsChanged = false;
+    if (slider == &(osc1.frequencySlider)) {
+        knobsChanged = true;
+    } else if (slider == &(osc1.levelSlider)) {
+        knobsChanged = true;
+    } else if (slider == &(osc1.panSlider)) {
+        knobsChanged = true;
+    } else if (slider == &(osc1.attackSlider)) {
+        knobsChanged = true;
+    } else if (slider == &(osc1.decaySlider)) {
+        knobsChanged = true;
+    } else if (slider == &(osc1.sustainSlider)) {
+        knobsChanged = true;
+    } else if (slider == &(osc1.releaseSlider)) {
+        knobsChanged = true;
+    } else if (slider == &(osc2.frequencySlider)) {
+        knobsChanged = true;
+    } else if (slider == &(osc2.levelSlider)) {
+        knobsChanged = true;
+    } else if (slider == &(osc2.panSlider)) {
+        knobsChanged = true;
+    } else if (slider == &(osc2.attackSlider)) {
+        knobsChanged = true;
+    } else if (slider == &(osc2.decaySlider)) {
+        knobsChanged = true;
+    } else if (slider == &(osc2.sustainSlider)) {
+        knobsChanged = true;
+    } else if (slider == &(osc2.releaseSlider)) {
+        knobsChanged = true;
+    }
+    if (knobsChanged) globalState.transmit (connection);
 }
 
 void MainContentComponent::textEditorReturnKeyPressed (TextEditor& box)

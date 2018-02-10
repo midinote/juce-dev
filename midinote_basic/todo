@@ -11,7 +11,6 @@ BUGS:
 
 GUI TOP PRIORITY:
 -a single filter that can be low-, high-, or band-pass, with Cutoff and Resonance
--make main component a listener of everything that calls globalState.transmit()
 
 LESS PRIORITY:
 -some sort of visual feedback on a successful or unsuccessful network connection
