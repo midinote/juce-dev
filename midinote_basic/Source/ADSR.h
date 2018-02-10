@@ -43,6 +43,7 @@ public:
     void setSustain (Point<float> point, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
     void setSustain (float dB, Slider* sliderY = nullptr);
     void setRelease (Point<float> point, Slider* sliderX = nullptr);
+    void setReleaseGraph (float x);
     void setRelease (float MS, Slider* sliderX = nullptr);
     void resized() override;
 
@@ -56,10 +57,12 @@ private:
     float endPointMS; // Graph::endPoint in miliseconds
     Point<float> attack;
     Point<float> decay;
+    float actualDecay; // actual length of time the user & synth want, from the moment the attack peak is hit
     Point<float> sustain;
-    // release (x,y) is just the endpoint and the bottom of the graph
-    float sustainLength;
+    float actualRelease; // actual length of time the user & synth want, from the moment the user lets go of the note
+    float sustainLength; // how much X distance between decay & sustain points on graph
 
+    void redrawSustainAndRelease(); // variable sustainLength for a nice feel
     void redraw(); // needed because a path has to be redrawn to insert
                    // a point between two other points
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ADSR)

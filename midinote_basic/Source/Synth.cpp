@@ -80,16 +80,16 @@ Synth::Synth()
 
     addAndMakeVisible (attackSlider);
     attackSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    attackSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
+    attackSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 60, 20);
     addAndMakeVisible (decaySlider);
     decaySlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    decaySlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
+    decaySlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 60, 20);
     addAndMakeVisible (sustainSlider);
     sustainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    sustainSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
+    sustainSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 60, 20);
     addAndMakeVisible (releaseSlider);
     releaseSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    releaseSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
+    releaseSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 60, 20);
     updateADSRKnobs();
 
     attackSlider.addListener(this);
@@ -180,6 +180,7 @@ void Synth::resized()
     const int topMarginKnob = 24;
     const int knobHeight = 60;
     const int knobWidth = 60;
+    const int knobWidthBigNumbers = knobWidth + 20;
     const int vBorder = 50;
     const int border = 5;
     const int graphHeight = (vBorder / 2 + knobHeight) * 2 - topMarginKnob - knobHeight;
@@ -195,21 +196,21 @@ void Synth::resized()
     envelopeADSR.setBounds (leftSlidersWidth, topMarginKnob, graphWidth, graphHeight);
     // center justification of ADSR knobs
     const int envelopeKnobs = 4;
-    const int betweenMargin = knobWidth / 2;
-    const int sideMargin = (graphWidth - (envelopeKnobs * (knobWidth + border)))
+    const int betweenMargin = knobWidthBigNumbers / 2;
+    const int sideMargin = (graphWidth - (envelopeKnobs * (knobWidthBigNumbers + border)))
                    / 2 - (betweenMargin * (envelopeKnobs / 2));
-    attackSlider.setBounds  (leftSlidersWidth + sideMargin + border * 1 + knobWidth * 0
+    attackSlider.setBounds  (leftSlidersWidth + sideMargin + border * 1 + knobWidthBigNumbers * 0
                              + betweenMargin * 1, graphHeight + vBorder,
-                             knobWidth, knobHeight);
-    decaySlider.setBounds  (leftSlidersWidth + sideMargin + border * 2 + knobWidth * 1
+                             knobWidthBigNumbers, knobHeight);
+    decaySlider.setBounds  (leftSlidersWidth + sideMargin + border * 2 + knobWidthBigNumbers * 1
                             + betweenMargin * 1, graphHeight + vBorder,
-                            knobWidth, knobHeight);
-    sustainSlider.setBounds   (leftSlidersWidth + sideMargin + border * 3 + knobWidth * 2
+                            knobWidthBigNumbers, knobHeight);
+    sustainSlider.setBounds   (leftSlidersWidth + sideMargin + border * 3 + knobWidthBigNumbers * 2
                                + betweenMargin * 1, graphHeight + vBorder,
-                               knobWidth, knobHeight);
-    releaseSlider.setBounds   (leftSlidersWidth + sideMargin + border * 4 + knobWidth * 3
+                               knobWidthBigNumbers, knobHeight);
+    releaseSlider.setBounds   (leftSlidersWidth + sideMargin + border * 4 + knobWidthBigNumbers * 3
                                + betweenMargin * 1, graphHeight + vBorder,
-                               knobWidth, knobHeight);
+                               knobWidthBigNumbers, knobHeight);
 }
 
 void Synth::sliderValueChanged(Slider* slider)
@@ -256,18 +257,18 @@ void Synth::updateADSR (float attack, float decay, float sustain, float release)
 void Synth::updateADSRKnobs()
 {
     attackSlider.setRange  (envelopeADSR.getStartPoint(),
-                            envelopeADSR.getDecay() - 1.0,
+                            envelopeADSR.getMaxMS() - envelopeADSR.getDecay() - envelopeADSR.getRelease() - 1.0,
                             dontSendNotification);
     attackSlider.setValue  (envelopeADSR.getAttack(), dontSendNotification);
-    decaySlider.setRange   (envelopeADSR.getAttack() + 1.0,
-                            envelopeADSR.getRelease() - 1.0,
+    decaySlider.setRange   (0,
+                            envelopeADSR.getMaxMS() - envelopeADSR.getAttack() - envelopeADSR.getRelease() - 1.0,
                             dontSendNotification);
     decaySlider.setValue   (envelopeADSR.getDecay(), dontSendNotification);
     sustainSlider.setRange (0, envelopeADSR.getMaxdB(),
                             dontSendNotification);
     sustainSlider.setValue (envelopeADSR.getSustain(), dontSendNotification);
-    releaseSlider.setRange (envelopeADSR.getDecay() + 1.0,
-                            envelopeADSR.getMaxMS(),
+    releaseSlider.setRange (0,
+                            envelopeADSR.getMaxMS() - envelopeADSR.getAttack() - envelopeADSR.getDecay() - 1.0,
                             dontSendNotification);
     releaseSlider.setValue (envelopeADSR.getRelease(), dontSendNotification);
     attackSlider.repaint();

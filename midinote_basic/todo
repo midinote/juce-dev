@@ -2,17 +2,16 @@ BUGS:
 -network code has to get settings from slider.getValue() for some reason
 -dBToVolume() garbles that float for some reason (if it's negative)
 -segfault on exit
--Release value can be moved beyond bounds of graph
 -renaming wavetype buttons' labels to just 2 characters (if window gets too small) can't be done because of a weird error--see comments in RadialButtons::paint()
 -resize limits aren't actually doing anything (at least on linux)
 -midi "inputs" looks for outputs on linux
 -F#5 was very quiet after attack once (can't reproduce)
 -A3 is set to 440, not A4
+-JUCE Assertion failure spam whenever an ADSR knob's range becomes 0; nothing else seems to go wrong and those knobs *should* be able to have a range of 0, when their current value is 0 and the ADSR's total length is the length of the graph
 
 GUI TOP PRIORITY:
 -a single filter that can be low-, high-, or band-pass, with Cutoff and Resonance
 -make main component a listener of everything that calls globalState.transmit()
--make each class inherit Transmittable & override the 2 virtual functions & add the right variables to them
 
 LESS PRIORITY:
 -some sort of visual feedback on a successful or unsuccessful network connection

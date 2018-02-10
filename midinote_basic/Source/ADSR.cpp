@@ -16,11 +16,14 @@ ADSR::ADSR (Colour backgroundColour, Colour colour) : Graph(backgroundColour, co
     maxMS = 2000;
     maxdB = 100;
     startPointMS = 0;
-    sustainLength = 200.0; // how much X distance between decay & sustain points on graph
-    setAttack (Point<float> (100.0, static_cast<float> (maxdB)));
-    setDecay (Point<float> (400.0, static_cast<float> (maxdB / 2)));
-    setSustain (Point<float> (getDecay() + sustainLength, static_cast<float> (maxdB / 2)));
-    setRelease (1200.0); // this sets endPointMS
+    endPointMS = 900.0;
+    sustainLength = endPointMS / 10.0;
+    attack = Point<float> (100.0, static_cast<float> (maxdB));
+    actualDecay = 300.0;
+    decay = Point<float> (attack.getX() + actualDecay, static_cast<float> (maxdB / 2));
+    sustain = Point<float> (getDecay() + sustainLength, static_cast<float> (maxdB / 2));
+    actualRelease = endPointMS - actualDecay;
+    redrawSustainAndRelease();
 }
 
 ADSR::~ADSR()
@@ -51,11 +54,10 @@ Point<float> ADSR::getAttackGraph()
 
 float ADSR::getDecay()
 {
-    return decay.getX();
+    return actualDecay;
 }
 Point<float> ADSR::getDecayGraph()
 {
-    //auto adjustedPoint = Point<float> (decay.getX() + attack.getX(), decay.getY());
     return decay;
 }
 
@@ -65,19 +67,26 @@ float ADSR::getSustain()
 }
 Point<float> ADSR::getSustainGraph()
 {
-    //auto adjustedPoint = Point<float> (sustain.getX() + decay.getX() + attack.getX(),
-    //                                   decay.getY());
     return sustain;
 }
 
 float ADSR::getRelease()
 {
-    return endPointMS;
+    return actualRelease;
 }
 Point<float> ADSR::getReleaseGraph()
 {
-    //return Point<float> (endPointMS + sustain.getX() + decay.getX() + attack.getX(), 0.0);
     return Point<float> (endPointMS, 0.0);
+}
+
+void ADSR::redrawSustainAndRelease()
+{
+    decay.setX (getAttackGraph().getX() + actualDecay);
+    endPointMS = getRelease() + getSustainGraph().getX();
+    sustainLength = endPointMS / 10.0;
+    sustain.setX (getDecayGraph().getX() + sustainLength);
+    endPointMS = getRelease() + getSustainGraph().getX();
+    redraw();
 }
 
 void ADSR::redraw()
@@ -86,8 +95,15 @@ void ADSR::redraw()
     // use multiplication to make the bounds of the graph represent the
     // bounds of the miliseconds and decibels
     Rectangle<int> area = getLocalBounds();
-    float Xmult = static_cast<float> (area.getWidth()) / static_cast<float> (maxMS);
-    float Ymult = static_cast<float> (area.getHeight()) / static_cast<float> (maxdB);
+    // very weird bug: area.getWidth() is lying, and this math corrects it
+    // 884 is the width getWidth() returns when the window is 609 (currently Main.cpp:MIN_WIDTH)
+    // 142 is the amount to subtract that by to get an ADSR graph that actually fits
+    // sustainLength definitely has something to do with this math, but somehow just subtracting
+    // sustainLength from area.getWidth() does not solve this
+    const double error = 142.0 / 884.0;
+    const float width = static_cast<float> (area.getWidth());
+    const double Xmult = (width - (width * error)) / static_cast<float> (maxMS);
+    const float Ymult = static_cast<float> (area.getHeight()) / static_cast<float> (maxdB);
     startPoint = startPointMS * Xmult;
     endPoint = getReleaseGraph().getX() * Xmult;
     auto attackPoint = Point<float> (getAttackGraph().getX() * Xmult,
@@ -104,14 +120,10 @@ void ADSR::redraw()
 
 void ADSR::setAttack (Point<float> point, Slider* sliderX, Slider* sliderY)
 {
-    //float diff = point.getX() - attack.getX();
     attack = point;
-    //decay.setX (decay.getX() + diff);
-    //sustain.setX (sustain.getX() + diff);
-    //endPointMS += diff;
     if (sliderX != nullptr) sliderX->setValue (getAttackGraph().getX());
     if (sliderY != nullptr) sliderY->setValue (getAttackGraph().getY());
-    redraw();
+    redrawSustainAndRelease();
 }
 void ADSR::setAttack (float MS, Slider* sliderX)
 {
@@ -120,37 +132,27 @@ void ADSR::setAttack (float MS, Slider* sliderX)
 
 void ADSR::setDecay (Point<float> point, Slider* sliderX, Slider* sliderY)
 {
-    //float diff = point.getX() - decay.getX();
-    //auto adjustedPoint = Point<float> (point.getX() - attack.getX(), point.getY());
     decay = point;
-    //sustain.setX (sustain.getX() + diff);
-    //endPointMS += diff;
     if (sliderX != nullptr) sliderX->setValue (getDecayGraph().getX());
     if (sliderY != nullptr) sliderY->setValue (getDecayGraph().getY());
-    redraw();
+    redrawSustainAndRelease();
 }
 void ADSR::setDecay (float MS, Slider* sliderX)
 {
-    float differenceMS = MS - getDecayGraph().getX();
-    setDecay (Point<float> (MS, getDecayGraph().getY()), sliderX, nullptr);
-    setSustain (Point<float> (MS + sustainLength, getSustainGraph().getY()), nullptr, nullptr);
-    setRelease (getRelease() + differenceMS, nullptr);
+    actualDecay = MS;
+    setDecay (Point<float> (MS + getAttack(), getDecayGraph().getY()), sliderX, nullptr);
 }
 
 void ADSR::setSustain (Point<float> point, Slider* sliderX, Slider* sliderY)
 {
-    //float diff = point.getX() - sustain.getX();
-    //auto adjustedPoint = Point<float> (point.getX() - attack.getX() - decay.getX(),
-    //                                   point.getY());
     sustain = point;
-    //endPointMS += diff;
     if (sliderX != nullptr) sliderX->setValue (getSustainGraph().getX());
     if (sliderY != nullptr) sliderY->setValue (getSustainGraph().getY());
-    redraw();
+    redrawSustainAndRelease();
 }
 void ADSR::setSustain (float dB, Slider* sliderY)
 {
-    setSustain (Point<float> (getSustainGraph().getX(), dB), nullptr, sliderY);
+    setSustain (Point<float> (getDecayGraph().getX() + sustainLength, dB), nullptr, sliderY);
     setDecay (Point<float> (getDecayGraph().getX(), dB), nullptr, nullptr);
 }
 
@@ -160,10 +162,9 @@ void ADSR::setRelease (Point<float> point, Slider* sliderX)
 }
 void ADSR::setRelease (float MS, Slider* sliderX)
 {
-    //endPointMS = x - sustain.getX() - decay.getX() - attack.getX();
-    endPointMS = MS;
-    if (sliderX != nullptr) sliderX->setValue (getReleaseGraph().getX());
-    redraw();
+    actualRelease = MS;
+    if (sliderX != nullptr) sliderX->setValue (getRelease());
+    redrawSustainAndRelease();
 }
 
 void ADSR::resized()
