@@ -51,6 +51,7 @@ public:
     void buttonClicked (Button* button) override;
 
     void updateADSR (Point<float> attack, Point<float> decay, Point<float> sustain, float release);
+    void updateADSR (float attack, float decay, float sustain, float release);
     void updateADSRKnobs();
 
     void updateSettings (Settings newSettings);

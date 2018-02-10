@@ -245,7 +245,14 @@ void Synth::updateADSR (Point<float> attack, Point<float> decay, Point<float> su
     envelopeADSR.setRelease (release, &releaseSlider);
     updateADSRKnobs();
 }
-
+void Synth::updateADSR (float attack, float decay, float sustain, float release)
+{
+    envelopeADSR.setAttack (attack, &attackSlider);
+    envelopeADSR.setDecay (decay, &decaySlider);
+    envelopeADSR.setSustain (sustain, &sustainSlider);
+    envelopeADSR.setRelease (release, &releaseSlider);
+    updateADSRKnobs();
+}
 void Synth::updateADSRKnobs()
 {
     attackSlider.setRange  (envelopeADSR.getStartPoint(),
@@ -302,6 +309,10 @@ void Synth::updateTree(ValueTree & t)
 	//t.setProperty(id + "_1", var(waveSlider.getValue()), nullptr);
 	//t.setProperty(id + "_2", var(levelSlider.getValue()), nullptr);
 	//t.setProperty(id + "_3", var(panSlider.getValue()), nullptr);
+    addValue(t, envelopeADSR.getAttack(), "attack");
+    addValue(t, envelopeADSR.getDecay(), "decay");
+    addValue(t, envelopeADSR.getSustain(), "sustain");
+    addValue(t, envelopeADSR.getRelease(), "release");
 }
 
 void Synth::updateValues(ValueTree & t)
@@ -311,6 +322,17 @@ void Synth::updateValues(ValueTree & t)
 	setValue(t, settings.level, "level");
 	setValue(t, settings.pan, "pan");
 	updateKnobs();
+    float attack = -1.0, decay = -1.0, sustain = -1.0, release = -1.0;
+    setValue(t, attack, "attack");
+    setValue(t, decay, "decay");
+    setValue(t, sustain, "sustain");
+    setValue(t, release, "release");
+    bool success = true;
+    if (attack < 0.0) std::cout << "could not receive attack" << std::endl;
+    if (decay < 0.0) std::cout << "could not receive decay" << std::endl;
+    if (sustain < 0.0) std::cout << "could not receive sustain" << std::endl;
+    if (release < 0.0) std::cout << "could not receive release" << std::endl;
+    if (success) updateADSR (attack, decay, sustain, release);
 }
 
 Synth::Settings* Synth::getSettings()

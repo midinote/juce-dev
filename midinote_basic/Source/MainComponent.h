@@ -67,10 +67,9 @@ public:
     void comboBoxChanged (ComboBox*) override;
     void buttonClicked (Button* button) override;
     void textEditorReturnKeyPressed (TextEditor&) override;
+    void sliderValueChanged (Slider*) override;
 
     void setMidiInput (int);
-
-    void sliderValueChanged (Slider*) override;
 
 private:
 	State globalState;

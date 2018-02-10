@@ -204,6 +204,10 @@ void MainContentComponent::buttonClicked (Button* button)
     }
 }
 
+void MainContentComponent::sliderValueChanged(Slider* slider)
+{
+}
+
 void MainContentComponent::textEditorReturnKeyPressed (TextEditor& box)
 {
     if (box.getName().compare ("IPbox") == 0)
@@ -221,8 +225,4 @@ void MainContentComponent::setMidiInput (int ind)
     deviceManager.addMidiInputCallback(newMidiInput, this);
     headerMenu.midiInputList.setSelectedId(ind+1, dontSendNotification);
     lastInputIndex = ind;
-}
-
-void MainContentComponent::sliderValueChanged(Slider* slider)
-{
 }
