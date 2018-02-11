@@ -18,7 +18,7 @@ class Oscillator
 {
 public:
     // Linux's GNU g++ interprets this as an unsigned int, but Juce::var only defines the conversion operator for signed int
-    enum WaveType : signed int {sine = 0, square, triangle, sawtooth, noise};
+    enum WaveType : signed int {sine = 0, square, triangle, sawtooth, noise, WAVETYPE_SIZE};
 
     Oscillator (float freq, float lev, WaveType waveType, ADSR* envelope = nullptr);
 

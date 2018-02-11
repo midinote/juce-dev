@@ -19,6 +19,7 @@
 #include "Oscillator.h"
 #include "ADSR.h"
 #include "RadialButtons.h"
+#include "Filter.h"
 
 //==============================================================================
 /*
@@ -81,6 +82,13 @@ public:
     Label sustainLabel;
     Slider releaseSlider;
     Label releaseLabel;
+
+    Filter filter;
+    Label filterModeLabel;
+    Slider cutoffSlider;
+    Label cutoffLabel;
+    Slider resonanceSlider;
+    Label resonanceLabel;
 
 private:
     Settings settings;

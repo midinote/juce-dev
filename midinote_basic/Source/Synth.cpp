@@ -17,13 +17,15 @@ Synth::Synth()
 :   waveType(Oscillator::sine),
     labelFont(Font (12)),
     labelJustification(Justification::centredTop),
-    waveButtons (Oscillator::sine, 5, Font (12), Justification::centredLeft,
+    filter (Font (12), Justification::centredLeft),
+    waveButtons (Oscillator::sine, Oscillator::WAVETYPE_SIZE, Font (12),
+                 Justification::centredLeft,
                  { "Sine", "Square", "Triangle", "Sawtooth", "Noise" })
 {
     addAndMakeVisible (frequencySlider);
     frequencySlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     frequencySlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
-    frequencySlider.setRange (55.0, 14080.0);
+    frequencySlider.setRange (55.0, 14080.0, 1);
     frequencySlider.setSkewFactorFromMidPoint (440.0);
     frequencySlider.setValue(440.0);
     frequencySlider.addListener (this);
@@ -37,7 +39,7 @@ Synth::Synth()
     addAndMakeVisible(levelSlider);
     levelSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     levelSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
-    levelSlider.setRange (-100, 6.0);
+    levelSlider.setRange (-100, 6.0, 0.1);
     levelSlider.setSkewFactorFromMidPoint(-6.0);
     levelSlider.setValue(0.0);
     levelSlider.addListener (this);
@@ -51,7 +53,7 @@ Synth::Synth()
     addAndMakeVisible(panSlider);
     panSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     panSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 40, 20);
-    panSlider.setRange(-0.5,0.5);
+    panSlider.setRange(-0.5, 0.5, 0.01);
     panSlider.setValue(0.0);
     panSlider.addListener (this);
 
@@ -64,17 +66,52 @@ Synth::Synth()
     addAndMakeVisible (waveButtons);
     waveButtons.addListenerToButtons (this);
 
-    addAndMakeVisible(waveLabel);
-    waveLabel.setText("Wavetype", dontSendNotification);
-    waveLabel.setFont(labelFont);
-    waveLabel.setJustificationType(labelJustification);
-    waveLabel.attachToComponent(&waveButtons, false);
+    addAndMakeVisible (waveLabel);
+    waveLabel.setText ("Wavetype", dontSendNotification);
+    waveLabel.setFont (labelFont);
+    waveLabel.setJustificationType (labelJustification);
+    waveLabel.attachToComponent (&waveButtons, false);
+
+    addAndMakeVisible (filter);
+    filter.addListenerToButtons (this);
+
+    addAndMakeVisible (filterModeLabel);
+    filterModeLabel.setText ("Filter Mode", dontSendNotification);
+    filterModeLabel.setFont (labelFont);
+    filterModeLabel.setJustificationType (labelJustification);
+    filterModeLabel.attachToComponent (&filter, false);
+
+    addAndMakeVisible (cutoffSlider);
+    cutoffSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    cutoffSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 60, 20);
+    cutoffSlider.setRange(10, 20000, 1);
+    cutoffSlider.setValue(filter.cutoff);
+    cutoffSlider.addListener (this);
+
+    addAndMakeVisible(cutoffLabel);
+    cutoffLabel.setText("Cutoff", dontSendNotification);
+    cutoffLabel.setFont(labelFont);
+    cutoffLabel.setJustificationType(labelJustification);
+    cutoffLabel.attachToComponent(&cutoffSlider, false);
+
+    addAndMakeVisible (resonanceSlider);
+    resonanceSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    resonanceSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 60, 20);
+    resonanceSlider.setRange(-3.0, 30.1, 0.1);
+    resonanceSlider.setValue(filter.resonance);
+    resonanceSlider.addListener (this);
+
+    addAndMakeVisible(resonanceLabel);
+    resonanceLabel.setText("Resonance", dontSendNotification);
+    resonanceLabel.setFont(labelFont);
+    resonanceLabel.setJustificationType(labelJustification);
+    resonanceLabel.attachToComponent(&resonanceSlider, false);
 
     addAndMakeVisible (envelopeMenu);
-    envelopeMenu.addItem("Envelope", 1);
-    envelopeMenu.addItem("Filter", 2);
-    envelopeMenu.addItem("LFO", 3);
-    envelopeMenu.setSelectedId(1, dontSendNotification);
+    envelopeMenu.addItem ("Envelope", 1);
+    envelopeMenu.addItem ("Filter", 2);
+    envelopeMenu.addItem ("LFO", 3);
+    envelopeMenu.setSelectedId (1, dontSendNotification);
     addAndMakeVisible (envelopeADSR);
     envelopeADSR.drawOn();
 
@@ -183,33 +220,35 @@ void Synth::resized()
     const int knobWidthBigNumbers = knobWidth + 20;
     const int vBorder = 50;
     const int border = 5;
+    const int radialButtonsWidth = knobWidth * 3 + border * 2;
     const int graphHeight = (vBorder / 2 + knobHeight) * 2 - topMarginKnob - knobHeight;
     const int graphWidth = area.getWidth() - (border * 4 + knobWidth * 2);
     frequencySlider.setBounds (border, topMarginKnob, knobWidth, knobHeight);
     levelSlider.setBounds (border * 2 + knobWidth, topMarginKnob, knobWidth, knobHeight);
     panSlider.setBounds (border * 3 + knobWidth * 2, topMarginKnob, knobWidth, knobHeight);
     const int leftSlidersHeight = vBorder + border + knobHeight;
-    waveButtons.setBounds (border, leftSlidersHeight, knobWidth * 3 + border * 2,
+    waveButtons.setBounds (border, leftSlidersHeight, radialButtonsWidth,
                            area.getHeight() - leftSlidersHeight - border);
     const int leftSlidersWidth = border * 4 + knobWidth * 3;
     envelopeMenu.setBounds (leftSlidersWidth, topMargin, 250, 16);
     envelopeADSR.setBounds (leftSlidersWidth, topMarginKnob, graphWidth, graphHeight);
-    // center justification of ADSR knobs
-    const int envelopeKnobs = 4;
+    // center justification of Filter & ADSR knobs & buttons
+    const int envelopeKnobs = 6;
     const int betweenMargin = knobWidthBigNumbers / 2;
-    const int sideMargin = (graphWidth - (envelopeKnobs * (knobWidthBigNumbers + border)))
-                   / 2 - (betweenMargin * (envelopeKnobs / 2));
-    attackSlider.setBounds  (leftSlidersWidth + sideMargin + border * 1 + knobWidthBigNumbers * 0
-                             + betweenMargin * 1, graphHeight + vBorder,
-                             knobWidthBigNumbers, knobHeight);
-    decaySlider.setBounds  (leftSlidersWidth + sideMargin + border * 2 + knobWidthBigNumbers * 1
-                            + betweenMargin * 1, graphHeight + vBorder,
-                            knobWidthBigNumbers, knobHeight);
-    sustainSlider.setBounds   (leftSlidersWidth + sideMargin + border * 3 + knobWidthBigNumbers * 2
-                               + betweenMargin * 1, graphHeight + vBorder,
+    const int sideMargin = (graphWidth - (radialButtonsWidth + envelopeKnobs * (knobWidthBigNumbers + border))) / 2 - (betweenMargin * 2);
+    filter.setBounds (leftSlidersWidth + sideMargin, graphHeight + vBorder + border,
+                      radialButtonsWidth, knobHeight);
+    cutoffSlider.setBounds    (leftSlidersWidth + radialButtonsWidth + sideMargin + border * 1 + knobWidthBigNumbers * 0 + betweenMargin * 1, graphHeight + vBorder,
                                knobWidthBigNumbers, knobHeight);
-    releaseSlider.setBounds   (leftSlidersWidth + sideMargin + border * 4 + knobWidthBigNumbers * 3
-                               + betweenMargin * 1, graphHeight + vBorder,
+    resonanceSlider.setBounds (leftSlidersWidth + radialButtonsWidth + sideMargin + border * 2 + knobWidthBigNumbers * 1 + betweenMargin * 1, graphHeight + vBorder,
+                               knobWidthBigNumbers, knobHeight);
+    attackSlider.setBounds    (leftSlidersWidth + radialButtonsWidth + sideMargin + border * 3 + knobWidthBigNumbers * 2 + betweenMargin * 2, graphHeight + vBorder,
+                               knobWidthBigNumbers, knobHeight);
+    decaySlider.setBounds     (leftSlidersWidth + radialButtonsWidth + sideMargin + border * 4 + knobWidthBigNumbers * 3 + betweenMargin * 2, graphHeight + vBorder,
+                               knobWidthBigNumbers, knobHeight);
+    sustainSlider.setBounds   (leftSlidersWidth + radialButtonsWidth + sideMargin + border * 5 + knobWidthBigNumbers * 4 + betweenMargin * 2, graphHeight + vBorder,
+                               knobWidthBigNumbers, knobHeight);
+    releaseSlider.setBounds   (leftSlidersWidth + radialButtonsWidth + sideMargin + border * 6 + knobWidthBigNumbers * 5 + betweenMargin * 2, graphHeight + vBorder,
                                knobWidthBigNumbers, knobHeight);
 }
 
@@ -236,6 +275,10 @@ void Synth::buttonClicked (Button* button)
 {
     if (waveButtons.contains (button))
         settings.wave = static_cast<Oscillator::WaveType> (waveButtons.clicked (button));
+    else if (filter.contains (button)) {
+        filter.clicked (button);
+        // set the synth accordingly? might not be necessary depending on how that gets implemented
+    }
 }
 
 void Synth::updateADSR (Point<float> attack, Point<float> decay, Point<float> sustain, float release)
@@ -257,19 +300,15 @@ void Synth::updateADSR (float attack, float decay, float sustain, float release)
 void Synth::updateADSRKnobs()
 {
     attackSlider.setRange  (envelopeADSR.getStartPoint(),
-                            envelopeADSR.getMaxMS() - envelopeADSR.getDecay() - envelopeADSR.getRelease() - 1.0,
-                            dontSendNotification);
+                            envelopeADSR.getMaxMS() - envelopeADSR.getDecay() - envelopeADSR.getRelease() - 1.0, 0.1);
     attackSlider.setValue  (envelopeADSR.getAttack(), dontSendNotification);
     decaySlider.setRange   (0,
-                            envelopeADSR.getMaxMS() - envelopeADSR.getAttack() - envelopeADSR.getRelease() - 1.0,
-                            dontSendNotification);
+                            envelopeADSR.getMaxMS() - envelopeADSR.getAttack() - envelopeADSR.getRelease() - 1.0, 0.1);
     decaySlider.setValue   (envelopeADSR.getDecay(), dontSendNotification);
-    sustainSlider.setRange (0, envelopeADSR.getMaxdB(),
-                            dontSendNotification);
+    sustainSlider.setRange (0, envelopeADSR.getMaxdB(), 0.1);
     sustainSlider.setValue (envelopeADSR.getSustain(), dontSendNotification);
     releaseSlider.setRange (0,
-                            envelopeADSR.getMaxMS() - envelopeADSR.getAttack() - envelopeADSR.getDecay() - 1.0,
-                            dontSendNotification);
+                            envelopeADSR.getMaxMS() - envelopeADSR.getAttack() - envelopeADSR.getDecay() - 1.0, 0.1);
     releaseSlider.setValue (envelopeADSR.getRelease(), dontSendNotification);
     attackSlider.repaint();
     decaySlider.repaint();

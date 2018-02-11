@@ -84,6 +84,9 @@ MainContentComponent::MainContentComponent()
     osc1.frequencySlider.addListener (this);
     osc1.levelSlider.addListener (this);
     osc1.waveButtons.addListenerToButtons (this);
+    osc1.filter.addListenerToButtons (this);
+    osc1.cutoffSlider.addListener (this);
+    osc1.resonanceSlider.addListener (this);
     osc1.attackSlider.addListener (this);
     osc1.decaySlider.addListener (this);
     osc1.sustainSlider.addListener (this);
@@ -93,6 +96,9 @@ MainContentComponent::MainContentComponent()
     osc2.frequencySlider.addListener (this);
     osc2.levelSlider.addListener (this);
     osc2.waveButtons.addListenerToButtons (this);
+    osc2.filter.addListenerToButtons (this);
+    osc2.cutoffSlider.addListener (this);
+    osc2.resonanceSlider.addListener (this);
     osc2.attackSlider.addListener (this);
     osc2.decaySlider.addListener (this);
     osc2.sustainSlider.addListener (this);
@@ -214,44 +220,34 @@ void MainContentComponent::buttonClicked (Button* button)
         else // if some sort of check that it is a valid IP address
             networkConnect (headerMenu.IPbox.getText().toStdString());
     } else if (osc1.waveButtons.contains (button)
-            or osc2.waveButtons.contains (button)) {
+            or osc2.waveButtons.contains (button)
+            or osc1.filter.contains (button)
+            or osc2.filter.contains (button)) {
         globalState.transmit (connection);
     }
 }
 
 void MainContentComponent::sliderValueChanged(Slider* slider)
 {
-    bool knobsChanged = false;
-    if (slider == &(osc1.frequencySlider)) {
-        knobsChanged = true;
-    } else if (slider == &(osc1.levelSlider)) {
-        knobsChanged = true;
-    } else if (slider == &(osc1.panSlider)) {
-        knobsChanged = true;
-    } else if (slider == &(osc1.attackSlider)) {
-        knobsChanged = true;
-    } else if (slider == &(osc1.decaySlider)) {
-        knobsChanged = true;
-    } else if (slider == &(osc1.sustainSlider)) {
-        knobsChanged = true;
-    } else if (slider == &(osc1.releaseSlider)) {
-        knobsChanged = true;
-    } else if (slider == &(osc2.frequencySlider)) {
-        knobsChanged = true;
-    } else if (slider == &(osc2.levelSlider)) {
-        knobsChanged = true;
-    } else if (slider == &(osc2.panSlider)) {
-        knobsChanged = true;
-    } else if (slider == &(osc2.attackSlider)) {
-        knobsChanged = true;
-    } else if (slider == &(osc2.decaySlider)) {
-        knobsChanged = true;
-    } else if (slider == &(osc2.sustainSlider)) {
-        knobsChanged = true;
-    } else if (slider == &(osc2.releaseSlider)) {
-        knobsChanged = true;
-    }
-    if (knobsChanged) globalState.transmit (connection);
+    if (slider == &(osc1.frequencySlider)
+     or slider == &(osc1.levelSlider)
+     or slider == &(osc1.panSlider)
+     or slider == &(osc1.cutoffSlider)
+     or slider == &(osc1.resonanceSlider)
+     or slider == &(osc1.attackSlider)
+     or slider == &(osc1.decaySlider)
+     or slider == &(osc1.sustainSlider)
+     or slider == &(osc1.releaseSlider)
+     or slider == &(osc2.frequencySlider)
+     or slider == &(osc2.levelSlider)
+     or slider == &(osc2.panSlider)
+     or slider == &(osc2.cutoffSlider)
+     or slider == &(osc2.resonanceSlider)
+     or slider == &(osc2.attackSlider)
+     or slider == &(osc2.decaySlider)
+     or slider == &(osc2.sustainSlider)
+     or slider == &(osc2.releaseSlider))
+        globalState.transmit (connection);
 }
 
 void MainContentComponent::textEditorReturnKeyPressed (TextEditor& box)

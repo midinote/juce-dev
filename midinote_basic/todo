@@ -8,9 +8,10 @@ BUGS:
 -F#5 was very quiet after attack once (can't reproduce)
 -A3 is set to 440, not A4
 -JUCE Assertion failure spam whenever an ADSR knob's range becomes 0; nothing else seems to go wrong and those knobs *should* be able to have a range of 0, when their current value is 0 and the ADSR's total length is the length of the graph
+-Level slider ignores setValue() in the initialization and defaults to 0.1 no matter what, ever since Jimi set its interval to 0.1
 
 GUI TOP PRIORITY:
--a single filter that can be low-, high-, or band-pass, with Cutoff and Resonance
+-TBD
 
 LESS PRIORITY:
 -some sort of visual feedback on a successful or unsuccessful network connection
@@ -20,6 +21,7 @@ LESS PRIORITY:
 -midi light showing midi device connected, and a light showing midi events
 -midi panic button (exclamation point)
 -midi learn
+-Envelope/Filter/LFO drop-down menu actually switches the graph between a visualization of those 3 things
 -make lines between points curve in the standard ADSR way (see mockup v2)
 -make ADSR logarithmic
 -have A, D, S, R in 4 separate graphs?, with a dial for how long each of the 4 is (up to a minute or more) without that changing the actual graphical size of the graph
