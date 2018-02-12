@@ -15,6 +15,7 @@ Author:  ValentinoAbate (vabate@ucsc.edu)
 #include "../JuceLibraryCode/JuceHeader.h"
 #include <iostream>
 #include <type_traits>
+#include <unordered_map>
 
 #define PORT 9001
 #define TIMEOUT 100 // miliseconds
@@ -40,12 +41,12 @@ class Transmittable;
 class State
 {
 public:
-	State(ValueTree state) : state{ state } {}
+	State(ValueTree& state) : state{ state }, listener{ *this } { this->state.addListener(&listener); }
 	//Update underlying state ValueTree from recieved data
 	void recieve(const ValueTree& recieved);
-	//Build (or update) state ValueTree from current values, and call for transmission
+	//Build (or update) state ValueTree from current values, and call for transmission (DEPRECATED)
 	void transmit(NetworkClient& connection);
-	//Update registered objects for current state ValueTree. Should be called when tranmission is recieved
+	//Update registered objects for current state ValueTree.
 	void updateObjects();
 	//Update state ValueTree from objects. should be called before transmission
 	void updateState();
@@ -53,9 +54,29 @@ public:
 	bool registerObject(Transmittable& obj);
 	//Return XML representation of underlying valueTree
 	String toXmlString();
+	//Set connection object
+	inline void setConnection(NetworkClient* con) { connection = con; };
 private:
+	void transmit(const var& val, const Identifier& identifier);
+	NetworkClient* connection = nullptr;
 	ValueTree state;
-	std::vector<ScopedPointer<Transmittable>> objects = std::vector<ScopedPointer<Transmittable>>();
+	std::unordered_map<std::string, ScopedPointer<Transmittable>> objects = std::unordered_map<std::string, ScopedPointer<Transmittable>>();
+	friend class Listener;
+	class Listener : public ValueTree::Listener
+	{
+	public:
+		Listener(State& state) : ValueTree::Listener(), parent{ state } {}
+		// Inherited via Listener
+		virtual void valueTreePropertyChanged(ValueTree & treeWhosePropertyHasChanged, const Identifier & property) override;
+		virtual void valueTreeChildAdded(ValueTree & parentTree, ValueTree & childWhichHasBeenAdded) override;
+		virtual void valueTreeChildRemoved(ValueTree & parentTree, ValueTree & childWhichHasBeenRemoved, int indexFromWhichChildWasRemoved) override;
+		virtual void valueTreeChildOrderChanged(ValueTree & parentTreeWhoseChildrenHaveMoved, int oldIndex, int newIndex) override;
+		virtual void valueTreeParentChanged(ValueTree & treeWhoseParentHasChanged) override;
+		State& parent;
+		bool transmit = true;
+	};
+	Listener listener;
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(State)
 };
 //Transmission interface: have any class implement this to enable transmission for that class
 class Transmittable
@@ -77,7 +98,10 @@ protected:
 	template<typename Value>
 	void addValue(ValueTree& t, Value v, const std::string& name, UndoManager* undo = nullptr)
 	{
-		t.setProperty(id + "_" + name, var(v), undo);
+		var val = var(v);
+		Identifier i = id + "_" + name;
+		if(!t.getProperty(i).equalsWithSameType(val))
+			t.setProperty(i, val, undo);
 	}
 	//Get one value from the tree. templated, but only works with values where juce::val(T) is defined
 	template<typename Value, typename std::enable_if<!std::is_enum<Value>::value>::type* = nullptr>
@@ -94,12 +118,15 @@ protected:
 
 //Network Classes//-----------------------------------------------------------------------------------------------------------------------------------------//
 
-//Client side of the connection. also created server-side to handle incoming connections
+//Client side of the connection.
 class NetworkClient : public InterprocessConnection
 {
 public:
 	NetworkClient(State& state, uint32 magicMessageHeaderNumber = MAGIC_NUMBER)
-		: InterprocessConnection(/*callbacksOnMessageThread*/ false, magicMessageHeaderNumber), state{ state } {};
+		: InterprocessConnection(/*callbacksOnMessageThread*/ false, magicMessageHeaderNumber), state{ state } 
+	{
+		state.setConnection(this);
+	};
 	virtual void connectionMade() override;
 	virtual void connectionLost() override;
 	virtual void messageReceived(const MemoryBlock &message) override;
@@ -138,7 +165,7 @@ private:
 		JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ServerSideConnection)
 	};
 	//BroadCast to all but input ServerSideConnection(for broadcasting after 1 client updates the state)
-	void broadcast(const ServerSideConnection* ignore) const;
+	void broadcast(const ServerSideConnection* ignore, const Identifier& id) const;
 	//Multiple Clients are supported
 	OwnedArray<ServerSideConnection> clients = OwnedArray<ServerSideConnection>();
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(NetworkServer)

@@ -11,7 +11,8 @@ Author:  Valentino Abate (vabate@ucsc.edu)
 
 #include "Network.h"
 
-// A few quick utility functions to convert between raw data and ValueTrees
+// UTILITY FUNCTIONS//
+
 ValueTree memoryBlockToValueTree(const MemoryBlock& mb)
 {
 	return ValueTree::readFromData(mb.getData(), mb.getSize());
@@ -30,9 +31,23 @@ String valueTreeToString(const ValueTree& v)
 	return xml != nullptr ? xml->createDocument("", true, false) : String();
 }
 
+MemoryBlock propertyToMemoryBlock(const var& val, const Identifier& identifier)
+{
+	ValueTree v("message");
+	v.removeAllProperties(nullptr);
+	v.setProperty(identifier, val, nullptr);
+	return valueTreeToMemoryBlock(v);
+}
+
+//STATE CODE//
+
 void State::recieve(const ValueTree & recieved)
 {
-	state.copyPropertiesFrom(recieved, nullptr);
+	Identifier i = recieved.getPropertyName(0);
+	listener.transmit = false;
+	state.setProperty(i, recieved.getProperty(i), nullptr);
+//	objects.at(i.toString().toStdString())->updateValues(state);
+	listener.transmit = true;
 }
 
 void State::transmit(NetworkClient& connection)
@@ -45,7 +60,7 @@ void State::updateObjects()
 {
 	for (const auto& obj : objects)
 	{
-		obj->updateValues(state);
+		obj.second->updateValues(state);
 	}
 }
 
@@ -53,7 +68,7 @@ void State::updateState()
 {
 	for (const auto& obj : objects)
 	{
-		obj->updateTree(state);
+		obj.second->updateTree(state);
 	}
 }
 
@@ -61,15 +76,48 @@ bool State::registerObject(Transmittable& obj)
 {
 	if (state.hasProperty(obj.id))
 		return false;
+	listener.transmit = false;
 	obj.updateTree(state);
-	objects.push_back(&obj);
-	return false;
+	listener.transmit = true;
+	objects.insert({ obj.id.toString().toStdString(), &obj });
+	return true;
 }
 
 String State::toXmlString()
 {
 	return state.toXmlString();
 }
+
+void State::transmit(const var & val, const Identifier & identifier)
+{
+	connection->sendMessage(propertyToMemoryBlock(val, identifier));
+}
+
+//STATE::LISTENER CODE//
+
+void State::Listener::valueTreePropertyChanged(ValueTree & treeWhosePropertyHasChanged, const Identifier & property)
+{
+	if (transmit)
+		parent.transmit(treeWhosePropertyHasChanged.getProperty(property), property);
+}
+
+void State::Listener::valueTreeChildAdded(ValueTree & parentTree, ValueTree & childWhichHasBeenAdded)
+{
+}
+
+void State::Listener::valueTreeChildRemoved(ValueTree & parentTree, ValueTree & childWhichHasBeenRemoved, int indexFromWhichChildWasRemoved)
+{
+}
+
+void State::Listener::valueTreeChildOrderChanged(ValueTree & parentTreeWhoseChildrenHaveMoved, int oldIndex, int newIndex)
+{
+}
+
+void State::Listener::valueTreeParentChanged(ValueTree & treeWhoseParentHasChanged)
+{
+}
+
+//NETWORK CLIENT CODE//
 
 void NetworkClient::connectionMade()
 {
@@ -96,23 +144,7 @@ void NetworkClient::printInfo(std::ostream & out)
 	out << "state: " << state.toXmlString() << std::endl;;
 }
 
-void NetworkServer::ServerSideConnection::connectionMade()
-{
-	std::cout << "connection made!\n";
-}
-
-void NetworkServer::ServerSideConnection::connectionLost()
-{
-	std::cout << "connection lost :(\n";
-	server.clients.remove(server.clients.indexOf(this));
-}
-
-void NetworkServer::ServerSideConnection::messageReceived(const MemoryBlock & message)
-{
-	state.copyPropertiesFrom(memoryBlockToValueTree(message), nullptr);
-	server.broadcast(this);
-	std::cout << "message recieved: " << state.toXmlString() << "\n";
-}
+//NETWORK SERVER CODE//
 
 NetworkServer::NetworkServer() : InterprocessConnectionServer() {
 
@@ -141,18 +173,38 @@ void NetworkServer::printInfo(std::ostream& out) const
 		out << "client_is_connected: " << client->isConnected() << std::endl;
 		out << "client_host: " << client->getConnectedHostName() << std::endl;
 	}
-	out << "server state:\n" << state.toXmlString();
+	out << "server state:\n" << valueTreeToString(state);
 }
 
-void NetworkServer::broadcast(const ServerSideConnection*  ignore) const
+void NetworkServer::broadcast(const ServerSideConnection*  ignore, const Identifier& id) const
 {
-	const MemoryBlock message = valueTreeToMemoryBlock(state);
+	const MemoryBlock message = propertyToMemoryBlock(state.getProperty(id), id);
 	for (const auto& client : NetworkServer::clients)
 	{
 		if (client != ignore)
 			client->sendMessage(message);
 	}
-	std::cout << "server_send: " << state.toXmlString() << std::endl;
+	std::cout << "server_send: " << valueTreeToString(state) << std::endl;
 }
 
+//NetworkServer::ServerSideConnection code//
 
+void NetworkServer::ServerSideConnection::connectionMade()
+{
+	std::cout << "connection made!\n";
+}
+
+void NetworkServer::ServerSideConnection::connectionLost()
+{
+	std::cout << "connection lost :(\n";
+	server.clients.remove(server.clients.indexOf(this));
+}
+
+void NetworkServer::ServerSideConnection::messageReceived(const MemoryBlock & message)
+{
+	ValueTree v = memoryBlockToValueTree(message);
+	Identifier i = v.getPropertyName(0);
+	state.setProperty(i, v.getProperty(i), nullptr);
+	server.broadcast(this, i);
+	std::cout << "message recieved: " << valueTreeToString(v) << std::endl;
+}

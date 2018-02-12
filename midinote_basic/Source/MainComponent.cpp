@@ -151,7 +151,7 @@ void MainContentComponent::handleNoteOn(MidiKeyboardState* state,
                                         float velocity)
 {
     osc1.addNote (MidiMessage::noteOn (midiChannel, midiNoteNumber, velocity));
-	globalState.transmit(connection);
+	globalState.updateState();
 }
 
 void MainContentComponent::handleNoteOff(MidiKeyboardState* state,
