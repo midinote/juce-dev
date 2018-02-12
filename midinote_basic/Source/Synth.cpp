@@ -339,34 +339,34 @@ void Synth::updateKnobs()
     panSlider.setValue(settings.pan);
 }
 
-void Synth::updateTree(ValueTree & t)
+void Synth::updateTree(State & s, const bool listen)
 {
-	addValue(t, frequencySlider.getValue(), "a4freq");
-	addValue(t, waveButtons.getValue(), "wave");
-	addValue(t, levelSlider.getValue(), "level");
-	addValue(t, panSlider.getValue(), "pan");
+	addValue(s, frequencySlider.getValue(), "a4freq", listen);
+	addValue(s, waveButtons.getValue(), "wave", listen);
+	addValue(s, levelSlider.getValue(), "level", listen);
+	addValue(s, panSlider.getValue(), "pan", listen);
 	//t.setProperty(id, var(frequencySlider.getValue()), nullptr);
 	//t.setProperty(id + "_1", var(waveSlider.getValue()), nullptr);
 	//t.setProperty(id + "_2", var(levelSlider.getValue()), nullptr);
 	//t.setProperty(id + "_3", var(panSlider.getValue()), nullptr);
-    addValue(t, envelopeADSR.getAttack(), "attack");
-    addValue(t, envelopeADSR.getDecay(), "decay");
-    addValue(t, envelopeADSR.getSustain(), "sustain");
-    addValue(t, envelopeADSR.getRelease(), "release");
+    addValue(s, envelopeADSR.getAttack(), "attack", listen);
+    addValue(s, envelopeADSR.getDecay(), "decay", listen);
+    addValue(s, envelopeADSR.getSustain(), "sustain", listen);
+    addValue(s, envelopeADSR.getRelease(), "release", listen);
 }
 
-void Synth::updateValues(ValueTree & t)
+void Synth::updateValues(State & s)
 {
-	setValue(t, settings.A4Frequency, "a4freq");
-	setValue(t, settings.wave, "wave");
-	setValue(t, settings.level, "level");
-	setValue(t, settings.pan, "pan");
+	setValue(s, settings.A4Frequency, "a4freq");
+	setValue(s, settings.wave, "wave");
+	setValue(s, settings.level, "level");
+	setValue(s, settings.pan, "pan");
 	updateKnobs();
     float attack = -1.0, decay = -1.0, sustain = -1.0, release = -1.0;
-    setValue(t, attack, "attack");
-    setValue(t, decay, "decay");
-    setValue(t, sustain, "sustain");
-    setValue(t, release, "release");
+    setValue(s, attack, "attack");
+    setValue(s, decay, "decay");
+    setValue(s, sustain, "sustain");
+    setValue(s, release, "release");
     bool success = true;
     if (attack < 0.0) std::cout << "could not receive attack" << std::endl;
     if (decay < 0.0) std::cout << "could not receive decay" << std::endl;

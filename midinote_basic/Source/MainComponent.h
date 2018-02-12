@@ -15,6 +15,8 @@
 #include "Network.h"
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#define or ||
+
 #define headerMenuHeight 36
 #define headerMenuMargin 4
 

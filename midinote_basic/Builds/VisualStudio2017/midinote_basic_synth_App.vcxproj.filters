@@ -379,10 +379,19 @@
     <ClCompile Include="..\..\Source\Network.cpp">
       <Filter>midinote_basic_synth\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ADSR.cpp">
+      <Filter>midinote_basic_synth\Source\SynthParts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Filter.cpp">
+      <Filter>midinote_basic_synth\Source\SynthParts</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\Graph.cpp">
       <Filter>midinote_basic_synth\Source\SynthParts</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Oscillator.cpp">
+      <Filter>midinote_basic_synth\Source\SynthParts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\RadialButtons.cpp">
       <Filter>midinote_basic_synth\Source\SynthParts</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Synth.cpp">
@@ -2169,10 +2178,19 @@
     <ClInclude Include="..\..\Source\Network.h">
       <Filter>midinote_basic_synth\Source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\ADSR.h">
+      <Filter>midinote_basic_synth\Source\SynthParts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Filter.h">
+      <Filter>midinote_basic_synth\Source\SynthParts</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\Graph.h">
       <Filter>midinote_basic_synth\Source\SynthParts</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Oscillator.h">
+      <Filter>midinote_basic_synth\Source\SynthParts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\RadialButtons.h">
       <Filter>midinote_basic_synth\Source\SynthParts</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\MidiNoteFunctionLib.h">

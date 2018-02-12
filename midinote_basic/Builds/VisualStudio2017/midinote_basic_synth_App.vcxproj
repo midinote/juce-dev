@@ -148,8 +148,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\Network.cpp"/>
+    <ClCompile Include="..\..\Source\ADSR.cpp"/>
+    <ClCompile Include="..\..\Source\Filter.cpp"/>
     <ClCompile Include="..\..\Source\Graph.cpp"/>
     <ClCompile Include="..\..\Source\Oscillator.cpp"/>
+    <ClCompile Include="..\..\Source\RadialButtons.cpp"/>
     <ClCompile Include="..\..\Source\Synth.cpp"/>
     <ClCompile Include="..\..\Source\MidiEditorGrid.cpp"/>
     <ClCompile Include="..\..\Source\MidiEditor.cpp"/>
@@ -1777,8 +1780,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\Network.h"/>
+    <ClInclude Include="..\..\Source\ADSR.h"/>
+    <ClInclude Include="..\..\Source\Filter.h"/>
     <ClInclude Include="..\..\Source\Graph.h"/>
     <ClInclude Include="..\..\Source\Oscillator.h"/>
+    <ClInclude Include="..\..\Source\RadialButtons.h"/>
     <ClInclude Include="..\..\Source\MidiNoteFunctionLib.h"/>
     <ClInclude Include="..\..\Source\Synth.h"/>
     <ClInclude Include="..\..\Source\MidiEditorGrid.h"/>

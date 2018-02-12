@@ -41,11 +41,10 @@ class Transmittable;
 class State
 {
 public:
+	friend class Transmittable;
 	State(ValueTree& state) : state{ state }, listener{ *this } { this->state.addListener(&listener); }
 	//Update underlying state ValueTree from recieved data
 	void recieve(const ValueTree& recieved);
-	//Build (or update) state ValueTree from current values, and call for transmission (DEPRECATED)
-	void transmit(NetworkClient& connection);
 	//Update registered objects for current state ValueTree.
 	void updateObjects();
 	//Update state ValueTree from objects. should be called before transmission
@@ -84,9 +83,9 @@ class Transmittable
 public:
 	friend class State;
 	//Build a Valuetree consisting of all values meant to be transmitted
-	virtual void updateTree(ValueTree& t) = 0;
+	virtual void updateTree(State& s, const bool listen) = 0;
 	//Set transmittable values from given ValueTree
-	virtual void updateValues(ValueTree& t) = 0;
+	virtual void updateValues(State& s) = 0;
 
 	inline Identifier getID() const { return id; }
 	inline void setID(const Identifier i) { id = i; }
@@ -96,23 +95,25 @@ protected:
 	//Helper functions for defining updateTree and updateValues//
 	//Add one value to the tree. templated, but only works with values where juce::val(T) is defined
 	template<typename Value>
-	void addValue(ValueTree& t, Value v, const std::string& name, UndoManager* undo = nullptr)
+	void addValue(State& s, Value v, const std::string& name, const bool listen, UndoManager* undo = nullptr)
 	{
 		var val = var(v);
 		Identifier i = id + "_" + name;
-		if(!t.getProperty(i).equalsWithSameType(val))
-			t.setProperty(i, val, undo);
+		if (listen == false)
+			s.state.setPropertyExcludingListener(&(s.listener), i, val, undo);
+		else if(!s.state.getProperty(i).equalsWithSameType(val))
+			s.state.setProperty(i, val, undo);
 	}
 	//Get one value from the tree. templated, but only works with values where juce::val(T) is defined
 	template<typename Value, typename std::enable_if<!std::is_enum<Value>::value>::type* = nullptr>
-	void setValue(ValueTree& t, Value& v, const std::string& name)
+	void setValue(State& t, Value& v, const std::string& name)
 	{
-		v = static_cast<Value>(t.getProperty(id + "_" + name));
+		v = static_cast<Value>(t.state.getProperty(id + "_" + name));
 	}
 	template<typename E, typename std::enable_if<std::is_enum<E>::value>::type* = nullptr>
-	void setValue(ValueTree& t, E& v, const std::string& name)
+	void setValue(State& t, E& v, const std::string& name)
 	{
-		v = static_cast<E>(static_cast<typename std::underlying_type<E>::type>(t.getProperty(id + "_" + name)));
+		v = static_cast<E>(static_cast<typename std::underlying_type<E>::type>(t.state.getProperty(id + "_" + name)));
 	}
 };
 

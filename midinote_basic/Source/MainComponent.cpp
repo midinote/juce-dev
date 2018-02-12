@@ -64,6 +64,10 @@ MainContentComponent::MainContentComponent()
 	globalState(ValueTree("global_state")),
 	connection(globalState)
 {
+	osc1.setID("osc1");
+	globalState.registerObject(osc1);
+	osc2.setID("osc2");
+	globalState.registerObject(osc2);
     addAndMakeVisible(headerMenu);
 
     addAndMakeVisible(midiEditor);
@@ -132,10 +136,6 @@ void MainContentComponent::networkConnect (std::string address)
 	//Default Address to use (127.0.0.1 for localhost)
 	if (address == "") address = "127.0.0.1";
 	std::cout << "attempt_connection to " << address << ": " << connection.connectToSocket(address, PORT, TIMEOUT) << "\n";
-	osc1.setID("osc1");
-	globalState.registerObject(osc1);
-	osc2.setID("osc2");
-	globalState.registerObject(osc2);
 }
 
 void MainContentComponent::prepareToPlay(int /*samplesPerBlockExpected*/, double sampleRate)

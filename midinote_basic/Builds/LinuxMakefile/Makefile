@@ -67,8 +67,11 @@ endif
 
 OBJECTS_APP := \
   $(JUCE_OBJDIR)/Network_90aae38f.o \
+  $(JUCE_OBJDIR)/ADSR_8d33c52b.o \
+  $(JUCE_OBJDIR)/Filter_cccb6f01.o \
   $(JUCE_OBJDIR)/Graph_583735af.o \
   $(JUCE_OBJDIR)/Oscillator_8a6cfe29.o \
+  $(JUCE_OBJDIR)/RadialButtons_148b7ac3.o \
   $(JUCE_OBJDIR)/Synth_d919089d.o \
   $(JUCE_OBJDIR)/MidiEditorGrid_366caddd.o \
   $(JUCE_OBJDIR)/MidiEditor_e2fa8277.o \
@@ -105,6 +108,16 @@ $(JUCE_OBJDIR)/Network_90aae38f.o: ../../Source/Network.cpp
 	@echo "Compiling Network.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/ADSR_8d33c52b.o: ../../Source/ADSR.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling ADSR.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/Filter_cccb6f01.o: ../../Source/Filter.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling Filter.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/Graph_583735af.o: ../../Source/Graph.cpp
 	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
 	@echo "Compiling Graph.cpp"
@@ -113,6 +126,11 @@ $(JUCE_OBJDIR)/Graph_583735af.o: ../../Source/Graph.cpp
 $(JUCE_OBJDIR)/Oscillator_8a6cfe29.o: ../../Source/Oscillator.cpp
 	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
 	@echo "Compiling Oscillator.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/RadialButtons_148b7ac3.o: ../../Source/RadialButtons.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling RadialButtons.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/Synth_d919089d.o: ../../Source/Synth.cpp

@@ -44,23 +44,15 @@ MemoryBlock propertyToMemoryBlock(const var& val, const Identifier& identifier)
 void State::recieve(const ValueTree & recieved)
 {
 	Identifier i = recieved.getPropertyName(0);
-	listener.transmit = false;
-	state.setProperty(i, recieved.getProperty(i), nullptr);
+	state.setPropertyExcludingListener(&listener, i, recieved.getProperty(i), nullptr);
 //	objects.at(i.toString().toStdString())->updateValues(state);
-	listener.transmit = true;
-}
-
-void State::transmit(NetworkClient& connection)
-{
-	updateState();
-	connection.sendMessage(valueTreeToMemoryBlock(state));
 }
 
 void State::updateObjects()
 {
 	for (const auto& obj : objects)
 	{
-		obj.second->updateValues(state);
+		obj.second->updateValues(*this);
 	}
 }
 
@@ -68,7 +60,7 @@ void State::updateState()
 {
 	for (const auto& obj : objects)
 	{
-		obj.second->updateTree(state);
+		obj.second->updateTree(*this, true);
 	}
 }
 
@@ -76,9 +68,7 @@ bool State::registerObject(Transmittable& obj)
 {
 	if (state.hasProperty(obj.id))
 		return false;
-	listener.transmit = false;
-	obj.updateTree(state);
-	listener.transmit = true;
+	obj.updateTree(*this, false);
 	objects.insert({ obj.id.toString().toStdString(), &obj });
 	return true;
 }
@@ -97,8 +87,7 @@ void State::transmit(const var & val, const Identifier & identifier)
 
 void State::Listener::valueTreePropertyChanged(ValueTree & treeWhosePropertyHasChanged, const Identifier & property)
 {
-	if (transmit)
-		parent.transmit(treeWhosePropertyHasChanged.getProperty(property), property);
+	parent.transmit(treeWhosePropertyHasChanged.getProperty(property), property);
 }
 
 void State::Listener::valueTreeChildAdded(ValueTree & parentTree, ValueTree & childWhichHasBeenAdded)

@@ -60,8 +60,8 @@ public:
     Settings* getSettings();
 
 	// Inherited via Transmittable
-	virtual void updateTree(ValueTree & t) override;
-	virtual void updateValues(ValueTree & t) override;
+	virtual void updateTree(State& s, const bool listen) override;
+	virtual void updateValues(State& s) override;
 
     Slider frequencySlider;
     Label frequencyLabel;
