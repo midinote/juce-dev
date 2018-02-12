@@ -42,7 +42,7 @@ LESS PRIORITY:
 -LFO and square/pulse wave relationship not decided yet (Jesse's gonna ask David Kant)
 
 NETWORK TOP PRIORITY:
--make update functions more modular so it passes less data at a time
+-TBD
 
 LESS PRIORITY:
 -function to check if IP address is valid, for if-check in MainContentComponent::buttonClicked()

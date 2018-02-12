@@ -183,7 +183,7 @@ void MainContentComponent::handleNoteOn(MidiKeyboardState* state,
                                         float velocity)
 {
     osc1.addNote (MidiMessage::noteOn (midiChannel, midiNoteNumber, velocity));
-	globalState.transmit(connection);
+	globalState.updateState();
 }
 
 void MainContentComponent::handleNoteOff(MidiKeyboardState* state,
@@ -223,7 +223,7 @@ void MainContentComponent::buttonClicked (Button* button)
             or osc2.waveButtons.contains (button)
             or osc1.filter.contains (button)
             or osc2.filter.contains (button)) {
-        globalState.transmit (connection);
+        globalState.updateState();
     }
 }
 
@@ -247,7 +247,7 @@ void MainContentComponent::sliderValueChanged(Slider* slider)
      or slider == &(osc2.decaySlider)
      or slider == &(osc2.sustainSlider)
      or slider == &(osc2.releaseSlider))
-        globalState.transmit (connection);
+        globalState.updateState();
 }
 
 void MainContentComponent::textEditorReturnKeyPressed (TextEditor& box)
