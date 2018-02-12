@@ -10,10 +10,17 @@
       <FILE id="TMKbiq" name="Network.cpp" compile="1" resource="0" file="Source/Network.cpp"/>
       <FILE id="LS8keS" name="Network.h" compile="0" resource="0" file="Source/Network.h"/>
       <GROUP id="{0654C488-4958-0FA4-0452-9FDF4300E881}" name="SynthParts">
+        <FILE id="XpEuPC" name="ADSR.cpp" compile="1" resource="0" file="Source/ADSR.cpp"/>
+        <FILE id="yS9EEl" name="ADSR.h" compile="0" resource="0" file="Source/ADSR.h"/>
+        <FILE id="JaiaSc" name="Filter.cpp" compile="1" resource="0" file="Source/Filter.cpp"/>
+        <FILE id="YYKVbl" name="Filter.h" compile="0" resource="0" file="Source/Filter.h"/>
         <FILE id="hcSVX3" name="Graph.cpp" compile="1" resource="0" file="Source/Graph.cpp"/>
         <FILE id="j95oye" name="Graph.h" compile="0" resource="0" file="Source/Graph.h"/>
         <FILE id="IM7qvo" name="Oscillator.cpp" compile="1" resource="0" file="Source/Oscillator.cpp"/>
         <FILE id="KPhrZV" name="Oscillator.h" compile="0" resource="0" file="Source/Oscillator.h"/>
+        <FILE id="KdKtOG" name="RadialButtons.cpp" compile="1" resource="0"
+              file="Source/RadialButtons.cpp"/>
+        <FILE id="JvdxVw" name="RadialButtons.h" compile="0" resource="0" file="Source/RadialButtons.h"/>
       </GROUP>
       <FILE id="FYh5Kh" name="MidiNoteFunctionLib.h" compile="1" resource="0"
             file="Source/MidiNoteFunctionLib.h" xcodeResource="0"/>

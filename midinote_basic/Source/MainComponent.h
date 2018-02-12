@@ -18,13 +18,15 @@
 #define headerMenuHeight 36
 #define headerMenuMargin 4
 
-class MenuComponent         : public Component
+class MenuComponent          : public Component
 {
 public:
     ComboBox midiInputList;
     Label midiInputListLabel;
     ComboBox presetsList;
     Label presetsListLabel;
+    TextEditor IPbox;
+    TextButton IPbutton;
 
     MenuComponent();
     ~MenuComponent();
@@ -37,32 +39,37 @@ private:
 };
 
 class MainContentComponent   : public AudioAppComponent,
+                               public TextEditor::Listener,
+                               public Button::Listener,
+                               public ComboBox::Listener,
+                               public Slider::Listener,
                                private MidiInputCallback,
-                               private ComboBoxListener,
-                               private MidiKeyboardStateListener,
-                               private SliderListener
+                               private MidiKeyboardStateListener
 {
 public:
     MainContentComponent();
     ~MainContentComponent();
 
-    void prepareToPlay(int, double) override;
-    void getNextAudioBlock(const AudioSourceChannelInfo&) override;
+    void networkConnect (std::string address = ""); // defaults to localhost
+
+    void prepareToPlay (int, double) override;
+    void getNextAudioBlock (const AudioSourceChannelInfo&) override;
     void releaseResources() override;
 
     void paint (Graphics& g) override;
     void resized() override;
 
-    void handleNoteOn(MidiKeyboardState*, int, int, float) override;
-    void handleNoteOff(MidiKeyboardState*, int, int, float) override;
+    void handleNoteOn (MidiKeyboardState*, int, int, float) override;
+    void handleNoteOff (MidiKeyboardState*, int, int, float) override;
 
     void handleIncomingMidiMessage (MidiInput*, const MidiMessage&) override;
 
     void comboBoxChanged (ComboBox*) override;
+    void buttonClicked (Button* button) override;
+    void textEditorReturnKeyPressed (TextEditor&) override;
+    void sliderValueChanged (Slider*) override;
 
     void setMidiInput (int);
-
-    void sliderValueChanged(Slider*) override;
 
 private:
 	State globalState;

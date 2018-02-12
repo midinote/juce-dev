@@ -7,22 +7,29 @@
 */
 
 MenuComponent::MenuComponent()
+:   IPbox ("IPbox"),
+    IPbutton ("Connect",
+    /* tooltip */ "Connect to the specified IP address, or leave blank for localhost.")
 {
-    addAndMakeVisible(midiInputListLabel);
-    midiInputListLabel.setColour(Label::textColourId, Colours::white);
-    midiInputListLabel.setText("Midi Input: ", dontSendNotification);
-    midiInputListLabel.attachToComponent(&midiInputList, true);
+    addAndMakeVisible (midiInputListLabel);
+    midiInputListLabel.setColour (Label::textColourId, Colours::white);
+    midiInputListLabel.setText ("Midi Input: ", dontSendNotification);
+    midiInputListLabel.attachToComponent (&midiInputList, true);
 
-    addAndMakeVisible(presetsListLabel);
-    presetsListLabel.setColour(Label::textColourId, Colours::white);
-    presetsListLabel.setText("Preset: ", dontSendNotification);
-    presetsListLabel.attachToComponent(&presetsList, true);
+    addAndMakeVisible (presetsListLabel);
+    presetsListLabel.setColour (Label::textColourId, Colours::white);
+    presetsListLabel.setText ("Preset: ", dontSendNotification);
+    presetsListLabel.attachToComponent (&presetsList, true);
 
-    addAndMakeVisible(midiInputList);
-    midiInputList.setTextWhenNoChoicesAvailable("No Devices Available");
+    addAndMakeVisible (midiInputList);
+    midiInputList.setTextWhenNoChoicesAvailable ("No Devices Available");
 
-    addAndMakeVisible(presetsList);
-    presetsList.setTextWhenNoChoicesAvailable("None");
+    addAndMakeVisible (presetsList);
+    presetsList.setTextWhenNoChoicesAvailable ("None");
+
+    addAndMakeVisible (IPbox);
+    addAndMakeVisible (IPbutton);
+    IPbox.setTextToShowWhenEmpty ("IP Address", Colours::grey);
 }
 
 MenuComponent::~MenuComponent()
@@ -38,28 +45,25 @@ void MenuComponent::resized()
 {
     int menuItemsSpace = 0;
     menuItemsSpace += 85; // length of "Midi Input: " text
-    midiInputList.setBounds(menuItemsSpace, 10, 250, headerMenuHeight - 16);
+    midiInputList.setBounds (menuItemsSpace, 10, 250, headerMenuHeight - 16);
     menuItemsSpace += midiInputList.getRight();
-    presetsList.setBounds(menuItemsSpace, 10, 180, headerMenuHeight - 16);
+    presetsList.setBounds (menuItemsSpace, 10, 180, headerMenuHeight - 16);
     menuItemsSpace += presetsList.getRight();
+    menuItemsSpace -= 380; // VERY weird bug
+    IPbox.setBounds (menuItemsSpace, 10, 110, headerMenuHeight - 16);
+    menuItemsSpace += IPbox.getRight();
+    menuItemsSpace -= 630; // VERY weird bug
+    IPbutton.setBounds (menuItemsSpace, 10, 80, headerMenuHeight - 16);
+    menuItemsSpace += IPbutton.getRight();
 }
 
 MainContentComponent::MainContentComponent()
 :   lastInputIndex (0),
     isAddingFromMidiInput (false),
-    noteOn(false),
+    noteOn (false),
 	globalState(ValueTree("global_state")),
 	connection(globalState)
 {
-
-	//Default Address to use (127.0.0.1 for localhost)
-	std::string address = "127.0.0.1";
-	std::cout << "attempt_connection to " << address << ": " << connection.connectToSocket(address, PORT, TIMEOUT) << "\n";
-	osc1.setID("osc1");
-	globalState.registerObject(osc1);
-	osc2.setID("osc2");
-	globalState.registerObject(osc2);
-
     addAndMakeVisible(headerMenu);
 
     addAndMakeVisible(midiEditor);
@@ -68,20 +72,37 @@ MainContentComponent::MainContentComponent()
 
     const StringArray midiInputs (MidiInput::getDevices());
     headerMenu.midiInputList.addItemList(midiInputs, 1);
-    headerMenu.midiInputList.addListener(this);
-    headerMenu.presetsList.addListener(this);
-    osc1.envelopeMenu.addListener(this);
-    osc2.envelopeMenu.addListener(this);
+    headerMenu.midiInputList.addListener (this);
+    headerMenu.presetsList.addListener (this);
+    headerMenu.IPbox.addListener (this);
+    headerMenu.IPbutton.addListener (this);
+    osc1.envelopeMenu.addListener (this);
+    osc2.envelopeMenu.addListener (this);
 
-    midiEditor.keyboardState.addListener(this);
-    osc1.panSlider.addListener(this);
-    osc1.frequencySlider.addListener(this);
-    osc1.levelSlider.addListener(this);
-    osc1.waveSlider.addListener(this);
-    osc2.panSlider.addListener(this);
-    osc2.frequencySlider.addListener(this);
-    osc2.levelSlider.addListener(this);
-    osc2.waveSlider.addListener(this);
+    midiEditor.keyboardState.addListener (this);
+    osc1.panSlider.addListener (this);
+    osc1.frequencySlider.addListener (this);
+    osc1.levelSlider.addListener (this);
+    osc1.waveButtons.addListenerToButtons (this);
+    osc1.filter.addListenerToButtons (this);
+    osc1.cutoffSlider.addListener (this);
+    osc1.resonanceSlider.addListener (this);
+    osc1.attackSlider.addListener (this);
+    osc1.decaySlider.addListener (this);
+    osc1.sustainSlider.addListener (this);
+    osc1.releaseSlider.addListener (this);
+
+    osc2.panSlider.addListener (this);
+    osc2.frequencySlider.addListener (this);
+    osc2.levelSlider.addListener (this);
+    osc2.waveButtons.addListenerToButtons (this);
+    osc2.filter.addListenerToButtons (this);
+    osc2.cutoffSlider.addListener (this);
+    osc2.resonanceSlider.addListener (this);
+    osc2.attackSlider.addListener (this);
+    osc2.decaySlider.addListener (this);
+    osc2.sustainSlider.addListener (this);
+    osc2.releaseSlider.addListener (this);
 
 
     for (int i; i < midiInputs.size(); ++i)
@@ -104,6 +125,17 @@ MainContentComponent::~MainContentComponent()
     //any future networking objects should be deleted/freed here
     shutdownAudio();
     delete this;
+}
+
+void MainContentComponent::networkConnect (std::string address)
+{
+	//Default Address to use (127.0.0.1 for localhost)
+	if (address == "") address = "127.0.0.1";
+	std::cout << "attempt_connection to " << address << ": " << connection.connectToSocket(address, PORT, TIMEOUT) << "\n";
+	osc1.setID("osc1");
+	globalState.registerObject(osc1);
+	osc2.setID("osc2");
+	globalState.registerObject(osc2);
 }
 
 void MainContentComponent::prepareToPlay(int /*samplesPerBlockExpected*/, double sampleRate)
@@ -175,6 +207,53 @@ void MainContentComponent::comboBoxChanged (ComboBox* box)
     } else if (box == &(headerMenu.presetsList)) {
         // do stuff around setting presets
     }
+    // conveniently, none (yet) of our ComboBox objects are something that should be sent over the network
+}
+
+void MainContentComponent::buttonClicked (Button* button)
+{
+    if (button == &(headerMenu.IPbutton)) {
+        if (headerMenu.IPbox.isEmpty()
+        or headerMenu.IPbox.getText().equalsIgnoreCase ("localhost")
+        or headerMenu.IPbox.getText().equalsIgnoreCase ("local"))
+            networkConnect(); // localhost
+        else // if some sort of check that it is a valid IP address
+            networkConnect (headerMenu.IPbox.getText().toStdString());
+    } else if (osc1.waveButtons.contains (button)
+            or osc2.waveButtons.contains (button)
+            or osc1.filter.contains (button)
+            or osc2.filter.contains (button)) {
+        globalState.updateState();
+    }
+}
+
+void MainContentComponent::sliderValueChanged(Slider* slider)
+{
+    if (slider == &(osc1.frequencySlider)
+     or slider == &(osc1.levelSlider)
+     or slider == &(osc1.panSlider)
+     or slider == &(osc1.cutoffSlider)
+     or slider == &(osc1.resonanceSlider)
+     or slider == &(osc1.attackSlider)
+     or slider == &(osc1.decaySlider)
+     or slider == &(osc1.sustainSlider)
+     or slider == &(osc1.releaseSlider)
+     or slider == &(osc2.frequencySlider)
+     or slider == &(osc2.levelSlider)
+     or slider == &(osc2.panSlider)
+     or slider == &(osc2.cutoffSlider)
+     or slider == &(osc2.resonanceSlider)
+     or slider == &(osc2.attackSlider)
+     or slider == &(osc2.decaySlider)
+     or slider == &(osc2.sustainSlider)
+     or slider == &(osc2.releaseSlider))
+        globalState.updateState();
+}
+
+void MainContentComponent::textEditorReturnKeyPressed (TextEditor& box)
+{
+    if (box.getName().compare ("IPbox") == 0)
+        buttonClicked (&(headerMenu.IPbutton));
 }
 
 void MainContentComponent::setMidiInput (int ind)
@@ -188,8 +267,4 @@ void MainContentComponent::setMidiInput (int ind)
     deviceManager.addMidiInputCallback(newMidiInput, this);
     headerMenu.midiInputList.setSelectedId(ind+1, dontSendNotification);
     lastInputIndex = ind;
-}
-
-void MainContentComponent::sliderValueChanged(Slider* slider)
-{
 }

@@ -12,39 +12,44 @@
 #define OSCILLATOR_H_INCLUDED
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "ADSR.h"
+
 class Oscillator
 {
 public:
-    enum WaveType {sine, square, triangle, sawtooth, noise};
+    // Linux's GNU g++ interprets this as an unsigned int, but Juce::var only defines the conversion operator for signed int
+    enum WaveType : signed int {sine = 0, square, triangle, sawtooth, noise, WAVETYPE_SIZE};
 
-    Oscillator (float freq, float lev, WaveType waveType);
-    
+    Oscillator (float freq, float lev, WaveType waveType, ADSR* envelope = nullptr);
+
     float oscillate (double, double);
-    
+
     WaveType getWaveType ();
     float getTuning ();
     float getLevel ();
     float getPulseWidth ();
-    
+
     void setWave (WaveType);
     void setTuning (float);
     void setLevel (float);
     void setPulseWidth (float);
 
 private:
-    
+
     float squareWaveFunction ();
     float sineWaveFunction ();
     float triangleWaveFunction ();
     float sawtoothWaveFunction ();
     float NoiseFunction ();
-    
+
     void updateAngleDelta (double);
-    
+
     WaveType wave;
     double currentAngle, angleDelta, currentFrequency, currentSampleSize, currentTime;
     float frequencyA4, level, pulseWidth;
     Random random;
+    ADSR* envelope;
+    bool hasEnvelope;
 };
 
 
