@@ -15,7 +15,11 @@
 #include "Network.h"
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#ifdef _WIN32
+#define and &&
 #define or ||
+#define not !
+#endif
 
 #define headerMenuHeight 36
 #define headerMenuMargin 4

@@ -42,7 +42,7 @@ class State
 {
 public:
 	friend class Transmittable;
-	State(ValueTree& state) : state{ state }, listener{ *this } { this->state.addListener(&listener); }
+	State(ValueTree state) : state{ state }, listener{ *this } { this->state.addListener(&listener); }
 	//Update underlying state ValueTree from recieved data
 	void recieve(const ValueTree& recieved);
 	//Update registered objects for current state ValueTree.
@@ -124,7 +124,7 @@ class NetworkClient : public InterprocessConnection
 {
 public:
 	NetworkClient(State& state, uint32 magicMessageHeaderNumber = MAGIC_NUMBER)
-		: InterprocessConnection(/*callbacksOnMessageThread*/ false, magicMessageHeaderNumber), state{ state } 
+		: InterprocessConnection(/*callbacksOnMessageThread*/ false, magicMessageHeaderNumber), state{ state }
 	{
 		state.setConnection(this);
 	};
