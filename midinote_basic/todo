@@ -6,7 +6,6 @@ BUGS:
 -resize limits aren't actually doing anything (at least on linux)
 -midi "inputs" looks for outputs on linux
 -F#5 was very quiet after attack once (can't reproduce)
--A3 is set to 440, not A4
 -JUCE Assertion failure spam whenever an ADSR knob's range becomes 0; nothing else seems to go wrong and those knobs *should* be able to have a range of 0, when their current value is 0 and the ADSR's total length is the length of the graph
 -Level slider ignores setValue() in the initialization and defaults to 0.1 no matter what, ever since Jimi set its interval to 0.1
 
