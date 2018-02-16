@@ -11,8 +11,8 @@
 #include "Filter.h"
 
 Filter::Filter (Font labelFont, Justification labelJustification, float _cutoff, float _resonance)
-:   RadialButtons (Filter::low, Filter::MODE_SIZE, labelFont, labelJustification,
-                   {"Bandpass", "Lowpass", "Highpass"})
+:   RadialButtons (Filter::off, Filter::MODE_SIZE, labelFont, labelJustification,
+                   {"OFF", "Lowpass", "Highpass", "Bandpass"})
 {
     this->cutoff = _cutoff;
     this->resonance = _resonance;

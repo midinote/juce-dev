@@ -11,7 +11,7 @@ BUGS:
 -Level slider ignores setValue() in the initialization and defaults to 0.1 no matter what, ever since Jimi set its interval to 0.1
 
 GUI TOP PRIORITY:
--on/off switch for Filter
+-TBD
 
 LESS PRIORITY:
 -some sort of visual feedback on a successful or unsuccessful network connection
