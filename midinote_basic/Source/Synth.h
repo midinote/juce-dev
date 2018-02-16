@@ -51,9 +51,18 @@ public:
     void sliderValueChanged (Slider*) override;
     void buttonClicked (Button* button) override;
 
-    void updateADSR (Point<float> attack, Point<float> decay, Point<float> sustain, float release);
-    void updateADSR (float attack, float decay, float sustain, float release);
+    void repaintADSRKnobs();
+    void updateAttackKnob();
+    void updateDecayKnob();
+    void updateSustainKnob();
+    void updateReleaseKnob();
     void updateADSRKnobs();
+
+    void updateAttack (float attack);
+    void updateDecay (float decay);
+    void updateSustain (float sustain);
+    void updateRelease (float release);
+    void updateADSR (float attack, float decay, float sustain, float release);
 
     void updateSettings (Settings newSettings);
     void updateSettings (float A4Frequency, Oscillator::WaveType wave, float level, float pan);

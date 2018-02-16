@@ -143,16 +143,18 @@ void ADSR::setDecay (float MS, Slider* sliderX)
     setDecay (Point<float> (MS + getAttack(), getDecayGraph().getY()), sliderX, nullptr);
 }
 
-void ADSR::setSustain (Point<float> point, Slider* sliderX, Slider* sliderY)
+void ADSR::setSustain (Point<float> point, Slider* sliderX, Slider* sliderY,
+                       bool calledFromOtherSetFunction)
 {
     sustain = point;
     if (sliderX != nullptr) sliderX->setValue (getSustainGraph().getX());
     if (sliderY != nullptr) sliderY->setValue (getSustainGraph().getY());
-    redrawSustainAndRelease();
+    if (not calledFromOtherSetFunction) redrawSustainAndRelease();
 }
 void ADSR::setSustain (float dB, Slider* sliderY)
 {
-    setSustain (Point<float> (getDecayGraph().getX() + sustainLength, dB), nullptr, sliderY);
+    setSustain (Point<float> (getDecayGraph().getX() + sustainLength, dB),
+                nullptr, sliderY, true);
     setDecay (Point<float> (getDecayGraph().getX(), dB), nullptr, nullptr);
 }
 

@@ -12,8 +12,6 @@ BUGS:
 
 GUI TOP PRIORITY:
 -on/off switch for Filter
--make updateADSR() more modular
--bug: decay value changes when anything else changes (because it's when ADSR changes and currently ADSR changes when anything changes because of another bug)
 
 LESS PRIORITY:
 -some sort of visual feedback on a successful or unsuccessful network connection

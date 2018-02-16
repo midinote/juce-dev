@@ -254,21 +254,19 @@ void Synth::resized()
 
 void Synth::sliderValueChanged(Slider* slider)
 {
-    bool ADSRchanged = false;
     if (slider == &attackSlider) {
         envelopeADSR.setAttack (slider->getValue());
-        ADSRchanged = true;
+        updateAttackKnob();
     } else if (slider == &decaySlider) {
         envelopeADSR.setDecay (slider->getValue());
-        ADSRchanged = true;
+        updateDecayKnob();
     } else if (slider == &sustainSlider) {
         envelopeADSR.setSustain (slider->getValue());
-        ADSRchanged = true;
+        updateSustainKnob();
     } else if (slider == &releaseSlider) {
         envelopeADSR.setRelease (slider->getValue());
-        ADSRchanged = true;
+        updateReleaseKnob();
     }
-    if (ADSRchanged) updateADSRKnobs();
 }
 
 void Synth::buttonClicked (Button* button)
@@ -281,39 +279,84 @@ void Synth::buttonClicked (Button* button)
     }
 }
 
-void Synth::updateADSR (Point<float> attack, Point<float> decay, Point<float> sustain, float release)
+void Synth::repaintADSRKnobs()
 {
-    envelopeADSR.setAttack (attack, &attackSlider);
-    envelopeADSR.setDecay (decay, &decaySlider);
-    envelopeADSR.setSustain (sustain, &sustainSlider);
-    envelopeADSR.setRelease (release, &releaseSlider);
-    updateADSRKnobs();
-}
-void Synth::updateADSR (float attack, float decay, float sustain, float release)
-{
-    envelopeADSR.setAttack (attack, &attackSlider);
-    envelopeADSR.setDecay (decay, &decaySlider);
-    envelopeADSR.setSustain (sustain, &sustainSlider);
-    envelopeADSR.setRelease (release, &releaseSlider);
-    updateADSRKnobs();
-}
-void Synth::updateADSRKnobs()
-{
-    attackSlider.setRange  (envelopeADSR.getStartPoint(),
-                            envelopeADSR.getMaxMS() - envelopeADSR.getDecay() - envelopeADSR.getRelease() - 1.0, 0.1);
-    attackSlider.setValue  (envelopeADSR.getAttack(), dontSendNotification);
-    decaySlider.setRange   (0,
-                            envelopeADSR.getMaxMS() - envelopeADSR.getAttack() - envelopeADSR.getRelease() - 1.0, 0.1);
-    decaySlider.setValue   (envelopeADSR.getDecay(), dontSendNotification);
-    sustainSlider.setRange (0, envelopeADSR.getMaxdB(), 0.1);
-    sustainSlider.setValue (envelopeADSR.getSustain(), dontSendNotification);
-    releaseSlider.setRange (0,
-                            envelopeADSR.getMaxMS() - envelopeADSR.getAttack() - envelopeADSR.getDecay() - 1.0, 0.1);
-    releaseSlider.setValue (envelopeADSR.getRelease(), dontSendNotification);
     attackSlider.repaint();
     decaySlider.repaint();
     sustainSlider.repaint();
     releaseSlider.repaint();
+}
+void Synth::updateAttackKnob()
+{
+    float max = envelopeADSR.getMaxMS() - envelopeADSR.getDecay() - envelopeADSR.getRelease() - 1.0;
+    attackSlider.setRange  (envelopeADSR.getStartPoint(), max, 0.1);
+    attackSlider.setValue  (envelopeADSR.getAttack(), dontSendNotification);
+    repaintADSRKnobs();
+}
+void Synth::updateDecayKnob()
+{
+    float max = envelopeADSR.getMaxMS() - envelopeADSR.getAttack() - envelopeADSR.getRelease() - 1.0;
+    decaySlider.setRange   (0, max, 0.1);
+    decaySlider.setValue   (envelopeADSR.getDecay(), dontSendNotification);
+    repaintADSRKnobs();
+}
+void Synth::updateSustainKnob()
+{
+    sustainSlider.setRange (0, envelopeADSR.getMaxdB(), 0.1);
+    sustainSlider.setValue (envelopeADSR.getSustain(), dontSendNotification);
+    repaintADSRKnobs();
+}
+void Synth::updateReleaseKnob()
+{
+    float max = envelopeADSR.getMaxMS() - envelopeADSR.getAttack() - envelopeADSR.getDecay() - 1.0;
+    releaseSlider.setRange (0, max, 0.1);
+    releaseSlider.setValue (envelopeADSR.getRelease(), dontSendNotification);
+    repaintADSRKnobs();
+}
+void Synth::updateADSRKnobs()
+{
+    updateAttackKnob();
+    updateDecayKnob();
+    updateSustainKnob();
+    updateReleaseKnob();
+}
+
+void Synth::updateAttack (float attack)
+{
+    envelopeADSR.setAttack (attack, &attackSlider);
+    // If we don't update them all at once, the sliders don't get their new ranges until
+    // you click on them. That may or may not be the behavior we want, depending on
+    // networking locking and optimization. For now, we'll go with the better looking
+    // and feeling choice for the user.
+    // But also, somehow, that isn't working. The knobs refuse to update anymore simply
+    // because the exact same knob.setRange()/Value() code is in separate functions???
+    //updateAttackKnob();
+    updateADSRKnobs();
+}
+void Synth::updateDecay (float decay)
+{
+    envelopeADSR.setDecay (decay, &decaySlider);
+    //updateDecayKnob();
+    updateADSRKnobs();
+}
+void Synth::updateSustain (float sustain)
+{
+    envelopeADSR.setSustain (sustain, &sustainSlider);
+    //updateSustainKnob();
+    updateADSRKnobs();
+}
+void Synth::updateRelease (float release)
+{
+    envelopeADSR.setRelease (release, &releaseSlider);
+    //updateReleaseKnob();
+    updateADSRKnobs();
+}
+void Synth::updateADSR (float attack, float decay, float sustain, float release)
+{
+    updateAttack (attack);
+    updateDecay (decay);
+    updateSustain (sustain);
+    updateRelease (release);
 }
 
 void Synth::updateSettings(Synth::Settings newSettings)
@@ -367,12 +410,14 @@ void Synth::updateValues(State & s)
     setValue(s, decay, "decay");
     setValue(s, sustain, "sustain");
     setValue(s, release, "release");
-    bool success = true;
     if (attack < 0.0) std::cout << "could not receive attack" << std::endl;
+    else updateAttack (attack);
     if (decay < 0.0) std::cout << "could not receive decay" << std::endl;
+    else updateDecay (decay);
     if (sustain < 0.0) std::cout << "could not receive sustain" << std::endl;
+    else updateSustain (sustain);
     if (release < 0.0) std::cout << "could not receive release" << std::endl;
-    if (success) updateADSR (attack, decay, sustain, release);
+    else updateRelease (release);
 }
 
 Synth::Settings* Synth::getSettings()

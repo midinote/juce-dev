@@ -40,7 +40,8 @@ public:
     void setAttack (float MS, Slider* sliderX = nullptr);
     void setDecay (Point<float> point, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
     void setDecay (float MS, Slider* sliderX = nullptr);
-    void setSustain (Point<float> point, Slider* sliderX = nullptr, Slider* sliderY = nullptr);
+    void setSustain (Point<float> point, Slider* sliderX = nullptr, Slider* sliderY = nullptr,
+                     bool calledFromOtherSetFunction = false);
     void setSustain (float dB, Slider* sliderY = nullptr);
     void setRelease (Point<float> point, Slider* sliderX = nullptr);
     void setReleaseGraph (float x);
