@@ -16,6 +16,7 @@ GUI TOP PRIORITY:
 -TBD
 
 LESS PRIORITY:
+-filter dB level setting (defaults to 12dB for now)
 -some sort of visual feedback on a successful or unsuccessful network connection
 -master volume knob with meter
 -tempo (with tap button under it that you can just tap)
@@ -36,6 +37,7 @@ AUDIO TOP PRIORITY:
 -integrate filter & ADSR with synth in the backend
 
 LESS PRIORITY:
+-filter dB level setting (defaults to 12dB for now)
 -have on/off switch be between midi device and in-window keyboard
 -make 2nd osc functional
 -3 visual oscillators (48 total voices)

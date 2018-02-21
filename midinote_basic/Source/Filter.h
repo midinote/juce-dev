@@ -17,14 +17,19 @@ class Filter   : public RadialButtons
 {
 public:
     // Linux's GNU g++ interprets this as an unsigned int, but Juce::var only defines the conversion operator for signed int
-    enum Mode : signed int {off = 0, low, high, band, MODE_SIZE};
+    enum Mode   : signed int {off = 0, low, high, band, MODE_SIZE};
+    enum dBMode : signed int {dB6 = 0, dB12, dB18, dB24, DB_MODE_SIZE};
 
     Filter (Font labelFont, Justification labelJustification,
-            float cutoff = 2000, float resonance = -3);
+            dBMode dB = dB12, float cutoff = 2000, float resonance = -3);
     ~Filter();
 
     Mode getMode();
 
+    dBMode getdB();
+    void setdB (dBMode dB);
+
+    dBMode dB;
     float cutoff;
     float resonance;
 
