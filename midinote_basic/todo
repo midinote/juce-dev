@@ -1,13 +1,16 @@
-BUGS:
+CRITICAL BUGS:
+-radial buttons won't always update, probably because of race condition (possibly already fixed in last network commit?)
+
+MINOR BUGS:
 -network code has to get settings from slider.getValue() for some reason
 -dBToVolume() garbles that float for some reason (if it's negative)
 -segfault on exit
 -renaming wavetype buttons' labels to just 2 characters (if window gets too small) can't be done because of a weird error--see comments in RadialButtons::paint()
 -resize limits aren't actually doing anything (at least on linux)
--midi "inputs" looks for outputs on linux
+-midi "inputs" looks for hardware-level outputs (instead of inputs on JACK and/or ALSA) on linux
 -F#5 was very quiet after attack once (can't reproduce)
 -JUCE Assertion failure spam whenever an ADSR knob's range becomes 0; nothing else seems to go wrong and those knobs *should* be able to have a range of 0, when their current value is 0 and the ADSR's total length is the length of the graph
--Level slider ignores setValue() in the initialization and defaults to 0.1 no matter what, ever since Jimi set its interval to 0.1
+-Level slider ignores setValue() in the initialization and defaults to 0.1 no matter what, ever since Jimi set its interval to 0.1 (probably a rounding error)
 
 GUI TOP PRIORITY:
 -TBD
@@ -26,7 +29,7 @@ LESS PRIORITY:
 -have A, D, S, R in 4 separate graphs?, with a dial for how long each of the 4 is (up to a minute or more) without that changing the actual graphical size of the graph
 -replace 2 ADSR graphs with a global one for both synths?
 -LFO with depth & rate (frequency), decided by a clickable display box for each BPM and Hz (click one to choose what the knob does)
--knobs: https://forum.juce.com/t/creating-custom-guis/8764
+-nicer-looking knobs by image: https://forum.juce.com/t/creating-custom-guis/8764
 
 AUDIO TOP PRIORITY:
 -crackle/pop issue--aliasing
@@ -40,7 +43,7 @@ LESS PRIORITY:
 -LFO and square/pulse wave relationship not decided yet (Jesse's gonna ask David Kant)
 
 NETWORK TOP PRIORITY:
--bug: radial buttons won't always update, probably because of race condition (already fixed in last network commit?)
+-TBD
 
 LESS PRIORITY:
 -function to check if IP address is valid, for if-check in MainContentComponent::buttonClicked()
