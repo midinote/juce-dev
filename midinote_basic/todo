@@ -1,5 +1,6 @@
 CRITICAL BUGS:
 -radial buttons won't always update, probably because of race condition (possibly already fixed in last network commit?)
+-Filter doesn't work and sounds awful (volume warning)
 
 MINOR BUGS:
 -network code has to get settings from slider.getValue() for some reason
@@ -16,7 +17,7 @@ GUI TOP PRIORITY:
 -TBD
 
 LESS PRIORITY:
--filter dB level setting (defaults to 12dB for now)
+-filter dB level setting (defaults to whatever JUCE's default is for now, which isn't specified)
 -some sort of visual feedback on a successful or unsuccessful network connection
 -master volume knob with meter
 -tempo (with tap button under it that you can just tap)
@@ -34,10 +35,10 @@ LESS PRIORITY:
 
 AUDIO TOP PRIORITY:
 -crackle/pop issue--aliasing
--integrate filter & ADSR with synth in the backend
+-integrate ADSR with synth in the backend
 
 LESS PRIORITY:
--filter dB level setting (defaults to 12dB for now)
+-filter dB level setting (defaults to whatever JUCE's default is for now, which isn't specified)
 -have on/off switch be between midi device and in-window keyboard
 -make 2nd osc functional
 -3 visual oscillators (48 total voices)

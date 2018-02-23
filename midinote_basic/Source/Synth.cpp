@@ -188,7 +188,7 @@ std::pair<float,float> Synth::synthesize(double sampleRate)
         sample += itor->second.second.oscillate(sampleRate, currentFrequency);
     }
     lock.unlock();
-    return applyPan(panSlider.getValue(), sample);
+    return applyPanAndFilter (panSlider.getValue(), sample, &filter, sampleRate);
 }
 
 void Synth::addNote (MidiMessage message)
@@ -275,7 +275,6 @@ void Synth::buttonClicked (Button* button)
         settings.wave = static_cast<Oscillator::WaveType> (waveButtons.clicked (button));
     else if (filter.contains (button)) {
         filter.clicked (button);
-        // set the synth accordingly? might not be necessary depending on how that gets implemented
     }
 }
 

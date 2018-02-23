@@ -32,6 +32,9 @@ public:
     dBMode dB;
     float cutoff;
     float resonance;
+    // separate left/right channel instances is advice from https://forum.juce.com/t/a-basic-code-on-how-to-add-the-iir-filter/23163/2
+    IIRFilter left;
+    IIRFilter right;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Filter)
