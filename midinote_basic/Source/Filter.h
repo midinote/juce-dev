@@ -25,6 +25,7 @@ public:
     ~Filter();
 
     Mode getMode();
+    void setMode (Mode mode);
 
     dBMode getdB();
     void setdB (dBMode dB);

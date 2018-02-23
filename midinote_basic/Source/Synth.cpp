@@ -395,6 +395,10 @@ void Synth::updateTree(State & s, const bool listen)
     addValue(s, envelopeADSR.getDecay(), "decay", listen);
     addValue(s, envelopeADSR.getSustain(), "sustain", listen);
     addValue(s, envelopeADSR.getRelease(), "release", listen);
+    addValue(s, filter.getMode(), "filter_mode", listen);
+    addValue(s, filter.getdB(), "filter_dB", listen);
+    addValue(s, filter.cutoff, "filter_cutoff", listen);
+    addValue(s, filter.resonance, "filter_resonance", listen);
 }
 
 void Synth::updateValues(State & s)
@@ -417,6 +421,18 @@ void Synth::updateValues(State & s)
     else updateSustain (sustain);
     if (release < 0.0) std::cout << "could not receive release" << std::endl;
     else updateRelease (release);
+    Filter::Mode filter_mode = Filter::MODE_SIZE;
+    Filter::dBMode filter_dB = Filter::DB_MODE_SIZE;
+    setValue(s, filter_mode, "filter_mode");
+    setValue(s, filter_dB, "filter_dB");
+    if (filter_mode == Filter::MODE_SIZE)
+        std::cout << "could not receive filter_mode" << std::endl;
+    else filter.setMode (filter_mode);
+    if (filter_dB == Filter::DB_MODE_SIZE)
+        std::cout << "could not receive filter_dB" << std::endl;
+    else filter.setdB (filter_dB);
+    setValue(s, filter.cutoff, "filter_cutoff");
+    setValue(s, filter.resonance, "filter_resonance");
 }
 
 Synth::Settings* Synth::getSettings()

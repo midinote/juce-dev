@@ -1,6 +1,6 @@
 CRITICAL BUGS:
 -radial buttons won't always update, probably because of race condition (possibly already fixed in last network commit?)
--Filter doesn't work and sounds awful (volume warning)
+-Filter doesn't work and sounds awful (volume warning); can possibly be fixed by processing the filter in MainContentComponent
 
 MINOR BUGS:
 -network code has to get settings from slider.getValue() for some reason

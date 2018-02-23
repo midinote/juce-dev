@@ -28,6 +28,10 @@ Filter::Mode Filter::getMode()
 {
     return static_cast<Filter::Mode> (getValue());
 }
+void Filter::setMode (Filter::Mode mode)
+{
+    setValue (mode);
+}
 
 Filter::dBMode Filter::getdB()
 {
