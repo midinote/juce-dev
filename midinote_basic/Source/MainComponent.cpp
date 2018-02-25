@@ -154,6 +154,34 @@ void MainContentComponent::getNextAudioBlock(const AudioSourceChannelInfo& buffe
         bufferL[sample] = currentSample.first;
         bufferR[sample] = currentSample.second;
     }
+    Filter* filter = &(osc1.filter);
+    // the way JUCE's IIRFilter library is designed, it has its own off-switch (makeInactive())
+    switch (filter->getMode()) {
+        case Filter::low:
+            filter->left.setCoefficients(IIRCoefficients::makeLowPass (currentSampleRate,
+                                         filter->cutoff, filter->resonance));
+            filter->right.setCoefficients(IIRCoefficients::makeLowPass (currentSampleRate,
+                                          filter->cutoff, filter->resonance));
+            break;
+        case Filter::high:
+            filter->left.setCoefficients(IIRCoefficients::makeHighPass (currentSampleRate,
+                                         filter->cutoff, filter->resonance));
+            filter->right.setCoefficients(IIRCoefficients::makeHighPass (currentSampleRate,
+                                          filter->cutoff, filter->resonance));
+            break;
+        case Filter::band:
+            filter->left.setCoefficients(IIRCoefficients::makeBandPass (currentSampleRate,
+                                         filter->cutoff, filter->resonance));
+            filter->right.setCoefficients(IIRCoefficients::makeBandPass (currentSampleRate,
+                                          filter->cutoff, filter->resonance));
+            break;
+        default:
+            filter->left.makeInactive();
+            filter->right.makeInactive();
+            break;
+    }
+    filter->left.processSamples (bufferL, bufferSize);
+    filter->right.processSamples (bufferR, bufferSize);
 }
 
 void MainContentComponent::releaseResources()

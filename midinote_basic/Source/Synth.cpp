@@ -97,7 +97,7 @@ Synth::Synth()
     addAndMakeVisible (resonanceSlider);
     resonanceSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     resonanceSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 60, 20);
-    resonanceSlider.setRange(-3.0, 30.1, 0.1);
+    resonanceSlider.setRange(0.0, 30.0, 0.1);
     resonanceSlider.setValue(filter.resonance);
     resonanceSlider.addListener (this);
 
@@ -188,7 +188,7 @@ std::pair<float,float> Synth::synthesize(double sampleRate)
         sample += itor->second.second.oscillate(sampleRate, currentFrequency);
     }
     lock.unlock();
-    return applyPanAndFilter (panSlider.getValue(), sample, &filter, sampleRate);
+    return applyPan (panSlider.getValue(), sample);
 }
 
 void Synth::addNote (MidiMessage message)
@@ -266,6 +266,10 @@ void Synth::sliderValueChanged(Slider* slider)
     } else if (slider == &releaseSlider) {
         envelopeADSR.setRelease (slider->getValue());
         updateReleaseKnob();
+    } else if (slider == &cutoffSlider) {
+        filter.cutoff = (slider->getValue());
+    } else if (slider == &resonanceSlider) {
+        filter.resonance = (slider->getValue());
     }
 }
 
@@ -375,10 +379,12 @@ void Synth::updateSettings(float A4Frequency, Oscillator::WaveType wave, float l
 
 void Synth::updateKnobs()
 {
-    frequencySlider.setValue(settings.A4Frequency);
-    waveButtons.setValue(settings.wave);
-    levelSlider.setValue(settings.level);
-    panSlider.setValue(settings.pan);
+    frequencySlider.setValue (settings.A4Frequency);
+    waveButtons.setValue (settings.wave);
+    levelSlider.setValue (settings.level);
+    panSlider.setValue (settings.pan);
+    cutoffSlider.setValue (filter.cutoff);
+    resonanceSlider.setValue (filter.resonance);
 }
 
 void Synth::updateTree(State & s, const bool listen)

@@ -1,6 +1,5 @@
 CRITICAL BUGS:
 -radial buttons won't always update, probably because of race condition (possibly already fixed in last network commit?)
--Filter doesn't work and sounds awful (volume warning); can possibly be fixed by processing the filter in MainContentComponent
 
 MINOR BUGS:
 -network code has to get settings from slider.getValue() for some reason
@@ -40,7 +39,7 @@ AUDIO TOP PRIORITY:
 LESS PRIORITY:
 -filter dB level setting (defaults to whatever JUCE's default is for now, which isn't specified)
 -have on/off switch be between midi device and in-window keyboard
--make 2nd osc functional
+-make 2nd osc functional (including filter)
 -3 visual oscillators (48 total voices)
 -2 routable LFOs that sync over network
 -LFO and square/pulse wave relationship not decided yet (Jesse's gonna ask David Kant)

@@ -21,7 +21,7 @@ public:
     enum dBMode : signed int {dB6 = 0, dB12, dB18, dB24, DB_MODE_SIZE};
 
     Filter (Font labelFont, Justification labelJustification,
-            dBMode dB = dB12, float cutoff = 2000, float resonance = -3);
+            dBMode dB = dB12, float cutoff = 2000, float resonance = 1);
     ~Filter();
 
     Mode getMode();
