@@ -85,6 +85,7 @@ Synth::Synth()
     cutoffSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     cutoffSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 60, 20);
     cutoffSlider.setRange(10, 20000, 1);
+    cutoffSlider.setSkewFactor(0.35);
     cutoffSlider.setValue(filter.cutoff);
     cutoffSlider.addListener (this);
 
