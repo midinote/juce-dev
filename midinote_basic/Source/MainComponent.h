@@ -67,6 +67,8 @@ public:
 
     void handleNoteOn (MidiKeyboardState*, int, int, float) override;
     void handleNoteOff (MidiKeyboardState*, int, int, float) override;
+    void focusLost (FocusChangeType) override;
+    void focusOfChildComponentChanged (FocusChangeType) override;
 
     void handleIncomingMidiMessage (MidiInput*, const MidiMessage&) override;
 

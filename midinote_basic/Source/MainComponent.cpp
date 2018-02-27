@@ -84,6 +84,7 @@ MainContentComponent::MainContentComponent()
     osc2.envelopeMenu.addListener (this);
 
     midiEditor.keyboardState.addListener (this);
+    midiEditor.grabKeyboardFocus();
     osc1.panSlider.addListener (this);
     osc1.frequencySlider.addListener (this);
     osc1.levelSlider.addListener (this);
@@ -220,6 +221,16 @@ void MainContentComponent::handleNoteOff(MidiKeyboardState* state,
                                         float velocity)
 {
     osc1.removeNote(MidiMessage::noteOff (midiChannel, midiNoteNumber, velocity));
+}
+
+void MainContentComponent::focusLost (FocusChangeType cause)
+{
+    //if (cause == focusChangedByMouseClick) midiEditor.grid.grabKeyboardFocus();
+}
+
+void MainContentComponent::focusOfChildComponentChanged (FocusChangeType cause)
+{
+    //if (cause == focusChangedByMouseClick) midiEditor.grid.grabKeyboardFocus();
 }
 
 void MainContentComponent::handleIncomingMidiMessage (MidiInput*, const MidiMessage& m)
