@@ -22,6 +22,7 @@ RadialButtons::RadialButtons (int enum_start, int enum_size, Font labelFont,
     if (enum_default == -1) enum_default = enum_start;
     start = enum_start;
     end = start + enum_size;
+    current = enum_default;
     for (int i = 0; i < enum_size; ++i) {
         addAndMakeVisible (buttons[i]);
         buttons[i].setColour (ToggleButton::tickColourId, onColour);
@@ -49,10 +50,12 @@ int RadialButtons::getValue()
     int index = 0;
     for (; index < buttons.size(); ++index)
         if (buttons[index].getToggleState() == true) break;
-    return index + start;
+    if (index + start != current) setValue (current);
+    return current;
 }
 void RadialButtons::setValue (int value)
 {
+    current = value;
     int index = value - start;
     for (int i = 0; i < buttons.size(); ++i) {
         if (i == index) buttons[i].setToggleState (true, dontSendNotification);

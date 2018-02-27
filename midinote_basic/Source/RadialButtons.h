@@ -39,6 +39,7 @@ public:
 private:
     int start;
     int end;
+    int current;
     // have to use vectors because Juce::Array does not have an "initialize with this amount of empty elements" constructor
     std::vector<ToggleButton> buttons;
     std::vector<Label> labels;
