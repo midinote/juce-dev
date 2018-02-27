@@ -70,7 +70,7 @@ int RadialButtons::clicked (Button* button)
 {
     for (int i = 0; i < buttons.size(); ++i) {
         if (button == &(buttons[i])) {
-            setValue (i + start);
+            if (buttons[i].getToggleState() == false) setValue (i + start);
             return i + start;
         }
     }

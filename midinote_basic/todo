@@ -3,7 +3,6 @@ CRITICAL BUGS:
 -radial buttons sometimes have a latency of up to a few seconds before they update over network
 -ADSR knobs randomly change over network connection even when nobody's changing any knobs
 -MIDI keyboard can lose focus
--Jimi forgot to make sure you can't disable radial buttons
 
 MINOR BUGS:
 -program has been known to crash after 2-way connection for a while
