@@ -1,7 +1,12 @@
 CRITICAL BUGS:
--radial buttons won't always update, probably because of race condition (possibly already fixed in last network commit?)
+-radial buttons won't always update, probably because of race condition -- STILL NOT FIXED???
+-radial buttons sometimes have a latency of up to a few seconds before they update over network
+-ADSR knobs randomly change over network connection even when nobody's changing any knobs
+-MIDI keyboard can lose focus
+-Jimi forgot to make sure you can't disable radial buttons
 
 MINOR BUGS:
+-program has been known to crash after 2-way connection for a while
 -network code has to get settings from slider.getValue() for some reason
 -dBToVolume() garbles that float for some reason (if it's negative)
 -segfault on exit
@@ -13,7 +18,9 @@ MINOR BUGS:
 -Level slider ignores setValue() in the initialization and defaults to 0.1 no matter what, ever since Jimi set its interval to 0.1 (probably a rounding error)
 
 GUI TOP PRIORITY:
--TBD
+-Z and X as shortcuts for octave up/down
+-type in numbers under sliders
+-abandon 2nd oscillator; move 1st oscillator down to prepare for an edit window above it
 
 LESS PRIORITY:
 -filter dB level setting (defaults to whatever JUCE's default is for now, which isn't specified)
@@ -45,10 +52,9 @@ LESS PRIORITY:
 -LFO and square/pulse wave relationship not decided yet (Jesse's gonna ask David Kant)
 
 NETWORK TOP PRIORITY:
--TBD
+-Value class to keep track of transmittable stuff more easily (Jimi can make this)
 
 LESS PRIORITY:
 -function to check if IP address is valid, for if-check in MainContentComponent::buttonClicked()
 -MIDI control syncing
 -locks
--Value class to keep track of transmittable stuff more easily (Jimi can make this)
