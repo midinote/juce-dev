@@ -37,6 +37,7 @@ public:
     void resized() override;
 
 private:
+    static int radioGroupId;
     int start;
     int end;
     int current;

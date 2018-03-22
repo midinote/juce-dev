@@ -10,6 +10,8 @@
 
 #include "RadialButtons.h"
 
+int RadialButtons::radioGroupId = 0;
+
 RadialButtons::RadialButtons (int enum_start, int enum_size, Font labelFont,
                               Justification labelJustification, Array<String> names,
                               int enum_default, Colour offColour, Colour onColour)
@@ -18,6 +20,7 @@ RadialButtons::RadialButtons (int enum_start, int enum_size, Font labelFont,
     labels (enum_size),
     originalNames (names)
 {
+    ++radioGroupId;
     if (names.size() != enum_size) throw "Every radial button must have a name";
     if (enum_default == -1) enum_default = enum_start;
     start = enum_start;
@@ -25,10 +28,10 @@ RadialButtons::RadialButtons (int enum_start, int enum_size, Font labelFont,
     current = enum_default;
     for (int i = 0; i < enum_size; ++i) {
         addAndMakeVisible (buttons[i]);
+        buttons[i].setRadioGroupId (radioGroupId, dontSendNotification);
         buttons[i].setColour (ToggleButton::tickColourId, onColour);
         buttons[i].setColour (ToggleButton::tickDisabledColourId, offColour);
         if (i == enum_default - enum_start) buttons[i].setToggleState (true, dontSendNotification);
-        else buttons[i].setToggleState (false, dontSendNotification);
         addAndMakeVisible (labels[i]);
         labels[i].setText (names[i], dontSendNotification);
         labels[i].setFont (labelFont);
@@ -57,10 +60,8 @@ void RadialButtons::setValue (int value)
 {
     current = value;
     int index = value - start;
-    for (int i = 0; i < buttons.size(); ++i) {
+    for (int i = 0; i < buttons.size(); ++i)
         if (i == index) buttons[i].setToggleState (true, dontSendNotification);
-        else buttons[i].setToggleState (false, dontSendNotification);
-    }
 }
 
 bool RadialButtons::contains (Button* button)
