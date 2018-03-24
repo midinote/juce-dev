@@ -60,8 +60,10 @@ void RadialButtons::setValue (int value)
 {
     current = value;
     int index = value - start;
-    for (int i = 0; i < buttons.size(); ++i)
-        if (i == index) buttons[i].setToggleState (true, dontSendNotification);
+    for (int i = 0; i < buttons.size(); ++i) if (i == index) {
+        buttons[i].setToggleState (true, dontSendNotification);
+        break;
+    }
 }
 
 bool RadialButtons::contains (Button* button)
